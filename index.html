@@ -14,14 +14,14 @@
 </head>
 <body>
     <div class="vh-100 w-100 dark d-flex justify-content-center align-items-center">
-        <div class="w-75 p-4 rounded-4 dark-inside-neumorphism">
+        <div class="w-responsive p-4 rounded-4 dark-inside-neumorphism">
             <div class="d-flex m-0 row gap-1 mb-1">
-                <div class="col ratio ratio-1x1 light rounded-3">
+                <div class="col-sm ratio ratio-1x1 light rounded-3">
                     <div class="d-flex justify-content-center align-items-center">
                         <img class="img-fluid w-75" src="assets/img/Logo.png" alt="Logo image"/>
                     </div>
                 </div>
-                <div class="col ratio ratio-1x1">
+                <div class="col-sm p-0">
                     <div class="h-100 d-flex flex-column gap-1 p-0">
                         <div class="light rounded-3 p-4 px-5">
                             <h1 class="text-end display-3 fw-bolder">
@@ -34,7 +34,7 @@
                                 Solution
                             </h1>
                         </div>
-                        <div class="light rounded-3 p-3 h-100">
+                        <div class="light rounded-3 p-3 h-100 d-none d-sm-inline-block">
                             <div class="h-100 d-flex justify-content-center align-items-center">
                                 <img class="img-fluid w-50" src="assets/img/git.png" alt="Git graph"/>
                             </div>
@@ -43,15 +43,17 @@
                 </div>
             </div>
             <div class="row m-0 gap-1">
-                <div class="light col rounded-3">
+                <div class="light col rounded-3 d-none d-sm-inline-block">
 
                 </div>
-                <div class="light col-3 rounded-3 p-4">
+                <div class="light col col-sm-3 rounded-3 p-4">
                     <a href="#what" class="btn btn-neumorhpism light w-100 rounded-pill" style="font-size: 1.4em">
-                        v
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-down" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67"/>
+                        </svg>
                     </a>
                 </div>
-                <div class="light col rounded-3">
+                <div class="light col rounded-3 d-none d-sm-inline-block">
 
                 </div>
 
@@ -86,7 +88,7 @@
     </div>
     <div class="container page-section hero pb-5" id="2">
         <h2>Who we are?</h2>
-        <div class="d-flex align-items-start justify-content-center">
+        <div class="w-100 d-flex flex-column flex-sm-row align-items-center align-items-sm-start justify-content-center">
             <github-card data-user="juuwel"></github-card>
             <github-card data-user="zapotocky77"></github-card>
             <github-card data-user="MatejMa2ur"></github-card>
