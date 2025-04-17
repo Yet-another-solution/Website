@@ -1,0 +1,52 @@
+{{ define "main" }}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-4">{{ .Title }}</h1>
+
+            <!-- Project image -->
+            <div class="mb-5">
+                <img src="{{ .Params.image }}" alt="{{ .Title }}" class="img-fluid rounded shadow-lg">
+            </div>
+
+            <!-- Project content -->
+            <div class="content">
+                {{ .Content }}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-light shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Project Details</h5>
+
+                    <div class="mb-3">
+                        <strong>Technologies:</strong>
+                        <div class="mt-2">
+                            {{ $techs := split .Params.tech "," }}
+                            {{ range $tech := $techs }}
+                            <span class="badge bg-primary me-1 mb-1">{{ $tech }}</span>
+                            {{ end }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Date:</strong>
+                        <p>{{ .Date.Format "January 2, 2006" }}</p>
+                    </div>
+
+                    <!-- External link button removed as we're using the page itself -->
+                </div>
+            </div>
+
+            <!-- Back to projects -->
+            <a href="/projects" class="btn btn-outline-secondary w-100">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+                Back to Projects
+            </a>
+        </div>
+    </div>
+</div>
+{{ end }}

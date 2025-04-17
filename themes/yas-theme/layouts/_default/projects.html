@@ -1,0 +1,126 @@
+{{ define "main" }}
+<div class="container py-5">
+    <h1 class="display-4 fw-bold mb-4 text-center">{{ .Title }}</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            {{ .Content }}
+        </div>
+    </div>
+
+    <div class="row g-4 mt-3">
+        {{ range .Site.Params.projects }}
+        <div class="col-md-6 col-lg-4">
+            <div class="card project-card h-100 border-0 shadow overflow-hidden">
+                <div class="position-relative">
+                    <!-- Gradient overlay -->
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-overlay"></div>
+                    <!-- Project image -->
+                    <img src="{{ .image }}" alt="{{ .title }}" class="card-img-top project-image">
+                    <!-- Dark gradient overlay at bottom -->
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-bottom"></div>
+
+                    <!-- Content that moves up on hover -->
+                    <div class="position-absolute bottom-0 start-0 w-100 p-3 p-md-4 content-overlay">
+                        <h3 class="h5 fw-bold text-white mb-2">{{ .title }}</h3>
+                        <div class="d-flex flex-wrap gap-1 mb-2">
+                            {{ $techs := split .tech "," }}
+                            {{ range $tech := $techs }}
+                            <span class="badge bg-dark bg-opacity-75 text-white small">{{ $tech }}</span>
+                            {{ end }}
+                        </div>
+                        <p class="text-white-50 small d-none d-md-block project-description">{{ .description }}</p>
+
+                        <!-- Learn More button -->
+                        <a href="{{ .link }}" class="btn btn-sm btn-light mt-2 d-inline-flex align-items-center learn-more-btn">
+                            Learn More
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right ms-1" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+
+<style>
+.project-card {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(to bottom right, rgba(30, 41, 59, 0.5), rgba(30, 41, 59, 0.8));
+    backdrop-filter: blur(10px);
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.project-image {
+    height: 240px;
+    object-fit: cover;
+    transition: transform 0.5s;
+    filter: saturate(1.1) contrast(1.1);
+}
+
+.project-card:hover .project-image {
+    transform: scale(1.1);
+}
+
+.bg-gradient-overlay {
+    background: linear-gradient(to bottom right, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2));
+    z-index: 1;
+}
+
+.bg-gradient-bottom {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 50%, transparent 100%);
+    z-index: 2;
+}
+
+.content-overlay {
+    z-index: 3;
+    transition: transform 0.5s;
+}
+
+.project-card:hover .content-overlay {
+    transform: translateY(-20px);
+}
+
+.project-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.learn-more-btn {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.project-card:hover .learn-more-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .project-card:hover {
+        transform: none;
+    }
+
+    .project-card:hover .content-overlay {
+        transform: translateY(-10px);
+    }
+
+    .learn-more-btn {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{{ end }}

@@ -1,0 +1,90 @@
+{{ define "main" }}
+<div class="vh-100 w-100 dark d-flex justify-content-center align-items-center">
+    <div class="w-responsive p-4 rounded-4 dark-inside-neumorphism">
+        <div class="d-flex m-0 row gap-1 mb-1">
+            <div class="col-sm ratio ratio-1x1 light rounded-3">
+                <div class="d-flex justify-content-center align-items-center">
+                    <img class="img-fluid w-75" src="{{ `img/Logo.png` | relURL }}" alt="Logo image"/>
+                </div>
+            </div>
+            <div class="col-sm p-0">
+                <div class="h-100 d-flex flex-column gap-1 p-0">
+                    <div class="light rounded-3 p-4 px-5">
+                        <h1 class="text-end display-3 fw-bolder">
+                            Yet
+                        </h1>
+                        <h1 class="text-end display-3 fw-bolder">
+                            Another
+                        </h1>
+                        <h1 class="text-end display-3 fw-bolder">
+                            Solution
+                        </h1>
+                    </div>
+                    <div class="light rounded-3 p-3 h-100 d-none d-sm-inline-block">
+                        <div class="h-100 d-flex justify-content-center align-items-center">
+                            <img class="img-fluid" src="{{ `img/git.png` | relURL }}" alt="Git graph"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row m-0 gap-1">
+            <div class="light col rounded-3 d-none d-sm-inline-block">
+
+            </div>
+            <div class="light col col-sm-3 rounded-3 p-4">
+                <a href="#what" class="btn btn-neumorhpism light w-100 rounded-pill" style="font-size: 1.4em">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-down" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="light col rounded-3 d-none d-sm-inline-block">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="content page-section pg-dark hero" id="1">
+        <div class="row">
+            <div class="col">
+                <h2 id="what">What we do?</h2>
+                <p class="p-2">
+                    <strong>Whoa!</strong><br> Hang onto your hats, cause our team is all about using the <em>coolest tech tools</em> to engineer <strong>remarkable software</strong>!
+                </p>
+                <p class="p-2">
+                    You see, we're big fans of <strong>GitHub</strong>. Why, you ask? Well, it helps us structure our work, share our epic ideas, and test out the fruits of our toil (a.k.a our fantastic code).
+                </p>
+
+                <p class="p-2">
+                    And, when it comes to programming languages, <strong>C#</strong> is our mightiest weapon! It's not just power-packed, it's a total pleasure to work with.
+                </p>
+                <p class="p-2">
+                    We also tinker with a nifty web tool, <strong>Blazor</strong>. It's the magic wand that helps us craft fun and interactive website features – all in C#. Cool, right?
+                </p>
+                <p class="p-2">
+                    Finally, for our data needs, we bank on <strong>PostgreSQL</strong>. Not only is it a free tool, but it also majestically manages our data, ensuring it's safe, sound, and structured.
+                </p>
+                <p class="p-2">
+                    Buckle up, because with these tools, we're ready to conquer <strong>any project</strong> that comes our way! Onwards!
+                </p>
+            </div>
+            <div class="col d-none d-sm-inline-block">
+                <img src="{{ `img/TechStack.png` | relURL }}" class="img-fluid">
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="container page-section hero pb-5" id="2">
+    <h2>Who we are?</h2>
+    <div class="w-100 d-flex flex-column flex-sm-row align-items-center align-items-sm-start justify-content-center">
+        <github-card data-user="juuwel"></github-card>
+        <github-card data-user="zapotocky77"></github-card>
+        <github-card data-user="MatejMa2ur"></github-card>
+    </div>
+</div>
+{{ end }}
