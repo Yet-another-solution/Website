@@ -1,28 +1,7 @@
-baseURL = "/"
+baseURL = "https://y-a-s.net"
 languageCode = "en-us"
 title = "Y-A-S"
 theme = "yas-theme"
 
 [params]
   description = "Yet Another Solution"
-
-  [[params.projects]]
-    title = "Project One"
-    image = "/img/TechStack.png"
-    tech = "C#,Blazor,PostgreSQL"
-    description = "This is a sample project showcasing our technology stack and development capabilities."
-    link = "/projects/project1"
-
-  [[params.projects]]
-    title = "Project Two"
-    image = "/img/git.png"
-    tech = "GitHub,Git,CI/CD"
-    description = "A demonstration of our version control and continuous integration workflow."
-    link = "/projects/project2"
-
-  [[params.projects]]
-    title = "Project Three"
-    image = "/img/Logo.png"
-    tech = "Design,Branding,UI/UX"
-    description = "Our approach to creating memorable brand identities and user experiences."
-    link = "#"
