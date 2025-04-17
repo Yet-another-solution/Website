@@ -3,5 +3,19 @@ languageCode = "en-us"
 title = "Y-A-S"
 theme = "yas-theme"
 
+# Enable built-in Hugo features for SEO
+enableRobotsTXT = true
+enableGitInfo = true
+disableHugoGeneratorInject = false
+
+# Sitemap configuration
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5
+  filename = "sitemap.xml"
+
 [params]
-  description = "Yet Another Solution"
+  description = "Yet Another Solution - A team of developers creating innovative software solutions using C#, Blazor, and PostgreSQL."
+  keywords = "software development, C#, Blazor, PostgreSQL, web development, projects"
+  author = "Y-A-S Team"
+  images = ["img/Logo.png"] # Default image for social sharing

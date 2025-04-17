@@ -1,12 +1,49 @@
 {{ define "main" }}
 <div class="container py-5">
+    <!-- Breadcrumb navigation -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/projects">Projects</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ .Title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Breadcrumb structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "{{ .Site.BaseURL }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Projects",
+                "item": "{{ .Site.BaseURL }}projects/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "{{ .Title }}",
+                "item": "{{ .Permalink }}"
+            }
+        ]
+    }
+    </script>
+
     <div class="row">
         <div class="col-md-8">
             <h1 class="mb-4">{{ .Title }}</h1>
 
             <!-- Project image -->
             <div class="mb-5 d-flex justify-content-center">
-                <img src="{{ .Params.image }}" alt="{{ .Title }}" class="img-fluid rounded shadow-lg" style="max-height: 500px;">
+                <img src="{{ .Params.image }}" alt="{{ .Title }} - {{ with .Params.description }}{{ . }}{{ end }}" class="img-fluid rounded shadow-lg" style="max-height: 500px;" loading="lazy">
             </div>
 
             <!-- Project content -->

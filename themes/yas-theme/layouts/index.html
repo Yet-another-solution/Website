@@ -1,10 +1,26 @@
 {{ define "main" }}
+<!-- Additional structured data for the homepage -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "{{ .Site.Title }}",
+    "url": "{{ .Site.BaseURL }}",
+    "description": "{{ .Site.Params.description }}",
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ .Site.BaseURL }}search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+    }
+}
+</script>
+
 <div class="vh-100 w-100 dark d-flex justify-content-center align-items-center">
     <div class="w-responsive p-4 rounded-4 dark-inside-neumorphism">
         <div class="d-flex m-0 row gap-1 mb-1">
             <div class="col-sm ratio ratio-1x1 light rounded-3">
                 <div class="d-flex justify-content-center align-items-center">
-                    <img class="img-fluid w-75" src="{{ `img/Logo.png` | relURL }}" alt="Logo image"/>
+                    <img class="img-fluid w-75" src="{{ `img/Logo.png` | relURL }}" alt="Y-A-S Logo" loading="lazy"/>
                 </div>
             </div>
             <div class="col-sm p-0">
@@ -22,7 +38,7 @@
                     </div>
                     <div class="light rounded-3 p-3 h-100 d-none d-sm-inline-block">
                         <div class="h-100 d-flex justify-content-center align-items-center">
-                            <img class="img-fluid" src="{{ `img/git.png` | relURL }}" alt="Git graph"/>
+                            <img class="img-fluid" src="{{ `img/git.png` | relURL }}" alt="Git commit graph visualization" loading="lazy"/>
                         </div>
                     </div>
                 </div>
@@ -79,7 +95,7 @@
                 </p>
             </div>
             <div class="col d-none d-sm-inline-block">
-                <img src="{{ `img/TechStack.png` | relURL }}" class="img-fluid">
+                <img src="{{ `img/TechStack.png` | relURL }}" class="img-fluid" alt="Technology stack: C#, Blazor, PostgreSQL, GitHub" loading="lazy">
             </div>
         </div>
     </div>
@@ -93,4 +109,41 @@
         <github-card data-user="MatejMa2ur"></github-card>
     </div>
 </div>
+
+<!-- Team members structured data -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "{{ .Site.Title }}",
+    "url": "{{ .Site.BaseURL }}",
+    "logo": "{{ `img/Logo.png` | absURL }}",
+    "member": [
+        {
+            "@type": "Person",
+            "name": "Juuwel",
+            "url": "https://github.com/juuwel",
+            "sameAs": [
+                "https://github.com/juuwel"
+            ]
+        },
+        {
+            "@type": "Person",
+            "name": "Zapotocky77",
+            "url": "https://github.com/zapotocky77",
+            "sameAs": [
+                "https://github.com/zapotocky77"
+            ]
+        },
+        {
+            "@type": "Person",
+            "name": "Matej Mazur",
+            "url": "https://github.com/MatejMa2ur",
+            "sameAs": [
+                "https://github.com/MatejMa2ur"
+            ]
+        }
+    ]
+}
+</script>
 {{ end }}

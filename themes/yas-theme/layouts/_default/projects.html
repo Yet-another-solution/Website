@@ -1,5 +1,35 @@
 {{ define "main" }}
 <div class="container py-5">
+    <!-- Breadcrumb navigation -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Projects</li>
+        </ol>
+    </nav>
+
+    <!-- Breadcrumb structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "{{ .Site.BaseURL }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Projects",
+                "item": "{{ .Permalink }}"
+            }
+        ]
+    }
+    </script>
+
     <h1 class="display-4 fw-bold mb-4 text-center">{{ .Title }}</h1>
 
     <div class="row justify-content-center">
@@ -16,7 +46,7 @@
                     <!-- Gradient overlay -->
                     <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-overlay"></div>
                     <!-- Project image -->
-                    <img src="{{ .Params.image }}" alt="{{ .Title }}" class="card-img-top project-image">
+                    <img src="{{ .Params.image }}" alt="{{ .Title }} - {{ with .Params.description }}{{ . }}{{ end }}" class="card-img-top project-image" loading="lazy">
                     <!-- Dark gradient overlay at bottom -->
                     <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-bottom"></div>
 

@@ -1,0 +1,21 @@
+# robots.txt for y-a-s.net
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://y-a-s.net/sitemap.xml
+
+# Disallow crawling of certain file types
+User-agent: *
+Disallow: /*.json$
+Disallow: /*.xml$
+Disallow: /*.js$
+Disallow: /*.css$
+
+# Allow Google to crawl everything
+User-agent: Googlebot
+Allow: /
+
+# Allow Bing to crawl everything
+User-agent: Bingbot
+Allow: /
