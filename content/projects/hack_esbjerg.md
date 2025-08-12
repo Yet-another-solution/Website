@@ -2,11 +2,10 @@
 title: "Hack Esbjerg | IT Hackathon"
 date: 2023-11-01
 draft: false
-image: "https://cod3rs.org/img/logo.png"
-tech: "Community"
-description: "A community of passionate developers working together to create amazing things."
-github: "https://github.com/Cod3rs-org"
-webUrl: "https://cod3rs.org/"
+image: "https://hack-esbjerg.cod3rs.org/img/Hackers-bg-Image.png"
+tech: "Hackathon"
+description: "Join Denmark's innovative hackathon in Esbjerg! 24 hours of coding"
+webUrl: "https://hack-esbjerg.cod3rs.org/"
 ---
 
 # Hack Esbjerg | IT Hackathon
