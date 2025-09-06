@@ -1,0 +1,28 @@
+{{ define "main" }}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <article class="content page-section">
+                <header class="mb-4">
+                    <h1 class="jet-brains-mono">{{ .Title }}</h1>
+                    {{ if .Description }}
+                    <p class="lead text-muted">{{ .Description }}</p>
+                    {{ end }}
+                </header>
+                
+                <div class="content jet-brains-mono">
+                    {{ .Content }}
+                </div>
+                
+                {{ if .Date }}
+                <footer class="mt-5 pt-3 border-top">
+                    <small class="text-muted">
+                        Last updated: {{ .Date.Format "January 2, 2006" }}
+                    </small>
+                </footer>
+                {{ end }}
+            </article>
+        </div>
+    </div>
+</div>
+{{ end }}
