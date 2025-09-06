@@ -6,27 +6,35 @@
     --primary-color: #66CC8A;
     --secondary-color: #377CFB;
     --danger-color: #EA5234;
+    --border-color: rgb(194, 196, 201);
 }
 
 *{
-    font-family: "Nunito", sans-serif;
+    font-family: "JetBrains Mono", monospace;
     font-optical-sizing: auto;
     transition: all .2s ease;
     scroll-behavior: smooth;
 }
 
-body {
-    font-family: 'Roboto Mono', sans-serif;
-}
-
-.dark{
+.dark-bg{
     background-color: var(--main-dark-color);
+}
+.light-text{
     color: var(--main-dark-text-color);
 }
-
-.light{
-    background-color: var(--main-light-color);
+.darker-text{
+    color: var(--main-light-text-color);
+}
+.dark-text{
     color: var(--main-dark-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--main-dark-color);
+}
+
+#start {
+    border-top: 3px solid var(--primary-color);
 }
 
 .btn-neumorhpism{
@@ -51,5 +59,74 @@ body {
 @media (min-width: 992px) { /* for devices larger than 992px */
     .w-responsive {
         width: 75% !important; /* override Bootstrap's width */
+    }
+}
+
+.rubik{
+    font-family: 'Rubik Mono One', monospace;
+}
+.jet-brains-mono {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.white-square {
+    background-color: white;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.lr-ws{
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    margin: 0 auto;
+}
+.lr-ws-center{
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+@media (max-width: 575.98px) { /* Mobile */
+    .s-text{
+        padding-top: 10vw;
+    }
+    h1.h1{
+        font-size: 5rem;
+    }
+
+    .white-square {
+        width: 100vw;
+        height: 100vw;
+    }
+
+    .lr-ws{
+        height: 5vw;
+        max-width: 90vw;
+    }
+    .lr-ws-center{
+        height: 90vw;
+        max-height: 90vw;
+    }
+}
+
+@media (min-width: 576px) { /* Desktop */
+    .s-text{
+        padding-top: 10vh;
+    }
+    h1.h1{
+        font-size: 12rem;
+    }
+
+    .white-square {
+        width: 100vh;
+        height: 100vh;
+    }
+
+    .lr-ws{
+        height: 5vh;
+        max-width: 90vh;
+    }
+    .lr-ws-center{
+        height: 90vh;
+        max-height: 90vh;
     }
 }
