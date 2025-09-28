@@ -37,6 +37,8 @@
     <link rel="icon" href="{{ `img/Logo.png` | relURL }}" type="image/png">
     <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
 
+    {{ block "head" . }}{{ end }}
+
     <!-- JSON-LD structured data -->
     {{ if .IsHome }}
     <script type="application/ld+json">

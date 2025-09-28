@@ -12,11 +12,11 @@ categories: ["Blog"]
 seriesOrder: 1
 
 # SEO and Social Media
-images: ["img/blog/blazor-getting-started.jpg"]
+#images: ["img/blog/blazor-getting-started.jpg"]
 toc: true
 comments: true
 
-type: "post"
+type: "blog"
 ---
 
 ## Introduction
