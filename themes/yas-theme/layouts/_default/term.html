@@ -1,0 +1,94 @@
+{{ define "main" }}
+<div class="taxonomy-term-page">
+  <header class="taxonomy-header">
+    <h1>{{ .Title }}</h1>
+    <p class="taxonomy-count">{{ len .Pages }} {{ if eq (len .Pages) 1 }}post{{ else }}posts{{ end }}</p>
+    {{ with .Content }}
+      <div class="taxonomy-description">{{ . }}</div>
+    {{ end }}
+  </header>
+
+  <main class="taxonomy-content">
+    {{ if .Pages }}
+      {{ range .Pages.GroupByDate "2006" }}
+        <section class="year-group">
+          <h2>{{ .Key }}</h2>
+          {{ range .Pages }}
+            <article class="post-item">
+              <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+              <div class="post-meta">
+                <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                  {{ .Date.Format "January 2, 2006" }}
+                </time>
+                {{ if .Params.author }}
+                  <span class="author">by {{ .Params.author }}</span>
+                {{ end }}
+                {{ if .ReadingTime }}
+                  <span class="reading-time">{{ .ReadingTime }} min read</span>
+                {{ end }}
+              </div>
+              {{ if .Description }}
+                <p class="post-description">{{ .Description }}</p>
+              {{ else if .Summary }}
+                <p class="post-description">{{ .Summary | truncate 200 }}</p>
+              {{ end }}
+              {{ if .Params.tags }}
+                <div class="post-tags">
+                  {{ range .Params.tags }}
+                    <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="tag">{{ . }}</a>
+                  {{ end }}
+                </div>
+              {{ end }}
+              {{ if .Params.series }}
+                <div class="post-series">
+                  {{ range .Params.series }}
+                    <span class="series-badge">📚 {{ . }}</span>
+                  {{ end }}
+                </div>
+              {{ end }}
+            </article>
+          {{ end }}
+        </section>
+      {{ end }}
+    {{ else }}
+      <p>No posts found.</p>
+    {{ end }}
+  </main>
+
+  <aside class="related-taxonomies">
+    <h3>Browse Other {{ .Data.Plural | title }}</h3>
+    <div class="taxonomy-links">
+      {{ $currentTerm := .Title }}
+      {{ range $name, $taxonomy := .Site.Taxonomies }}
+        {{ if eq $name $.Data.Plural }}
+          {{ range $term, $pages := $taxonomy }}
+            {{ if ne $term $currentTerm }}
+              <a href="{{ "/" | relLangURL }}{{ $name }}/{{ $term | urlize }}" class="taxonomy-link">
+                {{ $term }} ({{ $pages.Count }})
+              </a>
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    </div>
+  </aside>
+</div>
+{{ end }}
+
+{{ define "head" }}
+  <meta name="title" content="{{ .Title }} | {{ .Site.Title }}">
+  <meta name="description" content="Browse all {{ len .Pages }} posts in {{ .Title }} on {{ .Site.Title }}.">
+  <link rel="canonical" href="{{ .Permalink }}">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:title" content="{{ .Title }} | {{ .Site.Title }}">
+  <meta property="og:description" content="Browse all {{ len .Pages }} posts in {{ .Title }} on {{ .Site.Title }}.">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:url" content="{{ .Permalink }}">
+  <meta property="twitter:title" content="{{ .Title }} | {{ .Site.Title }}">
+  <meta property="twitter:description" content="Browse all {{ len .Pages }} posts in {{ .Title }} on {{ .Site.Title }}.">
+{{ end }}

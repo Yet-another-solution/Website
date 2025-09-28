@@ -1,0 +1,130 @@
+{{ define "main" }}
+<div class="blog-list">
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    {{ if .Content }}
+      <div class="page-description">
+        {{ .Content }}
+      </div>
+    {{ end }}
+
+    <!-- Tag and Series filters -->
+    <div class="taxonomy-filters">
+      <div class="filter-group">
+        <h3>Browse by Tags:</h3>
+        <div class="tag-cloud">
+          {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+            <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}" class="tag-link">
+              {{ $name }} ({{ $taxonomy.Count }})
+            </a>
+          {{ end }}
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h3>Browse by Series:</h3>
+        <div class="series-list">
+          {{ range $name, $taxonomy := .Site.Taxonomies.series }}
+            <a href="{{ "/series/" | relLangURL }}{{ $name | urlize }}" class="series-link">
+              {{ $name }} ({{ $taxonomy.Count }} posts)
+            </a>
+          {{ end }}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="posts-container">
+    {{ $paginator := .Paginate (where .Site.RegularPages "Type" "in" (slice "post" "blog")) }}
+
+    {{ range $paginator.Pages }}
+      <article class="post-preview">
+        <header class="post-header">
+          <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+          <div class="post-meta">
+            <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+              {{ .Date.Format "January 2, 2006" }}
+            </time>
+            {{ if .Params.author }}
+              <span class="author">by {{ .Params.author }}</span>
+            {{ end }}
+            {{ if .ReadingTime }}
+              <span class="reading-time">{{ .ReadingTime }} min read</span>
+            {{ end }}
+          </div>
+        </header>
+
+        {{ if .Params.images }}
+          <div class="post-image">
+            <img src="{{ index .Params.images 0 }}" alt="{{ .Title }}" loading="lazy">
+          </div>
+        {{ end }}
+
+        <div class="post-summary">
+          {{ if .Description }}
+            <p>{{ .Description }}</p>
+          {{ else }}
+            {{ .Summary }}
+          {{ end }}
+        </div>
+
+        <footer class="post-footer">
+          {{ if .Params.tags }}
+            <div class="post-tags">
+              {{ range .Params.tags }}
+                <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="tag">{{ . }}</a>
+              {{ end }}
+            </div>
+          {{ end }}
+
+          {{ if .Params.series }}
+            <div class="post-series">
+              {{ range .Params.series }}
+                <a href="{{ "/series/" | relLangURL }}{{ . | urlize }}" class="series">📚 {{ . }}</a>
+              {{ end }}
+            </div>
+          {{ end }}
+
+          <a href="{{ .Permalink }}" class="read-more">Read More →</a>
+        </footer>
+      </article>
+    {{ end }}
+
+    <!-- Pagination -->
+    {{ if gt $paginator.TotalPages 1 }}
+      <nav class="pagination">
+        {{ if $paginator.HasPrev }}
+          <a href="{{ $paginator.Prev.URL }}" class="pagination-prev">← Previous</a>
+        {{ end }}
+
+        <span class="pagination-info">
+          Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}
+        </span>
+
+        {{ if $paginator.HasNext }}
+          <a href="{{ $paginator.Next.URL }}" class="pagination-next">Next →</a>
+        {{ end }}
+      </nav>
+    {{ end }}
+  </main>
+</div>
+
+<!-- JSON-LD structured data for blog listing -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "{{ .Site.Title }} Blog",
+  "description": "{{ .Description | default .Site.Params.description }}",
+  "url": "{{ .Permalink }}",
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ .Site.Params.schema.publisherName | default .Site.Title }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ .Site.BaseURL }}{{ .Site.Params.schema.publisherLogo | default "img/logo.png" }}"
+    }
+  }
+}
+</script>
+{{ end }}

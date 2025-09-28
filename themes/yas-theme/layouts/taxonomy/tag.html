@@ -1,0 +1,59 @@
+{{ define "main" }}
+<div class="taxonomy-page tag-page">
+  <header class="taxonomy-header">
+    <h1>Posts tagged with "{{ .Title }}"</h1>
+    <p class="taxonomy-count">{{ len .Pages }} {{ if eq (len .Pages) 1 }}post{{ else }}posts{{ end }}</p>
+  </header>
+
+  <main class="taxonomy-content">
+    {{ range .Pages.GroupByDate "2006" }}
+      <section class="year-group">
+        <h2>{{ .Key }}</h2>
+        {{ range .Pages }}
+          <article class="post-item">
+            <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+            <div class="post-meta">
+              <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                {{ .Date.Format "January 2, 2006" }}
+              </time>
+              {{ if .Params.author }}
+                <span class="author">by {{ .Params.author }}</span>
+              {{ end }}
+            </div>
+            {{ if .Description }}
+              <p class="post-description">{{ .Description }}</p>
+            {{ end }}
+            {{ if .Params.series }}
+              <div class="post-series">
+                {{ range .Params.series }}
+                  <span class="series-badge">📚 {{ . }}</span>
+                {{ end }}
+              </div>
+            {{ end }}
+          </article>
+        {{ end }}
+      </section>
+    {{ end }}
+  </main>
+
+  <aside class="related-tags">
+    <h3>Related Tags</h3>
+    <div class="tag-cloud">
+      {{ $currentTag := .Title }}
+      {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+        {{ if ne $name $currentTag }}
+          <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}" class="tag-link">
+            {{ $name }} ({{ $taxonomy.Count }})
+          </a>
+        {{ end }}
+      {{ end }}
+    </div>
+  </aside>
+</div>
+{{ end }}
+
+{{ define "head" }}
+  <meta name="title" content="Posts tagged with {{ .Title }} | {{ .Site.Title }}">
+  <meta name="description" content="Browse all {{ len .Pages }} posts tagged with {{ .Title }} on {{ .Site.Title }}.">
+  <link rel="canonical" href="{{ .Permalink }}">
+{{ end }}

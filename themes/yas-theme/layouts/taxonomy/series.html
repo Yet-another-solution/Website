@@ -1,0 +1,76 @@
+{{ define "main" }}
+<div class="taxonomy-page series-page">
+  <header class="taxonomy-header">
+    <h1>{{ .Title }} Series</h1>
+    <p class="taxonomy-count">{{ len .Pages }} {{ if eq (len .Pages) 1 }}post{{ else }}posts{{ end }}</p>
+    {{ with .Content }}
+      <div class="series-description">{{ . }}</div>
+    {{ end }}
+  </header>
+
+  <main class="taxonomy-content">
+    <div class="series-posts">
+      {{ $pages := .Pages.ByParam "seriesOrder" }}
+      {{ range $index, $page := $pages }}
+        <article class="series-post-item">
+          <div class="series-number">{{ add $index 1 }}</div>
+          <div class="series-post-content">
+            <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+            <div class="post-meta">
+              <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                {{ .Date.Format "January 2, 2006" }}
+              </time>
+              {{ if .Params.author }}
+                <span class="author">by {{ .Params.author }}</span>
+              {{ end }}
+              {{ if .ReadingTime }}
+                <span class="reading-time">{{ .ReadingTime }} min read</span>
+              {{ end }}
+            </div>
+            {{ if .Description }}
+              <p class="post-description">{{ .Description }}</p>
+            {{ end }}
+            {{ if .Params.tags }}
+              <div class="post-tags">
+                {{ range .Params.tags }}
+                  <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="tag">{{ . }}</a>
+                {{ end }}
+              </div>
+            {{ end }}
+          </div>
+        </article>
+      {{ end }}
+    </div>
+  </main>
+
+  <aside class="series-info">
+    <div class="series-stats">
+      <h3>Series Overview</h3>
+      <ul>
+        <li><strong>Total Posts:</strong> {{ len .Pages }}</li>
+        <li><strong>Total Reading Time:</strong> {{ $totalTime := 0 }}{{ range .Pages }}{{ $totalTime = add $totalTime .ReadingTime }}{{ end }}{{ $totalTime }} minutes</li>
+        <li><strong>First Post:</strong> {{ $firstPost := .Pages.ByDate | first 1 }}{{ if $firstPost }}{{ (index $firstPost 0).Date.Format "January 2006" }}{{ end }}</li>
+        <li><strong>Last Updated:</strong> {{ $lastPost := .Pages.ByLastmod.Reverse | first 1 }}{{ if $lastPost }}{{ (index $lastPost 0).Lastmod.Format "January 2006" }}{{ end }}</li>
+      </ul>
+    </div>
+
+    <div class="related-series">
+      <h3>Other Series</h3>
+      {{ $currentSeries := .Title }}
+      {{ range $name, $taxonomy := .Site.Taxonomies.series }}
+        {{ if ne $name $currentSeries }}
+          <a href="{{ "/series/" | relLangURL }}{{ $name | urlize }}" class="series-link">
+            {{ $name }} ({{ $taxonomy.Count }} posts)
+          </a>
+        {{ end }}
+      {{ end }}
+    </div>
+  </aside>
+</div>
+{{ end }}
+
+{{ define "head" }}
+  <meta name="title" content="{{ .Title }} Series | {{ .Site.Title }}">
+  <meta name="description" content="Follow the {{ .Title }} series with {{ len .Pages }} posts covering comprehensive insights and tutorials.">
+  <link rel="canonical" href="{{ .Permalink }}">
+{{ end }}

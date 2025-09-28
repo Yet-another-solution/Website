@@ -8,14 +8,57 @@ enableRobotsTXT = true
 enableGitInfo = true
 disableHugoGeneratorInject = false
 
+# Pagination (Hugo v0.128.0+ format)
+[pagination]
+  pagerSize = 10
+  path = "page"
+
+# Taxonomies for blog organization
+[taxonomies]
+  tag = "tags"
+  series = "series"
+  category = "categories"
+
 # Sitemap configuration
 [sitemap]
   changefreq = "weekly"
   priority = 0.5
   filename = "sitemap.xml"
 
+# Menu configuration
+[[menu.main]]
+  name = "Blog"
+  url = "/blog/"
+  weight = 10
+
+[[menu.main]]
+  name = "Projects"
+  url = "/projects/"
+  weight = 20
+
+[[menu.main]]
+  name = "Contact"
+  url = "/contact/"
+  weight = 30
+
 [params]
   description = "Yet Another Solution - A team of developers creating innovative software solutions using C#, Blazor, and PostgreSQL."
-  keywords = "software development, C#, Blazor, PostgreSQL, web development, projects"
+  keywords = "software development, C#, Blazor, PostgreSQL, web development, projects, blog"
   author = "Y-A-S Team"
   images = ["img/Logo.png"] # Default image for social sharing
+
+  # Blog-specific settings
+  dateFormat = "January 2, 2006"
+  readingTime = true
+  showRelatedPosts = true
+  relatedPostsCount = 3
+
+  # SEO settings
+  twitterCard = "summary_large_image"
+  twitterSite = "@YASTeam" # Replace with your Twitter handle
+
+  # Schema.org settings
+  [params.schema]
+    publisherName = "Y-A-S Team"
+    publisherLogo = "img/Logo.png"
+    authorName = "Y-A-S Team"

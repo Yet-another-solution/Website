@@ -1,0 +1,22 @@
+{{ define "main" }}
+<div class="taxonomies-overview">
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    <p>Browse content by {{ .Data.Singular }}</p>
+  </header>
+
+  <main class="taxonomies-list">
+    {{ range .Data.Terms.Alphabetical }}
+      <div class="taxonomy-item">
+        <h2>
+          <a href="{{ .Page.Permalink }}">{{ .Page.Title }}</a>
+          <span class="count">({{ .Count }})</span>
+        </h2>
+        {{ if .Page.Content }}
+          <div class="taxonomy-description">{{ .Page.Content | truncate 200 }}</div>
+        {{ end }}
+      </div>
+    {{ end }}
+  </main>
+</div>
+{{ end }}
