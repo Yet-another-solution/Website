@@ -1,22 +1,28 @@
 {{ define "main" }}
-<div class="taxonomies-overview">
-  <header class="page-header">
-    <h1>{{ .Title }}</h1>
-    <p>Browse content by {{ .Data.Singular }}</p>
-  </header>
+<div class="yas-page-canvas">
+<div class="yas-panel">
+<div class="yas-panel-inner">
 
-  <main class="taxonomies-list">
+  <div class="yas-panel-header">
+    <h1 class="yas-panel-title">{{ .Title }}</h1>
+    <p class="mt-2 mb-0" style="color: var(--main-dark-text-color); font-size: 0.9rem;">Browse content by {{ .Data.Singular }}</p>
+  </div>
+
+  <div class="taxonomies-list">
     {{ range .Data.Terms.Alphabetical }}
-      <div class="taxonomy-item">
-        <h2>
-          <a href="{{ .Page.Permalink }}">{{ .Page.Title }}</a>
-          <span class="count">({{ .Count }})</span>
+      <div class="taxonomy-item mb-3">
+        <h2 style="font-size: 1.2rem;">
+          <a href="{{ .Page.Permalink }}" style="color: var(--main-dark-color); text-decoration: none;">{{ .Page.Title }}</a>
+          <span style="color: var(--main-dark-text-color); font-size: 0.9rem;">({{ .Count }})</span>
         </h2>
         {{ if .Page.Content }}
-          <div class="taxonomy-description">{{ .Page.Content | truncate 200 }}</div>
+          <div class="taxonomy-description" style="color: var(--main-light-text-color);">{{ .Page.Content | truncate 200 }}</div>
         {{ end }}
       </div>
     {{ end }}
-  </main>
+  </div>
+
+</div>
+</div>
 </div>
 {{ end }}

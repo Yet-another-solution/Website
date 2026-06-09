@@ -1,12 +1,16 @@
 {{ define "main" }}
+<div class="yas-page-canvas">
+<div class="yas-panel">
+<div class="yas-panel-inner">
 <div class="taxonomy-page series-page">
-  <header class="taxonomy-header">
-    <h1>{{ .Title }} Series</h1>
-    <p class="taxonomy-count">{{ len .Pages }} {{ if eq (len .Pages) 1 }}post{{ else }}posts{{ end }}</p>
+
+  <div class="yas-panel-header">
+    <h1 class="yas-panel-title">{{ .Title }}</h1>
+    <p class="taxonomy-count mt-2 mb-0" style="color: var(--main-dark-text-color); font-size: 0.9rem;">{{ len .Pages }} {{ if eq (len .Pages) 1 }}post{{ else }}posts{{ end }}</p>
     {{ with .Content }}
-      <div class="series-description">{{ . }}</div>
+      <div class="series-description mt-2">{{ . }}</div>
     {{ end }}
-  </header>
+  </div>
 
   <main class="taxonomy-content">
     <div class="series-posts">
@@ -66,7 +70,10 @@
       {{ end }}
     </div>
   </aside>
-</div>
+</div><!-- /.taxonomy-page -->
+</div><!-- /.yas-panel-inner -->
+</div><!-- /.yas-panel -->
+</div><!-- /.yas-page-canvas -->
 {{ end }}
 
 {{ define "head" }}

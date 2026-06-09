@@ -1,5 +1,7 @@
 {{ define "main" }}
-<div class="container py-5">
+<div class="yas-page-canvas">
+<div class="yas-panel">
+<div class="yas-panel-inner">
     <!-- Breadcrumb navigation -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
@@ -53,9 +55,8 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card bg-light shadow-sm mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Project Details</h5>
+            <div class="project-details-panel mb-4">
+                    <h5>Project Details</h5>
 
                     <div class="mb-3">
                         <strong>Technologies:</strong>
@@ -89,7 +90,6 @@
                         </svg>
                     </a>
                     {{ end }}
-                </div>
             </div>
 
             <!-- Back to projects -->
@@ -101,5 +101,7 @@
             </a>
         </div>
     </div>
-</div>
+</div><!-- /.yas-panel-inner -->
+</div><!-- /.yas-panel -->
+</div><!-- /.yas-page-canvas -->
 {{ end }}

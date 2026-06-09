@@ -1,5 +1,8 @@
 {{ define "main" }}
-<div class="container py-5">
+<div class="yas-page-canvas">
+<div class="yas-panel">
+<div class="yas-panel-inner">
+
     <!-- Breadcrumb navigation -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
@@ -30,13 +33,11 @@
     }
     </script>
 
-    <h1 class="display-4 fw-bold mb-4 text-center">{{ .Title }}</h1>
-
-    <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-8">
-            {{ .Content }}
-        </div>
+    <div class="yas-panel-header">
+        <h1 class="yas-panel-title">{{ .Title }}</h1>
     </div>
+
+    {{ with .Content }}<div class="mb-4">{{ . }}</div>{{ end }}
 
     <div class="row g-4 mt-3">
         {{ range where .Site.RegularPages "Section" "projects" }}
@@ -91,7 +92,9 @@
         </div>
         {{ end }}
     </div>
-</div>
+</div><!-- /.yas-panel-inner -->
+</div><!-- /.yas-panel -->
+</div><!-- /.yas-page-canvas -->
 
 <style>
 .project-card {

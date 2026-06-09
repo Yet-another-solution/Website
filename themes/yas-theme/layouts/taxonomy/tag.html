@@ -1,9 +1,13 @@
 {{ define "main" }}
+<div class="yas-page-canvas">
+<div class="yas-panel">
+<div class="yas-panel-inner">
 <div class="taxonomy-page tag-page">
-  <header class="taxonomy-header">
-    <h1>Posts tagged with "{{ .Title }}"</h1>
-    <p class="taxonomy-count">{{ len .Pages }} {{ if eq (len .Pages) 1 }}post{{ else }}posts{{ end }}</p>
-  </header>
+
+  <div class="yas-panel-header">
+    <h1 class="yas-panel-title">{{ .Title }}</h1>
+    <p class="taxonomy-count mt-2 mb-0" style="color: var(--main-dark-text-color); font-size: 0.9rem;">{{ len .Pages }} {{ if eq (len .Pages) 1 }}post{{ else }}posts{{ end }}</p>
+  </div>
 
   <main class="taxonomy-content">
     {{ range .Pages.GroupByDate "2006" }}
@@ -49,7 +53,10 @@
       {{ end }}
     </div>
   </aside>
-</div>
+</div><!-- /.taxonomy-page -->
+</div><!-- /.yas-panel-inner -->
+</div><!-- /.yas-panel -->
+</div><!-- /.yas-page-canvas -->
 {{ end }}
 
 {{ define "head" }}

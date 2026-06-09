@@ -1,4 +1,7 @@
 {{ define "main" }}
+<div class="yas-page-canvas">
+<div class="yas-panel">
+<div class="yas-panel-inner">
 <div class="blog-list">
   <header class="page-header">
     <h1>{{ .Title }}</h1>
@@ -107,7 +110,10 @@
       </nav>
     {{ end }}
   </main>
-</div>
+</div><!-- /.blog-list -->
+</div><!-- /.yas-panel-inner -->
+</div><!-- /.yas-panel -->
+</div><!-- /.yas-page-canvas -->
 
 <!-- JSON-LD structured data for blog listing -->
 <script type="application/ld+json">
