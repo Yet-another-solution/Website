@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map(project => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+const techs = project.data.tech?.split(',').map(t => t.trim()) ?? [];
+---
+
+<BaseLayout
+  title={project.data.title}
+  description={project.data.description}
+  image={project.data.image}
+  section="projects"
+>
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+
+        <nav aria-label="breadcrumb" class="mb-4">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/projects/">Projects</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{project.data.title}</li>
+          </ol>
+        </nav>
+
+        <div class="row">
+          <div class="col-md-8">
+            <h1 class="mb-4">{project.data.title}</h1>
+
+            {project.data.image && (
+              <div class="mb-5 d-flex justify-content-center">
+                <img
+                  src={project.data.image}
+                  alt={`${project.data.title}`}
+                  class="img-fluid"
+                  style="max-height: 500px; border: 1px solid var(--border-color);"
+                  loading="lazy"
+                />
+              </div>
+            )}
+
+            <div class="post-content">
+              <Content />
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="project-details-panel mb-4">
+              <h5>Project Details</h5>
+
+              {techs.length > 0 && (
+                <div class="mb-3">
+                  <strong>Technologies:</strong>
+                  <div class="tech-badges mt-2">
+                    {techs.map(tech => <span class="tech-badge">{tech}</span>)}
+                  </div>
+                </div>
+              )}
+
+              <div class="mb-3">
+                <strong>Date:</strong>
+                <p class="mb-0 mt-1">
+                  {project.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </p>
+              </div>
+
+              {project.data.webUrl && (
+                <a href={project.data.webUrl} target="_blank" class="cta-btn-outline d-flex justify-content-center mb-2">
+                  Visit Page
+                </a>
+              )}
+              {project.data.github && (
+                <a href={project.data.github} target="_blank" class="cta-btn-primary d-flex justify-content-center mb-2">
+                  GitHub Repository
+                </a>
+              )}
+            </div>
+
+            <a href="/projects/" class="cta-btn-outline d-flex justify-content-center">
+              ← Back to Projects
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>

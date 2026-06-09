@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { slugify } from '../../utils/slugify';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const tags = [...new Set(posts.flatMap(p => p.data.tags ?? []))];
+  return tags.map(tag => ({
+    params: { tag: slugify(tag) },
+    props: { tag, posts: posts.filter(p => p.data.tags?.includes(tag)) },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+const sorted = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title={`Tag: ${tag}`} description={`Posts tagged with ${tag}`} section="blog">
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+
+        <div class="yas-panel-header">
+          <h1 class="yas-panel-title">{tag}</h1>
+          <p class="mt-2 mb-0" style="color: var(--main-dark-text-color); font-size: 0.9rem;">
+            {sorted.length} {sorted.length === 1 ? 'post' : 'posts'}
+          </p>
+        </div>
+
+        <div class="posts-container">
+          {sorted.map(post => (
+            <article class="post-preview">
+              <header class="post-header">
+                <h2><a href={`/blog/${post.slug}/`}>{post.data.title}</a></h2>
+                <div class="post-meta">
+                  <time datetime={post.data.date.toISOString()}>
+                    {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </time>
+                  {post.data.author && <span class="author">by {post.data.author}</span>}
+                </div>
+              </header>
+              {post.data.description && (
+                <div class="post-summary"><p>{post.data.description}</p></div>
+              )}
+              <footer class="post-footer">
+                <div class="d-flex flex-wrap gap-2">
+                  {post.data.tags?.map(t => (
+                    <a href={`/tags/${slugify(t)}/`} class="tag">{t}</a>
+                  ))}
+                </div>
+                <a href={`/blog/${post.slug}/`} class="read-more">Read More →</a>
+              </footer>
+            </article>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>

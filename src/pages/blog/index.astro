@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { slugify } from '../../utils/slugify';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Collect all tags and series
+const allTags = [...new Set(posts.flatMap(p => p.data.tags ?? []))].sort();
+const allSeries = [...new Set(posts.flatMap(p => p.data.series ?? []))].sort();
+---
+
+<BaseLayout title="Blog" description="Insights, tutorials, and thoughts on software development from the Y-A-S team." section="blog">
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+
+        <div class="yas-panel-header">
+          <h1 class="yas-panel-title">Blog</h1>
+        </div>
+
+        <!-- Filters -->
+        {(allTags.length > 0 || allSeries.length > 0) && (
+          <div class="taxonomy-filters">
+            {allTags.length > 0 && (
+              <div class="filter-group">
+                <h3>Browse by Tags:</h3>
+                <div class="tag-cloud">
+                  {allTags.map(tag => (
+                    <a href={`/tags/${slugify(tag)}/`} class="tag-link">
+                      {tag}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+            {allSeries.length > 0 && (
+              <div class="filter-group">
+                <h3>Browse by Series:</h3>
+                <div class="series-list">
+                  {allSeries.map(s => (
+                    <a href={`/series/${slugify(s)}/`} class="series-link">
+                      {s} ({posts.filter(p => p.data.series?.includes(s)).length} posts)
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        <!-- Posts -->
+        <div class="posts-container">
+          {posts.map(post => (
+            <article class="post-preview">
+              <header class="post-header">
+                <h2><a href={`/blog/${post.slug}/`}>{post.data.title}</a></h2>
+                <div class="post-meta">
+                  <time datetime={post.data.date.toISOString()}>
+                    {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </time>
+                  {post.data.author && <span class="author">by {post.data.author}</span>}
+                </div>
+              </header>
+
+              {post.data.images && post.data.images.length > 0 && (
+                <div class="post-image">
+                  <img src={post.data.images[0]} alt={post.data.title} loading="lazy" />
+                </div>
+              )}
+
+              <div class="post-summary">
+                {post.data.description && <p>{post.data.description}</p>}
+              </div>
+
+              <footer class="post-footer">
+                <div class="d-flex flex-wrap gap-2">
+                  {post.data.tags?.map(tag => (
+                    <a href={`/tags/${slugify(tag)}/`} class="tag">{tag}</a>
+                  ))}
+                  {post.data.series?.map(s => (
+                    <a href={`/series/${slugify(s)}/`} class="series">{s}</a>
+                  ))}
+                </div>
+                <a href={`/blog/${post.slug}/`} class="read-more">Read More →</a>
+              </footer>
+            </article>
+          ))}
+
+          {posts.length === 0 && (
+            <p style="color: var(--main-dark-text-color);">No posts yet — check back soon.</p>
+          )}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>
