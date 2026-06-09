@@ -85,47 +85,55 @@
 
 </div>
 <div class="container py-5">
-    <div class="content page-section pg-dark hero" id="1">
-        <div class="row">
-            <div class="col">
-                <h2 id="what">
-                    What we do?
-                </h2>
-                <p class="p-2">
-                    We create software!
-                </p>
-                <h2>
-                    What we use?
-                </h2>
-                <p class="p-2">
-                    Full-Stack C#, Blazor, PostgreSQL, GitHub, Azure, and more.
-                </p>
+    <!-- What we do / What we use section -->
+    <div class="homepage-intro fade-in-up" id="what">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="intro-text-block">
+                    <span class="intro-label">Who we are</span>
+                    <h2 class="intro-heading">We build software<span class="accent-dot">.</span></h2>
+                    <p class="intro-body">
+                        Yet Another Solution is a team of developers crafting full-stack applications with modern tools — from backend APIs to polished web interfaces.
+                    </p>
+                    <div class="tech-badges">
+                        <span class="tech-badge">C#</span>
+                        <span class="tech-badge">Blazor</span>
+                        <span class="tech-badge">PostgreSQL</span>
+                        <span class="tech-badge">Azure</span>
+                        <span class="tech-badge">GitHub</span>
+                    </div>
+                    <div class="mt-4">
+                        <a href="/projects" class="cta-btn-primary me-3">View Projects</a>
+                        <a href="/contact" class="cta-btn-outline">Contact Us</a>
+                    </div>
+                </div>
             </div>
-            <div class="col d-none d-sm-inline-block">
-                <img src="{{ `img/TechStack.png` | relURL }}" class="img-fluid" alt="Technology stack: C#, Blazor, PostgreSQL, GitHub" loading="lazy">
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="tech-stack-wrapper">
+                    <img src="{{ `img/TechStack.png` | relURL }}" class="img-fluid tech-stack-img" alt="Technology stack: C#, Blazor, PostgreSQL, GitHub" loading="lazy">
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Blog CTA Section -->
-    <div class="content page-section py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 20px; margin-top: 3rem;">
+    <div class="blog-cta-section fade-in-up">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h2 class="h3 mb-3" style="color: var(--main-dark-color);">
-                    📚 Read Our Blog
-                </h2>
-                <p class="mb-3" style="color: var(--main-light-text-color);">
-                    Discover insights, tutorials, and thoughts on software development, web technologies, and innovative solutions from the Y-A-S team.
+                <span class="intro-label">From the team</span>
+                <h2 class="blog-cta-heading">Read our Blog</h2>
+                <p class="blog-cta-body">
+                    Insights, tutorials, and deep dives on software development, web technologies, and innovative solutions.
                 </p>
-                <div class="d-flex gap-2 flex-wrap">
-                    <span class="badge bg-primary">Blazor</span>
-                    <span class="badge bg-secondary">C#</span>
-                    <span class="badge bg-success">Web Development</span>
-                    <span class="badge bg-info">Tutorials</span>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                    <span class="outline-badge">Blazor</span>
+                    <span class="outline-badge">C#</span>
+                    <span class="outline-badge outline-badge--blue">Web Development</span>
+                    <span class="outline-badge outline-badge--blue">Tutorials</span>
                 </div>
             </div>
-            <div class="col-md-4 text-center mt-3 mt-md-0">
-                <a href="/blog/" class="btn btn-lg px-4 py-3" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; border-radius: 25px; font-weight: 600; text-decoration: none; box-shadow: 0 4px 15px rgba(102, 204, 138, 0.3); transition: all 0.3s ease;">
+            <div class="col-md-4 text-center mt-4 mt-md-0">
+                <a href="/blog/" class="cta-btn-primary cta-btn-large">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-journal-text me-2" viewBox="0 0 16 16">
                         <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
                         <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
