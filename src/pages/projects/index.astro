@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Projects" description="Explore projects built by the Y-A-S team using C#, Blazor, and more." section="projects">
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+
+        <div class="yas-panel-header">
+          <h1 class="yas-panel-title">Projects</h1>
+        </div>
+
+        <div class="row g-4">
+          {projects.map(project => {
+            const techs = project.data.tech?.split(',').map(t => t.trim()) ?? [];
+            return (
+              <div class="col-md-6 col-lg-4">
+                <div class="card project-card h-100 border-0 shadow overflow-hidden">
+                  <div class="position-relative">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-overlay"></div>
+                    <img src={project.data.image} alt={`${project.data.title}`} class="card-img-top project-image" loading="lazy" />
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-bottom"></div>
+                    <div class="position-absolute bottom-0 start-0 w-100 p-3 p-md-4 content-overlay">
+                      <h3 class="h5 fw-bold text-white mb-2">{project.data.title}</h3>
+                      <div class="d-flex flex-wrap gap-1 mb-2">
+                        {techs.map(tech => (
+                          <span class="badge bg-dark bg-opacity-75 text-white small">{tech}</span>
+                        ))}
+                      </div>
+                      <p class="text-white-50 small d-none d-md-block project-description">
+                        {project.data.description}
+                      </p>
+                      <a href={`/projects/${project.slug}/`} class="btn btn-sm btn-light mt-2 d-inline-flex align-items-center learn-more-btn">
+                        Learn More
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="ms-1" viewBox="0 0 16 16">
+                          <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                        </svg>
+                      </a>
+                      {project.data.webUrl && (
+                        <a href={project.data.webUrl} class="btn btn-sm btn-secondary mt-2 ms-2 d-inline-flex align-items-center learn-more-btn">
+                          Visit Page
+                        </a>
+                      )}
+                      {project.data.github && (
+                        <a href={project.data.github} class="btn btn-sm btn-primary mt-2 ms-2 d-inline-flex align-items-center learn-more-btn">
+                          GitHub
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+.project-card { transition: all 0.5s cubic-bezier(0.4,0,0.2,1); }
+.project-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }
+.project-image { height: 240px; object-fit: cover; transition: transform 0.5s; filter: saturate(1.1) contrast(1.1); }
+.project-card:hover .project-image { transform: scale(1.1); }
+.bg-gradient-overlay { background: linear-gradient(to bottom right, rgba(59,130,246,0.2), rgba(147,51,234,0.2)); z-index: 1; }
+.bg-gradient-bottom { background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%); z-index: 2; }
+.content-overlay { z-index: 3; transition: transform 0.5s; }
+.project-card:hover .content-overlay { transform: translateY(-20px); }
+.project-description { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.learn-more-btn { opacity: 0; transform: translateY(10px); transition: all 0.3s; }
+.project-card:hover .learn-more-btn { opacity: 1; transform: translateY(0); }
+@media (max-width: 768px) {
+  .project-card:hover { transform: none; }
+  .learn-more-btn { opacity: 1; transform: translateY(0); }
+}
+</style>

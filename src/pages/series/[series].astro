@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { slugify } from '../../utils/slugify';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const seriesNames = [...new Set(posts.flatMap(p => p.data.series ?? []))];
+  return seriesNames.map(name => ({
+    params: { series: name.toLowerCase().replace(/\s+/g, '-') },
+    props: {
+      seriesName: name,
+      posts: posts
+        .filter(p => p.data.series?.includes(name))
+        .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0)),
+    },
+  }));
+}
+
+const { seriesName, posts } = Astro.props;
+---
+
+<BaseLayout title={seriesName} description={`All posts in the ${seriesName} series`} section="blog">
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+
+        <div class="yas-panel-header">
+          <h1 class="yas-panel-title">{seriesName}</h1>
+          <p class="mt-2 mb-0" style="color: var(--main-dark-text-color); font-size: 0.9rem;">
+            {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+          </p>
+        </div>
+
+        <div class="series-posts">
+          {posts.map((post, i) => (
+            <article class="series-post-item">
+              <div class="series-number">{i + 1}</div>
+              <div class="series-post-content">
+                <h3><a href={`/blog/${post.slug}/`}>{post.data.title}</a></h3>
+                <div class="post-meta">
+                  <time datetime={post.data.date.toISOString()}>
+                    {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </time>
+                  {post.data.author && <span class="author">by {post.data.author}</span>}
+                </div>
+                {post.data.description && (
+                  <p class="post-description">{post.data.description}</p>
+                )}
+                {post.data.tags && (
+                  <div class="d-flex flex-wrap gap-2 mt-2">
+                    {post.data.tags.map(tag => (
+                      <a href={`/tags/${slugify(tag)}/`} class="tag">{tag}</a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>

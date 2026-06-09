@@ -1,0 +1,148 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { slugify } from '../../utils/slugify';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// Series navigation
+let seriesPosts: typeof allPosts = [];
+let currentIndex = -1;
+if (post.data.series && post.data.series.length > 0) {
+  const seriesName = post.data.series[0];
+  seriesPosts = allPosts
+    .filter(p => p.data.series?.includes(seriesName))
+    .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0));
+  currentIndex = seriesPosts.findIndex(p => p.slug === post.slug);
+}
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.images?.[0]}
+  section="blog"
+>
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+        <article class="blog-post">
+
+          <nav class="blog-nav-back">
+            <a href="/blog/" class="back-to-blog">
+              <span class="back-icon">←</span>
+              <span class="back-text">Back to Blog</span>
+            </a>
+          </nav>
+
+          <header class="post-header">
+            <div class="post-meta-enhanced">
+              <h1>{post.data.title}</h1>
+              <div class="meta-secondary">
+                <div class="d-flex justify-content-between flex-wrap gap-2">
+                  <div>
+                    <span class="meta-label">Published</span>
+                    <time datetime={post.data.date.toISOString()}>
+                      {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </time>
+                    {post.data.author && (
+                      <div class="meta-content mt-1">
+                        <span class="meta-label">Author</span>
+                        <span>by {post.data.author}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {post.data.series && post.data.series.length > 0 && (
+              <div class="post-series-info">
+                {post.data.series.map(s => (
+                  <div class="series-banner">
+                    <span class="series-icon">📚</span>
+                    <span class="series-text">
+                      Part {post.data.seriesOrder ?? 1} of{' '}
+                      <a href={`/series/${slugify(s)}/`}>{s}</a> series
+                      ({seriesPosts.length} posts)
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {post.data.images && post.data.images.length > 0 && (
+              <div class="featured-image">
+                <img src={post.data.images[0]} alt={post.data.title} loading="lazy" />
+              </div>
+            )}
+          </header>
+
+          <div class="post-content">
+            <Content />
+          </div>
+
+          <footer class="post-footer" style="display: block;">
+            {(post.data.tags || post.data.series) && (
+              <div class="post-taxonomies">
+                {post.data.tags && (
+                  <div class="post-tags">
+                    <h4>Tags:</h4>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                      {post.data.tags.map(tag => (
+                        <a href={`/tags/${slugify(tag)}/`} class="tag">{tag}</a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {post.data.series && (
+                  <div class="post-series mt-3">
+                    <h4>Series:</h4>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                      {post.data.series.map(s => (
+                        <a href={`/series/${slugify(s)}/`} class="series">{s}</a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {seriesPosts.length > 1 && (
+              <nav class="series-navigation mt-4">
+                <h4>{post.data.series?.[0]} — Series Navigation</h4>
+                <div class="series-nav-links">
+                  {currentIndex > 0 && (
+                    <a href={`/blog/${seriesPosts[currentIndex - 1].slug}/`} class="series-prev">
+                      ← {seriesPosts[currentIndex - 1].data.title}
+                    </a>
+                  )}
+                  {currentIndex < seriesPosts.length - 1 && (
+                    <a href={`/blog/${seriesPosts[currentIndex + 1].slug}/`} class="series-next">
+                      {seriesPosts[currentIndex + 1].data.title} →
+                    </a>
+                  )}
+                </div>
+                <div class="series-progress">
+                  <span>Progress: {currentIndex + 1}/{seriesPosts.length}</span>
+                </div>
+              </nav>
+            )}
+          </footer>
+
+        </article>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
