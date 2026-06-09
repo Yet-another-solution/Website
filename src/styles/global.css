@@ -1461,9 +1461,19 @@ h1, h2, h3, h4, h5, h6 {
 /* ===== NAVBAR ===== */
 
 .yas-navbar {
-    background-color: var(--main-dark-color) !important;
+    background-color: rgba(51, 60, 77, 0.96) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border-color);
-    padding: 0.75rem 0;
+    padding: 0 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.yas-navbar .container-fluid {
+    padding-left: 7%;
+    padding-right: 7%;
 }
 
 .yas-navbar-brand {
@@ -1471,35 +1481,47 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     gap: 0.6rem;
     text-decoration: none;
+    padding: 0.7rem 0;
+    border-left: 3px solid var(--primary-color);
+    padding-left: 0.75rem;
 }
 
 .yas-navbar-brand:hover .yas-logo {
     filter: drop-shadow(0 0 6px rgba(102, 204, 138, 0.5));
 }
 
+.yas-navbar-brand span {
+    color: white;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+}
+
 .yas-nav-link {
     color: var(--main-dark-text-color) !important;
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 1.1rem 1rem !important;
     position: relative;
+    transition: color 0.2s ease;
 }
 
 .yas-nav-link::after {
     content: '';
     position: absolute;
-    bottom: 2px;
-    left: 50%;
-    transform: translateX(-50%) scaleX(0);
-    width: 60%;
+    bottom: 0;
+    left: 1rem;
+    right: 1rem;
     height: 2px;
     background: var(--primary-color);
-    border-radius: 2px;
+    transform: scaleX(0);
     transition: transform 0.25s ease;
 }
 
 .yas-nav-link:hover { color: white !important; }
 .yas-nav-link:hover::after,
-.yas-nav-link.yas-nav-active::after { transform: translateX(-50%) scaleX(1); }
+.yas-nav-link.yas-nav-active::after { transform: scaleX(1); }
 .yas-nav-link.yas-nav-active { color: white !important; }
 
 /* ===== PAGE CANVAS + PANEL SYSTEM (white-square aesthetic) ===== */
