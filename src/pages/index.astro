@@ -155,16 +155,40 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
     }
 
     function initHeroSquares(fallbackImg: HTMLElement) {
-      // Colors match the Y-A-S brand mark (public/img/Squares.svg)
+      // Colors and proportions match the Y-A-S brand mark (public/img/Squares.svg):
+      // each row is a light rounded-square border behind a smaller colored one.
+      const neutral = 0xe5e2e1;
       const rows = [
-        { outer: 0xe5e2e1, inner: 0xe5e2e1 },
-        { outer: 0xe5e2e1, inner: 0x66cc8a },
-        { outer: 0xe5e2e1, inner: 0x377cfb },
-        { outer: 0xe5e2e1, inner: 0xea5234 },
-        { outer: 0xe5e2e1, inner: 0x333c4d },
+        { inner: 0xe5e2e1 },
+        { inner: 0x66cc8a },
+        { inner: 0x377cfb },
+        { inner: 0xea5234 },
+        { inner: 0x333c4d },
       ];
       const bgColor = 0x333c4d;
       const baseSize = 100;
+      const innerSize = baseSize * 0.91;
+      const outerRadius = baseSize * 0.0909;
+      const innerRadius = innerSize * 0.0789;
+
+      function roundedSquareGeometry(size: number, radius: number) {
+        const s = size / 2;
+        const r = Math.min(radius, s);
+        const shape = new THREE.Shape();
+        shape.moveTo(-s + r, -s);
+        shape.lineTo(s - r, -s);
+        shape.quadraticCurveTo(s, -s, s, -s + r);
+        shape.lineTo(s, s - r);
+        shape.quadraticCurveTo(s, s, s - r, s);
+        shape.lineTo(-s + r, s);
+        shape.quadraticCurveTo(-s, s, -s, s - r);
+        shape.lineTo(-s, -s + r);
+        shape.quadraticCurveTo(-s, -s, -s + r, -s);
+        return new THREE.ShapeGeometry(shape);
+      }
+
+      const outerGeometry = roundedSquareGeometry(baseSize, outerRadius);
+      const innerGeometry = roundedSquareGeometry(innerSize, innerRadius);
 
       let width = window.innerWidth;
       let height = window.innerHeight;
@@ -190,34 +214,38 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
       const camera = new THREE.OrthographicCamera(0, width, 0, height, 0.1, 2000);
       camera.position.z = 100;
 
-      const groups = rows.map(({ outer, inner }, i) => {
+      let centerX = width / 2;
+      let centerY = height / 2;
+      let targets = computeTargets();
+
+      const neutralColor = new THREE.Color(neutral);
+
+      const groups = rows.map(({ inner }, i) => {
         const group = new THREE.Group();
         const outerMesh = new THREE.Mesh(
-          new THREE.PlaneGeometry(baseSize, baseSize),
-          new THREE.MeshBasicMaterial({ color: outer, side: THREE.DoubleSide })
+          outerGeometry,
+          new THREE.MeshBasicMaterial({ color: neutral, side: THREE.DoubleSide })
         );
         const innerMesh = new THREE.Mesh(
-          new THREE.PlaneGeometry(baseSize * 0.91, baseSize * 0.91),
-          new THREE.MeshBasicMaterial({ color: inner, transparent: true, side: THREE.DoubleSide })
+          innerGeometry,
+          new THREE.MeshBasicMaterial({ color: neutral, transparent: true, side: THREE.DoubleSide })
         );
         innerMesh.position.z = 0.1;
         group.add(outerMesh, innerMesh);
         group.userData.innerMesh = innerMesh;
         group.userData.outerMesh = outerMesh;
-        group.position.z = i * 0.5;
-        group.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+        group.userData.finalColor = new THREE.Color(inner);
+        // Every piece starts stacked on the same spot, unrotated and neutral —
+        // together they read as a single plain square before exploding apart.
+        group.position.set(centerX, centerY, i * 0.5);
+        group.rotation.set(0, 0, 0);
+        group.scale.set(targets[i].scale, targets[i].scale, 1);
         scene.add(group);
         return group;
       });
 
       // hide the static fallback image now that the canvas is confirmed to work
       fallbackImg.style.visibility = 'hidden';
-
-      let centerX = width / 2;
-      let centerY = height / 2;
-      groups.forEach(group => group.position.set(centerX, centerY, group.position.z));
-
-      let targets = computeTargets();
 
       function computeTargets() {
         const rect = fallbackImg.getBoundingClientRect();
@@ -259,11 +287,10 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
         if (!settled) {
           const elapsed = now - start;
           if (elapsed < holdMs) {
-            groups.forEach(group => {
-              group.rotation.x += 0.02;
-              group.rotation.y += 0.025;
-            });
             renderer.setClearAlpha(1);
+            groups.forEach((group, i) => {
+              group.scale.set(targets[i].scale, targets[i].scale, 1);
+            });
           } else {
             const t = Math.min((elapsed - holdMs) / animMs, 1);
             const e = ease(t);
@@ -272,11 +299,10 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
               const tgt = targets[i];
               group.position.x = centerX + (tgt.x - centerX) * e;
               group.position.y = centerY + (tgt.y - centerY) * e;
-              group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, 0, e);
-              group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, 0, e);
-              group.rotation.z = THREE.MathUtils.lerp(group.rotation.z, Math.PI / 4, e);
-              const s = THREE.MathUtils.lerp(1, tgt.scale, e);
-              group.scale.set(s, s, 1);
+              group.rotation.z = e * (Math.PI / 4);
+              group.scale.set(tgt.scale, tgt.scale, 1);
+              const inner = group.userData.innerMesh;
+              inner.material.color.copy(neutralColor).lerp(group.userData.finalColor, e);
             });
             if (t >= 1) settled = true;
           }
