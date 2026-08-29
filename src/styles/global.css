@@ -90,6 +90,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 575.98px) { /* Mobile */
+    /* The hero square is sized by viewport width on mobile (see .white-square
+       below), so the hero itself must match instead of staying full-height —
+       otherwise a slab of empty dark background is left below the square. */
+    #home {
+        height: 100vw !important;
+    }
+
     .s-text{
         padding-top: 10vw;
     }
