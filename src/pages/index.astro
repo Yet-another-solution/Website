@@ -247,6 +247,63 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
       // hide the static fallback image now that the canvas is confirmed to work
       fallbackImg.style.visibility = 'hidden';
 
+      // Small ambient squares anchored near the screen corners — the same
+      // brand motif carried through the rest of the page. They fade in once
+      // the main logo settles, then drift upward and fade out as you scroll,
+      // at a different speed each for a bit of parallax depth.
+      const accentConfigs = [
+        { color: 0x66cc8a, corner: 'tl', size: 46, parallax: 0.25 },
+        { color: 0x377cfb, corner: 'tr', size: 60, parallax: 0.4 },
+        { color: 0xea5234, corner: 'bl', size: 38, parallax: 0.55 },
+        { color: 0x333c4d, corner: 'br', size: 54, parallax: 0.7 },
+      ];
+      const accentOpacity = 0.16;
+
+      const accents = accentConfigs.map(cfg => {
+        const mesh = new THREE.Mesh(
+          outerGeometry,
+          new THREE.MeshBasicMaterial({ color: cfg.color, transparent: true, opacity: 0, side: THREE.DoubleSide })
+        );
+        mesh.rotation.z = Math.PI / 4;
+        mesh.userData.cfg = cfg;
+        scene.add(mesh);
+        return mesh;
+      });
+
+      function accentBasePosition(cfg: { corner: string }) {
+        const margin = Math.min(width, height) * 0.12;
+        return {
+          x: cfg.corner.includes('l') ? margin : width - margin,
+          y: cfg.corner.includes('t') ? margin : height - margin,
+        };
+      }
+
+      let accentBases = accentConfigs.map(accentBasePosition);
+      let revealStart = 0;
+
+      function updateAccents(now: number) {
+        const scrollY = window.scrollY;
+        accents.forEach((mesh, i) => {
+          const cfg = accentConfigs[i];
+          const base = accentBases[i];
+          const scale = cfg.size / baseSize;
+          mesh.scale.set(scale, scale, 1);
+          mesh.position.set(base.x, base.y - scrollY * cfg.parallax, 1 + i * 0.01);
+
+          let opacity = 0;
+          if (settled) {
+            const revealT = ease(Math.min(1, (now - revealStart) / 500));
+            // Fade out based on how far this square has actually travelled
+            // rather than raw scroll distance, so faster (higher-parallax)
+            // squares don't get cut off before slower ones even arrive.
+            const traveled = scrollY * cfg.parallax;
+            const scrollFade = Math.max(0, 1 - traveled / (height * 0.6));
+            opacity = accentOpacity * revealT * scrollFade;
+          }
+          mesh.material.opacity = opacity;
+        });
+      }
+
       function computeTargets() {
         const rect = fallbackImg.getBoundingClientRect();
         const scale = (rect.width * 1.05) / baseSize;
@@ -279,6 +336,7 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
         centerX = width / 2;
         centerY = height / 2;
         targets = computeTargets();
+        accentBases = accentConfigs.map(accentBasePosition);
       });
 
       function animate(now: number) {
@@ -304,7 +362,10 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
               const inner = group.userData.innerMesh;
               inner.material.color.copy(neutralColor).lerp(group.userData.finalColor, e);
             });
-            if (t >= 1) settled = true;
+            if (t >= 1) {
+              settled = true;
+              revealStart = now;
+            }
           }
         } else {
           // Track the real slot in the document so the squares scroll with the
@@ -315,28 +376,24 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
           // past the slot's resting position, rather than lingering while it
           // drifts above the fold.
           const edgeFade = Math.min(1, Math.max(0, 1 + rect.top / (window.innerHeight * 0.4)));
-          if (edgeFade <= 0) {
-            canvas.style.display = 'none';
-          } else {
-            canvas.style.display = '';
-            const scale = (rect.width * 1.05) / baseSize;
-            const step = rect.height * 0.15;
-            const baseX = rect.left + rect.width / 2;
-            const baseY = rect.top + rect.height * 0.85;
-            const wobble = Math.sin(window.scrollY * 0.002) * 0.3;
-            groups.forEach((group, i) => {
-              const dir = i % 2 === 0 ? 1 : -1;
-              group.position.set(baseX, baseY - i * step, group.position.z);
-              group.rotation.set(0, 0, Math.PI / 4 + dir * wobble);
-              group.scale.set(scale, scale, 1);
-              group.userData.innerMesh.material.transparent = true;
-              group.userData.innerMesh.material.opacity = edgeFade;
-              group.userData.outerMesh.material.transparent = true;
-              group.userData.outerMesh.material.opacity = edgeFade;
-            });
-          }
+          const scale = (rect.width * 1.05) / baseSize;
+          const step = rect.height * 0.15;
+          const baseX = rect.left + rect.width / 2;
+          const baseY = rect.top + rect.height * 0.85;
+          const wobble = Math.sin(window.scrollY * 0.002) * 0.3;
+          groups.forEach((group, i) => {
+            const dir = i % 2 === 0 ? 1 : -1;
+            group.position.set(baseX, baseY - i * step, group.position.z);
+            group.rotation.set(0, 0, Math.PI / 4 + dir * wobble);
+            group.scale.set(scale, scale, 1);
+            group.userData.innerMesh.material.transparent = true;
+            group.userData.innerMesh.material.opacity = edgeFade;
+            group.userData.outerMesh.material.transparent = true;
+            group.userData.outerMesh.material.opacity = edgeFade;
+          });
         }
 
+        updateAccents(now);
         renderer.render(scene, camera);
       }
 
