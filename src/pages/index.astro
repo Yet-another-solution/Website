@@ -78,7 +78,7 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
       <div class="yas-panel-inner" id="what">
 
         <!-- Intro -->
-        <div class="homepage-intro fade-in-up">
+        <div class="homepage-intro reveal-section color-wash--neutral fade-in-up">
           <div class="row align-items-center g-5">
             <div class="col-lg-6">
               <span class="intro-label">Yet Another Solution</span>
@@ -108,7 +108,7 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
 
         <!-- How We Work -->
         <div class="yas-rule"></div>
-        <div class="reveal-section fade-in-up">
+        <div class="reveal-section color-panel color-wash--green fade-in-up">
           <span class="intro-label">How We Work</span>
           <h2 class="blog-cta-heading">From idea to shipped.</h2>
           <p class="blog-cta-body" style="max-width: 640px;">
@@ -125,7 +125,7 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
 
         <!-- Talks & Presentations -->
         <div class="yas-rule"></div>
-        <div class="reveal-section fade-in-up">
+        <div class="reveal-section color-panel color-wash--blue fade-in-up">
           <span class="intro-label">Talks &amp; Presentations</span>
           <h2 class="blog-cta-heading">We talk shop, too.</h2>
           <p class="blog-cta-body" style="max-width: 640px;">
@@ -159,7 +159,7 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
 
         <!-- Why Y-A-S -->
         <div class="yas-rule"></div>
-        <div class="reveal-section fade-in-up">
+        <div class="reveal-section color-panel color-wash--red fade-in-up">
           <span class="intro-label">Why Y-A-S</span>
           <h2 class="blog-cta-heading">Small team, real ownership.</h2>
           <p class="blog-cta-body" style="max-width: 640px;">
@@ -176,7 +176,7 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
 
         <!-- Blog CTA -->
         <div class="yas-rule"></div>
-        <div class="blog-cta-section reveal-section fade-in-up">
+        <div class="blog-cta-section reveal-section color-panel color-wash--navy fade-in-up">
           <div class="row align-items-center g-4">
             <div class="col-md-8">
               <span class="intro-label">From the team</span>
@@ -227,6 +227,20 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
     }
     .talk-title { font-size: 1rem; font-weight: 700; color: var(--main-dark-color); margin: 0 0 0.25rem; }
     .talk-venue { font-size: 0.85rem; color: var(--main-dark-text-color); margin: 0; }
+
+    /* Each of the 5 sections below the hero is tinted to match one of the
+       stacked squares, so scrolling through the page visually echoes the
+       logo's own color order (neutral, green, blue, red, navy). */
+    .color-panel { padding: 2.5rem; border-left: 3px solid transparent; }
+    .color-wash--neutral { background: rgba(229, 226, 225, 0.35); }
+    .color-wash--green { background: rgba(102, 204, 138, 0.08); }
+    .color-wash--blue { background: rgba(55, 124, 251, 0.08); }
+    .color-wash--red { background: rgba(234, 82, 52, 0.08); }
+    .color-wash--navy { background: rgba(51, 60, 77, 0.07); }
+    .color-panel.color-wash--green { border-left-color: var(--primary-color); }
+    .color-panel.color-wash--blue { border-left-color: var(--secondary-color); }
+    .color-panel.color-wash--red { border-left-color: var(--danger-color); }
+    .color-panel.color-wash--navy { border-left-color: var(--main-dark-color); }
   </style>
 
   <script>
@@ -337,9 +351,9 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
       // hide the static fallback image now that the canvas is confirmed to work
       fallbackImg.style.visibility = 'hidden';
 
-      // One entry per content section below the hero, in document order.
-      // Squares vanish top-down (row 4, the navy one, first) as each section
-      // scrolls into view — row 0 (the neutral one) always stays.
+      // One entry per content section below the hero, in document order —
+      // one per square, matching row order top-to-bottom (neutral, green,
+      // blue, red, navy) so each section's color lines up with its square.
       const revealSections = Array.from(document.querySelectorAll('.reveal-section'));
 
       function computeTargets() {
@@ -354,9 +368,11 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
         const inset = 24;
         const baseX = frameRect.left + inset + halfDiamond;
         const baseY = rect.top + rect.height * 0.85;
+        // Row 0 (neutral) sits on top, row 4 (navy) on the bottom — matching
+        // the brand mark's own top-to-bottom order.
         return rows.map((_, i) => ({
           x: baseX,
-          y: baseY - i * step,
+          y: baseY - (4 - i) * step,
           scale,
         }));
       }
@@ -386,29 +402,34 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
         if (settled) stickyTargets = computeTargets();
       });
 
-      // How far each square has progressed toward "leaving", 0 (fully present)
-      // to 1 (gone), driven by how far its mapped section has scrolled into
-      // view rather than a one-shot trigger — so it scrubs cleanly both ways.
+      const footer = document.querySelector('.yas-footer');
+
+      // How far each square has progressed toward "shrinking away", 0 (full
+      // size) to 1 (smallest), driven by how far its color-matched section
+      // has scrolled into view rather than a one-shot trigger — so it scrubs
+      // cleanly both ways as you scroll up and down.
       function computeRemoval() {
         const removal = [0, 0, 0, 0, 0];
         const startLine = height * 0.9;
         const endLine = height * 0.3;
         revealSections.forEach((section, k) => {
-          const squareIndex = 4 - k;
-          if (squareIndex < 0) return;
+          if (k > 4) return;
           const rect = section.getBoundingClientRect();
           const t = (startLine - rect.top) / (startLine - endLine);
-          removal[squareIndex] = Math.min(1, Math.max(0, t));
+          removal[k] = Math.min(1, Math.max(0, t));
         });
-        // Row 0 (neutral) has no section of its own, so it would otherwise
-        // stay pinned on screen forever — including on top of the footer.
-        // Fade it out as the last section's tail end scrolls through, using
-        // its top edge (its bottom rarely clears the fold on a short page).
-        const lastSection = revealSections[revealSections.length - 1];
-        if (lastSection) {
-          const rect = lastSection.getBoundingClientRect();
-          const t = (height * 0.45 - rect.top) / (height * 0.35);
-          removal[0] = Math.min(1, Math.max(0, t));
+        // The last section's own threshold may not be reachable on a short
+        // page (there's simply no more room to scroll it further up), which
+        // would otherwise leave the last square full-size and overlapping
+        // the footer. Once the footer itself comes into view, force every
+        // square the rest of the way down regardless of section position.
+        if (footer) {
+          const footerRect = footer.getBoundingClientRect();
+          const footerProgress = (height * 0.9 - footerRect.top) / (height * 0.6);
+          const clamped = Math.min(1, Math.max(0, footerProgress));
+          for (let i = 0; i < removal.length; i++) {
+            removal[i] = Math.max(removal[i], clamped);
+          }
         }
         return removal;
       }
@@ -447,16 +468,17 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
           groups.forEach((group, i) => {
             const base = stickyTargets[i];
             const dir = i % 2 === 0 ? 1 : -1;
-            const leave = ease(removal[i]);
-            group.position.set(base.x, base.y - leave * 220, group.position.z);
-            group.rotation.set(0, 0, Math.PI / 4 + dir * wobble + leave * 0.6);
-            const s = base.scale * (1 - leave * 0.5);
+            // Squares stay put and simply shrink as their matching section
+            // scrolls past, rather than flying off screen.
+            const shrink = ease(removal[i]);
+            group.position.set(base.x, base.y, group.position.z);
+            group.rotation.set(0, 0, Math.PI / 4 + dir * wobble);
+            const s = base.scale * (1 - shrink * 0.7);
             group.scale.set(s, s, 1);
-            const opacity = 1 - leave;
             group.userData.innerMesh.material.transparent = true;
-            group.userData.innerMesh.material.opacity = opacity;
+            group.userData.innerMesh.material.opacity = 1;
             group.userData.outerMesh.material.transparent = true;
-            group.userData.outerMesh.material.opacity = opacity;
+            group.userData.outerMesh.material.opacity = 1;
           });
         }
 
