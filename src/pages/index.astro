@@ -305,7 +305,14 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
       ];
       const bgColor = 0x333c4d;
       const baseSize = 100;
+      // Ratios lifted straight from public/img/Squares.svg: each row is a
+      // neutral outer frame with a smaller colored square on top of it, so
+      // only the frame's exposed edges show once the rows overlap in the
+      // stack (the parts covered by the next row are hidden by real depth
+      // occlusion, not drawn at all).
       const outerRadius = baseSize * 0.0909;
+      const innerSize = baseSize * 0.9091;
+      const innerRadius = innerSize * 0.0789;
 
       function roundedSquareGeometry(size: number, radius: number) {
         const s = size / 2;
@@ -323,7 +330,8 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
         return new THREE.ShapeGeometry(shape);
       }
 
-      const squareGeometry = roundedSquareGeometry(baseSize, outerRadius);
+      const outerGeometry = roundedSquareGeometry(baseSize, outerRadius);
+      const innerGeometry = roundedSquareGeometry(innerSize, innerRadius);
 
       let width = window.innerWidth;
       let height = window.innerHeight;
@@ -358,15 +366,25 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
 
       const groups = rows.map(({ inner }, i) => {
         const group = new THREE.Group();
-        // A single flat-colored piece per row — no separate lighter frame
-        // layer, so there's nothing to leave a visible seam between two
-        // overlapping colors in the stack.
-        const mesh = new THREE.Mesh(
-          squareGeometry,
-          new THREE.MeshBasicMaterial({ color: neutral, transparent: true, side: THREE.DoubleSide })
+        // Two opaque, non-transparent meshes per row: a neutral outer frame
+        // and a smaller colored inner fill. Opaque materials depth-test
+        // properly, so each row's higher Z (further down the stack) makes it
+        // correctly occlude the rows behind it — only the exposed sliver of
+        // each frame peeks out, exactly like the layered rects in the SVG,
+        // instead of every frame drawing a full ring around its own color.
+        const outerMesh = new THREE.Mesh(
+          outerGeometry,
+          new THREE.MeshBasicMaterial({ color: neutral, side: THREE.DoubleSide })
         );
-        group.add(mesh);
-        group.userData.mesh = mesh;
+        const innerMesh = new THREE.Mesh(
+          innerGeometry,
+          new THREE.MeshBasicMaterial({ color: neutral, side: THREE.DoubleSide })
+        );
+        innerMesh.position.z = 0.01;
+        group.add(outerMesh);
+        group.add(innerMesh);
+        group.userData.outerMesh = outerMesh;
+        group.userData.innerMesh = innerMesh;
         group.userData.finalColor = new THREE.Color(inner);
         // Every piece starts stacked on the same spot, unrotated and neutral —
         // together they read as a single plain square before exploding apart.
@@ -384,6 +402,74 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
       // one per square, matching row order top-to-bottom (neutral, green,
       // blue, red, navy) so each section's color lines up with its square.
       const revealSections = Array.from(document.querySelectorAll('.reveal-section'));
+
+      // Clicking a settled square scrolls to its matching section; hovering
+      // shows a small tooltip naming where it leads. Raycasting (not a DOM
+      // hit-test) is required here because the canvas itself is
+      // pointer-events:none so it never blocks clicks on real page content.
+      const raycaster = new THREE.Raycaster();
+      const pointerNDC = new THREE.Vector2();
+      const hitMeshes = groups.map((group) => group.userData.outerMesh);
+
+      const tooltip = document.createElement('div');
+      tooltip.setAttribute('aria-hidden', 'true');
+      Object.assign(tooltip.style, {
+        position: 'fixed',
+        zIndex: '2001',
+        pointerEvents: 'none',
+        background: 'rgba(51, 60, 77, 0.95)',
+        color: '#fff',
+        padding: '0.35rem 0.75rem',
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: '0.8rem',
+        whiteSpace: 'nowrap',
+        transform: 'translate(-50%, -140%)',
+        opacity: '0',
+        transition: 'opacity 0.15s ease',
+      });
+      document.body.appendChild(tooltip);
+
+      function sectionLabel(i: number) {
+        const section = revealSections[i];
+        const label = section ? section.querySelector('.intro-label') : null;
+        return label ? label.textContent ?? '' : '';
+      }
+
+      function pickHovered(clientX: number, clientY: number) {
+        if (!settled) return -1;
+        pointerNDC.x = (clientX / window.innerWidth) * 2 - 1;
+        pointerNDC.y = -(clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(pointerNDC, camera);
+        const hits = raycaster.intersectObjects(hitMeshes, false);
+        if (!hits.length) return -1;
+        return hitMeshes.indexOf(hits[0].object as THREE.Mesh);
+      }
+
+      window.addEventListener('pointermove', (event) => {
+        const idx = pickHovered(event.clientX, event.clientY);
+        if (idx >= 0 && revealSections[idx]) {
+          document.body.style.cursor = 'pointer';
+          tooltip.textContent = sectionLabel(idx);
+          tooltip.style.left = `${event.clientX}px`;
+          tooltip.style.top = `${event.clientY}px`;
+          tooltip.style.opacity = '1';
+        } else {
+          document.body.style.cursor = '';
+          tooltip.style.opacity = '0';
+        }
+      });
+
+      window.addEventListener('pointerleave', () => {
+        document.body.style.cursor = '';
+        tooltip.style.opacity = '0';
+      });
+
+      window.addEventListener('click', (event) => {
+        const idx = pickHovered(event.clientX, event.clientY);
+        if (idx >= 0 && revealSections[idx]) {
+          revealSections[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
 
       function computeTargets() {
         const rect = fallbackImg.getBoundingClientRect();
@@ -484,8 +570,8 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
               group.position.y = centerY + (tgt.y - centerY) * e;
               group.rotation.z = e * (Math.PI / 4);
               group.scale.set(tgt.scale, tgt.scale, 1);
-              const mesh = group.userData.mesh;
-              mesh.material.color.copy(neutralColor).lerp(group.userData.finalColor, e);
+              const innerMesh = group.userData.innerMesh;
+              innerMesh.material.color.copy(neutralColor).lerp(group.userData.finalColor, e);
             });
             if (t >= 1) {
               settled = true;
@@ -493,19 +579,16 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
             }
           }
         } else {
-          const wobble = Math.sin(window.scrollY * 0.002) * 0.3;
           const removal = computeRemoval();
           groups.forEach((group, i) => {
             const base = stickyTargets[i];
-            const dir = i % 2 === 0 ? 1 : -1;
             // Squares stay put and simply shrink as their matching section
             // scrolls past, rather than flying off screen.
             const shrink = ease(removal[i]);
             group.position.set(base.x, base.y, group.position.z);
-            group.rotation.set(0, 0, Math.PI / 4 + dir * wobble);
+            group.rotation.set(0, 0, Math.PI / 4);
             const s = base.scale * (1 - shrink * 0.7);
             group.scale.set(s, s, 1);
-            group.userData.mesh.material.opacity = 1;
           });
         }
 
