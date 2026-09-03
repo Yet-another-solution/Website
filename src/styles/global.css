@@ -90,6 +90,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 575.98px) { /* Mobile */
+    /* The hero square is sized by viewport width on mobile (see .white-square
+       below), so the hero itself must match instead of staying full-height —
+       otherwise a slab of empty dark background is left below the square. */
+    #home {
+        height: 100vw !important;
+    }
+
     .s-text{
         padding-top: 10vw;
     }
@@ -613,7 +620,7 @@ h1, h2, h3, h4, h5, h6 {
     margin-right: 0.3rem;
     font-weight: 700;
     font-family: 'Nunito', sans-serif;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, #ff6b6b 100%) !important;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--danger-color) 100%) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
@@ -631,7 +638,7 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 1.5rem;
     padding-top: 2rem;
     padding-bottom: 1rem;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    background: linear-gradient(135deg, rgba(102, 204, 138, 0.08) 0%, #ffffff 55%);
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     margin-left: -1.5rem;
@@ -1060,7 +1067,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .series-stats {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: linear-gradient(135deg, #ffffff 0%, var(--main-light-color) 100%);
     padding: 2rem;
     border-radius: 15px;
     border: 1px solid var(--border-color);
@@ -1303,7 +1310,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Enhanced Blog Post Styling */
 .blog-post .post-content blockquote {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: linear-gradient(135deg, #ffffff 0%, var(--main-light-color) 100%);
     border-left: 5px solid var(--primary-color);
     margin: 2rem 0;
     padding: 1.5rem 2rem;

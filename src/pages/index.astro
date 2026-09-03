@@ -12,13 +12,13 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
       <div class="white-square">
         <div class="lr-ws"></div>
         <div class="lr-ws-center">
-          <div class="lr-ws d-flex flex-column" style="height:100%">
+          <div class="lr-ws d-flex flex-column" id="hero-frame" style="height:100%">
             <div class="s-text">
               <h1 class="rubik display-1 h1 dark-text text-center">Y-A-S</h1>
             </div>
             <div class="d-flex h-100">
               <div class="col-2 d-flex justify-content-start align-items-end">
-                <img src="/img/Squares.png" alt="Y-A-S Logo" class="img-fluid" style="max-height: 100%; object-fit: contain;" />
+                <img src="/img/Squares.png" alt="Y-A-S Logo" class="img-fluid" id="squares-fallback" style="max-height: 100%; object-fit: contain;" />
               </div>
               <div class="col-8 d-flex justify-content-center align-items-start">
                 <div>
@@ -78,60 +78,138 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
       <div class="yas-panel-inner" id="what">
 
         <!-- Intro -->
-        <div class="homepage-intro fade-in-up">
-          <div class="row align-items-center g-5">
-            <div class="col-lg-6">
-              <span class="intro-label">Yet Another Solution</span>
-              <h2 class="intro-heading">We build software<span class="accent-dot">.</span></h2>
-              <p class="intro-body">
-                A team of developers crafting full-stack applications with modern tools — from backend APIs to polished web interfaces.
-              </p>
-              <div class="tech-badges mb-4">
-                <span class="tech-badge">C#</span>
-                <span class="tech-badge">Blazor</span>
-                <span class="tech-badge">PostgreSQL</span>
-                <span class="tech-badge">Azure</span>
-                <span class="tech-badge">GitHub</span>
+        <div class="homepage-intro reveal-section color-wash--neutral fade-in-up">
+          <div class="reveal-inner reveal-inner--neutral">
+            <div class="row align-items-center g-5">
+              <div class="col-lg-6">
+                <span class="intro-label">Yet Another Solution</span>
+                <h2 class="intro-heading">We build software<span class="accent-dot">.</span></h2>
+                <p class="intro-body">
+                  A team of developers crafting full-stack applications with modern tools — from backend APIs to polished web interfaces.
+                </p>
+                <div class="tech-badges mb-4">
+                  <span class="tech-badge">C#</span>
+                  <span class="tech-badge">Blazor</span>
+                  <span class="tech-badge">PostgreSQL</span>
+                  <span class="tech-badge">Azure</span>
+                  <span class="tech-badge">GitHub</span>
+                </div>
+                <div class="d-flex gap-3 flex-wrap">
+                  <a href="/projects/" class="cta-btn-primary">View Projects</a>
+                  <a href="/contact/" class="cta-btn-outline">Contact Us</a>
+                </div>
               </div>
-              <div class="d-flex gap-3 flex-wrap">
-                <a href="/projects/" class="cta-btn-primary">View Projects</a>
-                <a href="/contact/" class="cta-btn-outline">Contact Us</a>
+              <div class="col-lg-6 d-none d-lg-block">
+                <div class="tech-stack-wrapper">
+                  <img src="/img/TechStack.png" class="img-fluid tech-stack-img" alt="Technology stack: C#, Blazor, PostgreSQL, GitHub" loading="lazy" />
+                </div>
               </div>
             </div>
-            <div class="col-lg-6 d-none d-lg-block">
-              <div class="tech-stack-wrapper">
-                <img src="/img/TechStack.png" class="img-fluid tech-stack-img" alt="Technology stack: C#, Blazor, PostgreSQL, GitHub" loading="lazy" />
+          </div>
+        </div>
+
+        <!-- How We Work -->
+        <div class="yas-rule"></div>
+        <div class="reveal-section color-wash--green fade-in-up">
+          <div class="reveal-inner reveal-inner--green">
+            <span class="intro-label">How We Work</span>
+            <h2 class="blog-cta-heading">From idea to shipped.</h2>
+            <p class="blog-cta-body" style="max-width: 640px;">
+              We move in small, focused iterations — spec, build, review, ship. Every project gets a clear
+              architecture, tested code, and documentation your team can actually use.
+            </p>
+            <div class="d-flex gap-2 flex-wrap mt-3">
+              <span class="outline-badge">Discovery</span>
+              <span class="outline-badge">Build</span>
+              <span class="outline-badge outline-badge--blue">Review</span>
+              <span class="outline-badge outline-badge--blue">Ship</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Talks & Presentations -->
+        <div class="yas-rule"></div>
+        <div class="reveal-section color-wash--blue fade-in-up">
+          <div class="reveal-inner reveal-inner--blue">
+            <span class="intro-label">Talks &amp; Presentations</span>
+            <h2 class="blog-cta-heading">We talk shop, too.</h2>
+            <p class="blog-cta-body" style="max-width: 640px;">
+              Conference talks, meetups, and workshop sessions from the team — mostly on Blazor, .NET, and the
+              hackathons we help run.
+            </p>
+            <div class="talks-list mt-4">
+              <div class="talk-item">
+                <span class="talk-date">2024</span>
+                <div>
+                  <h3 class="talk-title">Building Real-Time Apps with Blazor Server</h3>
+                  <p class="talk-venue">Hack Esbjerg — IT Hackathon</p>
+                </div>
               </div>
+              <div class="talk-item">
+                <span class="talk-date">2024</span>
+                <div>
+                  <h3 class="talk-title">PostgreSQL Performance Patterns for .NET Developers</h3>
+                  <p class="talk-venue">Cod3rs Community Meetup</p>
+                </div>
+              </div>
+              <div class="talk-item">
+                <span class="talk-date">2023</span>
+                <div>
+                  <h3 class="talk-title">From Zero to Cipher: Designing Hack The Flag</h3>
+                  <p class="talk-venue">Nordic DevFest</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Why Y-A-S -->
+        <div class="yas-rule"></div>
+        <div class="reveal-section color-wash--red fade-in-up">
+          <div class="reveal-inner reveal-inner--red">
+            <span class="intro-label">Why Y-A-S</span>
+            <h2 class="blog-cta-heading">Small team, real ownership.</h2>
+            <p class="blog-cta-body" style="max-width: 640px;">
+              No hand-offs between account managers and engineers — you talk directly to the people writing
+              your code. We pick boring, reliable technology so your product stays maintainable long after launch.
+            </p>
+            <div class="d-flex gap-2 flex-wrap mt-3">
+              <span class="outline-badge">.NET &amp; C#</span>
+              <span class="outline-badge">PostgreSQL</span>
+              <span class="outline-badge outline-badge--blue">Cloud-native</span>
+              <span class="outline-badge outline-badge--blue">CI/CD</span>
             </div>
           </div>
         </div>
 
         <!-- Blog CTA -->
         <div class="yas-rule"></div>
-        <div class="blog-cta-section fade-in-up">
-          <div class="row align-items-center g-4">
-            <div class="col-md-8">
-              <span class="intro-label">From the team</span>
-              <h2 class="blog-cta-heading">Read our Blog</h2>
-              <p class="blog-cta-body">
-                Insights, tutorials, and deep dives on software development, web technologies, and innovative solutions.
-              </p>
-              <div class="d-flex gap-2 flex-wrap mt-3">
-                <span class="outline-badge">Blazor</span>
-                <span class="outline-badge">C#</span>
-                <span class="outline-badge outline-badge--blue">Web Development</span>
-                <span class="outline-badge outline-badge--blue">Tutorials</span>
+        <div class="blog-cta-section reveal-section color-wash--navy fade-in-up">
+          <div class="reveal-inner reveal-inner--navy">
+            <div class="row align-items-center g-4">
+              <div class="col-md-8">
+                <span class="intro-label">From the team</span>
+                <h2 class="blog-cta-heading">Read our Blog</h2>
+                <p class="blog-cta-body">
+                  Insights, tutorials, and deep dives on software development, web technologies, and innovative solutions.
+                </p>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <span class="outline-badge">Blazor</span>
+                  <span class="outline-badge">C#</span>
+                  <span class="outline-badge outline-badge--blue">Web Development</span>
+                  <span class="outline-badge outline-badge--blue">Tutorials</span>
+                </div>
               </div>
-            </div>
-            <div class="col-md-4 text-center mt-3 mt-md-0">
-              <a href="/blog/" class="cta-btn-primary cta-btn-large">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
-                  <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
-                  <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
-                  <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
-                </svg>
-                Explore Blog
-              </a>
+              <div class="col-md-4 text-center mt-3 mt-md-0">
+                <a href="/blog/" class="cta-btn-primary cta-btn-large">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
+                    <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
+                    <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
+                  </svg>
+                  Explore Blog
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -139,4 +217,395 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
       </div>
     </div>
   </div>
+
+  <style>
+    /* Guards against the full-bleed sections below introducing a stray
+       horizontal scrollbar on some browsers (100vw includes scrollbar width). */
+    .yas-page-canvas { overflow-x: hidden; }
+
+    .talks-list { display: flex; flex-direction: column; gap: 1rem; }
+    .talk-item {
+      display: flex;
+      align-items: baseline;
+      gap: 1.25rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border-color);
+      border-left: 3px solid var(--primary-color);
+    }
+    .talk-date {
+      font-family: 'Rubik Mono One', monospace;
+      font-size: 0.85rem;
+      color: var(--primary-color);
+      flex-shrink: 0;
+      width: 3rem;
+    }
+    .talk-title { font-size: 1rem; font-weight: 700; color: var(--main-dark-color); margin: 0 0 0.25rem; }
+    .talk-venue { font-size: 0.85rem; color: var(--main-dark-text-color); margin: 0; }
+
+    /* Each of the 5 sections below the hero is a full-width, full-height
+       "screen" tinted to match one of the stacked squares, so scrolling
+       through the page visually echoes the logo's own color order
+       (neutral, green, blue, red, navy). The bleed trick below breaks the
+       section out of .yas-panel-inner's centered, max-width column while
+       .reveal-inner keeps the actual content readable at that same width. */
+    .reveal-section {
+      position: relative;
+      left: 50%;
+      right: 50%;
+      width: 100vw;
+      margin-left: -50vw;
+      margin-right: -50vw;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+    .reveal-inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 2.5rem 1.75rem;
+      border-left: 3px solid transparent;
+    }
+    .color-wash--neutral { background: rgba(229, 226, 225, 0.35); }
+    .color-wash--green { background: rgba(102, 204, 138, 0.08); }
+    .color-wash--blue { background: rgba(55, 124, 251, 0.08); }
+    .color-wash--red { background: rgba(234, 82, 52, 0.08); }
+    .color-wash--navy { background: rgba(51, 60, 77, 0.07); }
+    .reveal-inner--neutral { border-left-color: var(--border-color); }
+    .reveal-inner--green { border-left-color: var(--primary-color); }
+    .reveal-inner--blue { border-left-color: var(--secondary-color); }
+    .reveal-inner--red { border-left-color: var(--danger-color); }
+    .reveal-inner--navy { border-left-color: var(--main-dark-color); }
+  </style>
+
+  <script>
+    import * as THREE from 'three';
+
+    const fallbackImg = document.getElementById('squares-fallback');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (fallbackImg && !reduceMotion) {
+      try {
+        initHeroSquares(fallbackImg);
+      } catch (err) {
+        console.warn('Hero squares animation unavailable:', err);
+      }
+    }
+
+    function initHeroSquares(fallbackImg: HTMLElement) {
+      // Colors and proportions match the Y-A-S brand mark (public/img/Squares.svg):
+      // each row is a light rounded-square border behind a smaller colored one.
+      const neutral = 0xe5e2e1;
+      const rows = [
+        { inner: 0xe5e2e1 },
+        { inner: 0x66cc8a },
+        { inner: 0x377cfb },
+        { inner: 0xea5234 },
+        { inner: 0x333c4d },
+      ];
+      const bgColor = 0x333c4d;
+      const baseSize = 100;
+      // Ratios lifted straight from public/img/Squares.svg: each row is a
+      // neutral outer frame with a smaller colored square on top of it, so
+      // only the frame's exposed edges show once the rows overlap in the
+      // stack (the parts covered by the next row are hidden by real depth
+      // occlusion, not drawn at all).
+      const outerRadius = baseSize * 0.0909;
+      const innerSize = baseSize * 0.9091;
+      const innerRadius = innerSize * 0.0789;
+
+      function roundedSquareGeometry(size: number, radius: number) {
+        const s = size / 2;
+        const r = Math.min(radius, s);
+        const shape = new THREE.Shape();
+        shape.moveTo(-s + r, -s);
+        shape.lineTo(s - r, -s);
+        shape.quadraticCurveTo(s, -s, s, -s + r);
+        shape.lineTo(s, s - r);
+        shape.quadraticCurveTo(s, s, s - r, s);
+        shape.lineTo(-s + r, s);
+        shape.quadraticCurveTo(-s, s, -s, s - r);
+        shape.lineTo(-s, -s + r);
+        shape.quadraticCurveTo(-s, -s, -s + r, -s);
+        return new THREE.ShapeGeometry(shape);
+      }
+
+      const outerGeometry = roundedSquareGeometry(baseSize, outerRadius);
+      const innerGeometry = roundedSquareGeometry(innerSize, innerRadius);
+
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      const heroFrame = document.getElementById('hero-frame');
+
+      const canvas = document.createElement('canvas');
+      canvas.setAttribute('aria-hidden', 'true');
+      Object.assign(canvas.style, {
+        position: 'fixed',
+        inset: '0',
+        width: '100vw',
+        height: '100vh',
+        zIndex: '2000',
+        pointerEvents: 'none',
+      });
+      document.body.appendChild(canvas);
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(width, height);
+      renderer.setClearColor(bgColor, 1);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.OrthographicCamera(0, width, 0, height, 0.1, 2000);
+      camera.position.z = 100;
+
+      let centerX = width / 2;
+      let centerY = height / 2;
+      let targets = computeTargets();
+
+      const neutralColor = new THREE.Color(neutral);
+
+      const groups = rows.map(({ inner }, i) => {
+        const group = new THREE.Group();
+        // The outer frame mesh still exists — for its correct depth
+        // occlusion of rows behind it, and so it stays a valid click/hover
+        // target — but colorWrite:false keeps it from painting the neutral
+        // border pixels themselves, so the transparent canvas shows the page
+        // background there instead of a visible ring.
+        const outerMesh = new THREE.Mesh(
+          outerGeometry,
+          new THREE.MeshBasicMaterial({ color: neutral, side: THREE.DoubleSide, colorWrite: false })
+        );
+        const innerMesh = new THREE.Mesh(
+          innerGeometry,
+          new THREE.MeshBasicMaterial({ color: neutral, side: THREE.DoubleSide })
+        );
+        innerMesh.position.z = 0.01;
+        group.add(outerMesh);
+        group.add(innerMesh);
+        group.userData.outerMesh = outerMesh;
+        group.userData.innerMesh = innerMesh;
+        group.userData.finalColor = new THREE.Color(inner);
+        // Every piece starts stacked on the same spot, unrotated and neutral —
+        // together they read as a single plain square before exploding apart.
+        group.position.set(centerX, centerY, i * 0.5);
+        group.rotation.set(0, 0, 0);
+        group.scale.set(targets[i].scale, targets[i].scale, 1);
+        scene.add(group);
+        return group;
+      });
+
+      // hide the static fallback image now that the canvas is confirmed to work
+      fallbackImg.style.visibility = 'hidden';
+
+      // One entry per content section below the hero, in document order —
+      // one per square, matching row order top-to-bottom (neutral, green,
+      // blue, red, navy) so each section's color lines up with its square.
+      const revealSections = Array.from(document.querySelectorAll('.reveal-section'));
+
+      // Clicking a settled square scrolls to its matching section; hovering
+      // shows a small tooltip naming where it leads. Raycasting (not a DOM
+      // hit-test) is required here because the canvas itself is
+      // pointer-events:none so it never blocks clicks on real page content.
+      const raycaster = new THREE.Raycaster();
+      const pointerNDC = new THREE.Vector2();
+      const hitMeshes = groups.map((group) => group.userData.outerMesh);
+
+      const tooltip = document.createElement('div');
+      tooltip.setAttribute('aria-hidden', 'true');
+      Object.assign(tooltip.style, {
+        position: 'fixed',
+        zIndex: '2001',
+        pointerEvents: 'none',
+        background: 'rgba(51, 60, 77, 0.95)',
+        color: '#fff',
+        padding: '0.35rem 0.75rem',
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: '0.8rem',
+        whiteSpace: 'nowrap',
+        transform: 'translate(-50%, -140%)',
+        opacity: '0',
+        transition: 'opacity 0.15s ease',
+      });
+      document.body.appendChild(tooltip);
+
+      function sectionLabel(i: number) {
+        const section = revealSections[i];
+        const label = section ? section.querySelector('.intro-label') : null;
+        return label ? label.textContent ?? '' : '';
+      }
+
+      function pickHovered(clientX: number, clientY: number) {
+        if (!settled) return -1;
+        pointerNDC.x = (clientX / window.innerWidth) * 2 - 1;
+        pointerNDC.y = -(clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(pointerNDC, camera);
+        const hits = raycaster.intersectObjects(hitMeshes, false);
+        if (!hits.length) return -1;
+        return hitMeshes.indexOf(hits[0].object as THREE.Mesh);
+      }
+
+      window.addEventListener('pointermove', (event) => {
+        const idx = pickHovered(event.clientX, event.clientY);
+        if (idx >= 0 && revealSections[idx]) {
+          document.body.style.cursor = 'pointer';
+          tooltip.textContent = sectionLabel(idx);
+          tooltip.style.left = `${event.clientX}px`;
+          tooltip.style.top = `${event.clientY}px`;
+          tooltip.style.opacity = '1';
+        } else {
+          document.body.style.cursor = '';
+          tooltip.style.opacity = '0';
+        }
+      });
+
+      window.addEventListener('pointerleave', () => {
+        document.body.style.cursor = '';
+        tooltip.style.opacity = '0';
+      });
+
+      window.addEventListener('click', (event) => {
+        const idx = pickHovered(event.clientX, event.clientY);
+        if (idx >= 0 && revealSections[idx]) {
+          revealSections[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+
+      function computeTargets() {
+        const rect = fallbackImg.getBoundingClientRect();
+        const frameRect = heroFrame ? heroFrame.getBoundingClientRect() : rect;
+        // Measured from public/img/Squares.svg: the vertical spacing between
+        // rows is ~64% of a square's side, so each diamond's tip lands just
+        // past the midline of the one above it — the squares genuinely end
+        // inside one another, not merely nick each other's edge.
+        const stepRatio = 0.6421;
+        const inset = 24;
+        const widthBasedSize = rect.width * 0.7;
+        // The full stack spans 4 inter-row steps plus the bottom diamond's
+        // own height — cap the size so that always fits the column's actual
+        // vertical room instead of overflowing it now that rows sit farther
+        // apart.
+        const heightBasedSize = rect.height / (4 * stepRatio + Math.SQRT2);
+        const diamondSize = Math.min(widthBasedSize, heightBasedSize);
+        const scale = diamondSize / baseSize;
+        // Anchor to the bordered frame's edges, not the raw column edge, so
+        // the stack sits inset from the border lines on every side instead
+        // of bleeding past them — left/right and top/bottom alike.
+        const halfDiamond = (diamondSize * Math.SQRT2) / 2;
+        const step = diamondSize * stepRatio;
+        const baseX = frameRect.left + inset + halfDiamond;
+        const baseY = frameRect.bottom - inset - halfDiamond;
+        // Row 0 (neutral) sits on top, row 4 (navy) on the bottom — matching
+        // the brand mark's own top-to-bottom order.
+        return rows.map((_, i) => ({
+          x: baseX,
+          y: baseY - (4 - i) * step,
+          scale,
+        }));
+      }
+
+      function ease(t: number) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      const start = performance.now();
+      const holdMs = 500;
+      const animMs = 1400;
+      let settled = false;
+      // Captured once the explosion settles (and refreshed on resize) so the
+      // stack stays put on screen instead of scrolling away with the page.
+      let stickyTargets = targets;
+
+      window.addEventListener('resize', () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        renderer.setSize(width, height);
+        camera.right = width;
+        camera.bottom = height;
+        camera.updateProjectionMatrix();
+        centerX = width / 2;
+        centerY = height / 2;
+        targets = computeTargets();
+        if (settled) stickyTargets = computeTargets();
+      });
+
+      const footer = document.querySelector('.yas-footer');
+
+      // How far each square has progressed toward "shrinking away", 0 (full
+      // size) to 1 (smallest), driven by how far its color-matched section
+      // has scrolled into view rather than a one-shot trigger — so it scrubs
+      // cleanly both ways as you scroll up and down.
+      function computeRemoval() {
+        const removal = [0, 0, 0, 0, 0];
+        const startLine = height * 0.9;
+        const endLine = height * 0.3;
+        revealSections.forEach((section, k) => {
+          if (k > 4) return;
+          const rect = section.getBoundingClientRect();
+          const t = (startLine - rect.top) / (startLine - endLine);
+          removal[k] = Math.min(1, Math.max(0, t));
+        });
+        // The last section's own threshold may not be reachable on a short
+        // page (there's simply no more room to scroll it further up), which
+        // would otherwise leave the last square full-size and overlapping
+        // the footer. Once the footer itself comes into view, force every
+        // square the rest of the way down regardless of section position.
+        if (footer) {
+          const footerRect = footer.getBoundingClientRect();
+          const footerProgress = (height * 0.9 - footerRect.top) / (height * 0.6);
+          const clamped = Math.min(1, Math.max(0, footerProgress));
+          for (let i = 0; i < removal.length; i++) {
+            removal[i] = Math.max(removal[i], clamped);
+          }
+        }
+        return removal;
+      }
+
+      function animate(now: number) {
+        requestAnimationFrame(animate);
+
+        if (!settled) {
+          const elapsed = now - start;
+          if (elapsed < holdMs) {
+            renderer.setClearAlpha(1);
+            groups.forEach((group, i) => {
+              group.scale.set(targets[i].scale, targets[i].scale, 1);
+            });
+          } else {
+            const t = Math.min((elapsed - holdMs) / animMs, 1);
+            const e = ease(t);
+            renderer.setClearAlpha(1 - e);
+            groups.forEach((group, i) => {
+              const tgt = targets[i];
+              group.position.x = centerX + (tgt.x - centerX) * e;
+              group.position.y = centerY + (tgt.y - centerY) * e;
+              group.rotation.z = e * (Math.PI / 4);
+              group.scale.set(tgt.scale, tgt.scale, 1);
+              const innerMesh = group.userData.innerMesh;
+              innerMesh.material.color.copy(neutralColor).lerp(group.userData.finalColor, e);
+            });
+            if (t >= 1) {
+              settled = true;
+              stickyTargets = computeTargets();
+            }
+          }
+        } else {
+          const removal = computeRemoval();
+          groups.forEach((group, i) => {
+            const base = stickyTargets[i];
+            // Squares stay put and simply shrink as their matching section
+            // scrolls past, rather than flying off screen.
+            const shrink = ease(removal[i]);
+            group.position.set(base.x, base.y, group.position.z);
+            group.rotation.set(0, 0, Math.PI / 4);
+            const s = base.scale * (1 - shrink * 0.7);
+            group.scale.set(s, s, 1);
+          });
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      requestAnimationFrame(animate);
+    }
+  </script>
 </BaseLayout>
