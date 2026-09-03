@@ -474,14 +474,25 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
       function computeTargets() {
         const rect = fallbackImg.getBoundingClientRect();
         const frameRect = heroFrame ? heroFrame.getBoundingClientRect() : rect;
-        const scale = (rect.width * 0.7) / baseSize;
-        const diamondSize = scale * baseSize;
+        // Measured from public/img/Squares.svg: the vertical spacing between
+        // rows is ~64% of a square's side, so each diamond's tip lands just
+        // past the midline of the one above it — the squares genuinely end
+        // inside one another, not merely nick each other's edge.
+        const stepRatio = 0.6421;
+        const inset = 24;
+        const widthBasedSize = rect.width * 0.7;
+        // The full stack spans 4 inter-row steps plus the bottom diamond's
+        // own height — cap the size so that always fits the column's actual
+        // vertical room instead of overflowing it now that rows sit farther
+        // apart.
+        const heightBasedSize = rect.height / (4 * stepRatio + Math.SQRT2);
+        const diamondSize = Math.min(widthBasedSize, heightBasedSize);
+        const scale = diamondSize / baseSize;
         // Anchor to the bordered frame's edges, not the raw column edge, so
         // the stack sits inset from the border lines on every side instead
         // of bleeding past them — left/right and top/bottom alike.
         const halfDiamond = (diamondSize * Math.SQRT2) / 2;
-        const inset = 24;
-        const step = diamondSize * 0.42;
+        const step = diamondSize * stepRatio;
         const baseX = frameRect.left + inset + halfDiamond;
         const baseY = frameRect.bottom - inset - halfDiamond;
         // Row 0 (neutral) sits on top, row 4 (navy) on the bottom — matching
