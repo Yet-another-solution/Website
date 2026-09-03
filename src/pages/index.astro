@@ -366,15 +366,14 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
 
       const groups = rows.map(({ inner }, i) => {
         const group = new THREE.Group();
-        // Two opaque, non-transparent meshes per row: a neutral outer frame
-        // and a smaller colored inner fill. Opaque materials depth-test
-        // properly, so each row's higher Z (further down the stack) makes it
-        // correctly occlude the rows behind it — only the exposed sliver of
-        // each frame peeks out, exactly like the layered rects in the SVG,
-        // instead of every frame drawing a full ring around its own color.
+        // The outer frame mesh still exists — for its correct depth
+        // occlusion of rows behind it, and so it stays a valid click/hover
+        // target — but colorWrite:false keeps it from painting the neutral
+        // border pixels themselves, so the transparent canvas shows the page
+        // background there instead of a visible ring.
         const outerMesh = new THREE.Mesh(
           outerGeometry,
-          new THREE.MeshBasicMaterial({ color: neutral, side: THREE.DoubleSide })
+          new THREE.MeshBasicMaterial({ color: neutral, side: THREE.DoubleSide, colorWrite: false })
         );
         const innerMesh = new THREE.Mesh(
           innerGeometry,
