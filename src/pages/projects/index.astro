@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
 import { getCollection } from 'astro:content';
 
 const projects = (await getCollection('projects', ({ data }) => !data.draft))
@@ -16,122 +17,14 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft))
         </div>
 
         <div class="row g-4">
-          {projects.map(project => {
-            const techs = project.data.tech?.split(',').map(t => t.trim()) ?? [];
-            return (
-              <div class="col-md-6 col-lg-4">
-                <div class="card project-card h-100 overflow-hidden">
-                  <div class="position-relative">
-                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-overlay"></div>
-                    <img src={project.data.image} alt={`${project.data.title}`} class="card-img-top project-image" loading="lazy" />
-                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-bottom"></div>
-                    <div class="position-absolute bottom-0 start-0 w-100 p-3 p-md-4 content-overlay">
-                      <h3 class="h5 fw-bold text-white mb-2">{project.data.title}</h3>
-                      <div class="d-flex flex-wrap gap-1 mb-2">
-                        {techs.map(tech => (
-                          <span class="project-tech-badge">{tech}</span>
-                        ))}
-                      </div>
-                      <p class="text-white-50 small d-none d-md-block project-description">
-                        {project.data.description}
-                      </p>
-                      <a href={`/projects/${project.slug}/`} class="btn btn-sm project-btn-primary mt-2 d-inline-flex align-items-center learn-more-btn">
-                        Learn More
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="ms-1" viewBox="0 0 16 16">
-                          <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
-                        </svg>
-                      </a>
-                      {project.data.webUrl && (
-                        <a href={project.data.webUrl} class="btn btn-sm project-btn-ghost mt-2 ms-2 d-inline-flex align-items-center learn-more-btn">
-                          Visit Page
-                        </a>
-                      )}
-                      {project.data.github && (
-                        <a href={project.data.github} class="btn btn-sm project-btn-ghost mt-2 ms-2 d-inline-flex align-items-center learn-more-btn">
-                          GitHub
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {projects.map((project) => (
+            <div class="col-md-6 col-lg-4">
+              <ProjectCard project={project} />
+            </div>
+          ))}
         </div>
 
       </div>
     </div>
   </div>
 </BaseLayout>
-
-<style>
-/* Sharp corners + left-accent-border on hover, matching the post-preview
-   and project-details-panel treatment used elsewhere on the site, instead
-   of Bootstrap's default rounded-card-with-shadow look. */
-.project-card {
-  --bs-card-border-radius: 0;
-  --bs-card-inner-border-radius: 0;
-  border-radius: 0;
-  border: 1px solid var(--border-color);
-  border-left: 3px solid transparent;
-  box-shadow: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-.project-card:hover {
-  border-left-color: var(--primary-color);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-}
-.project-image {
-  height: 240px;
-  object-fit: cover;
-  border-radius: 0;
-  transition: transform 0.5s;
-  filter: saturate(1.1) contrast(1.05);
-}
-.project-card:hover .project-image { transform: scale(1.06); }
-.bg-gradient-overlay {
-  background: linear-gradient(135deg, rgba(102, 204, 138, 0.18), rgba(55, 124, 251, 0.18));
-  z-index: 1;
-}
-.bg-gradient-bottom {
-  background: linear-gradient(to top, rgba(30, 37, 50, 0.92) 0%, rgba(30, 37, 50, 0.55) 50%, transparent 100%);
-  z-index: 2;
-}
-.content-overlay { z-index: 3; }
-.project-description { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-
-.project-tech-badge {
-  display: inline-block;
-  padding: 0.2rem 0.55rem;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.project-btn-primary {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white !important;
-  border: none;
-  border-radius: 0;
-  font-weight: 600;
-}
-.project-btn-primary:hover { color: white !important; filter: brightness(1.08); }
-.project-btn-ghost {
-  background: rgba(255, 255, 255, 0.12);
-  color: white !important;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 0;
-  font-weight: 600;
-}
-.project-btn-ghost:hover { background: rgba(255, 255, 255, 0.22); color: white !important; }
-
-.learn-more-btn { opacity: 0; transform: translateY(6px); transition: all 0.25s; }
-.project-card:hover .learn-more-btn { opacity: 1; transform: translateY(0); }
-@media (max-width: 768px) {
-  .learn-more-btn { opacity: 1; transform: translateY(0); }
-}
-</style>

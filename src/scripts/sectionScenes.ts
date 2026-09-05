@@ -29,7 +29,7 @@ const INK = ON_LIGHT.ink;
 const MUTED = ON_LIGHT.muted;
 const STROKE = 3.5;
 
-export type SceneName = 'workflow' | 'talks' | 'ownership' | 'blog';
+export type SceneName = 'workflow' | 'ownership' | 'blog';
 
 type Updater = (time: number, progress: number) => void;
 type SceneBuilder = (view: SceneView) => Updater;
@@ -74,7 +74,7 @@ function bar(width: number, height: number, color = INK, opacity = 1): THREE.Mes
  * ------------------------------------------------------------------ */
 
 const workflow: SceneBuilder = ({ scene, reduceMotion }) => {
-  const accent = BRAND.primary;
+  const accent = BRAND.secondary;
   const steps = ['Discovery', 'Build', 'Review', 'Ship'];
   const xs = [-225, -75, 75, 225];
   const y = 18;
@@ -169,90 +169,11 @@ const workflow: SceneBuilder = ({ scene, reduceMotion }) => {
 };
 
 /* ------------------------------------------------------------------ *
- * Talks & Presentations — a slide, a speaker, an audience
- * ------------------------------------------------------------------ */
-
-const talks: SceneBuilder = ({ scene, reduceMotion }) => {
-  const accent = BRAND.secondary;
-
-  const screen = new THREE.Group();
-  screen.add(box(300, 176, 6));
-  const title = bar(140, 8, INK, 0.75);
-  title.position.set(-60, 62, 0);
-  screen.add(title);
-  const subtitle = bar(90, 5, MUTED, 0.7);
-  subtitle.position.set(-85, 47, 0);
-  screen.add(subtitle);
-
-  const barHeights = [46, 78, 110, 64, 92];
-  const bars = barHeights.map((height, i) => {
-    const column = mesh(
-      roundedRectGeometry(22, height, 3),
-      i === 2 ? accent : INK,
-      i === 2 ? 1 : 0.32
-    );
-    column.userData.height = height;
-    column.position.set(-100 + i * 42, -70 + height / 2, 0);
-    screen.add(column);
-    return column;
-  });
-
-  const pointer = mesh(new THREE.CircleGeometry(4, 16), BRAND.danger);
-  pointer.position.z = 0.3;
-  screen.add(pointer);
-
-  screen.add(line([vec(0, -88), vec(0, -108)], 10, INK, 0.85));
-  const base = mesh(roundedRectOutlineGeometry(90, 8, 4, 3), INK, 0.85);
-  base.position.y = -112;
-  screen.add(base);
-  screen.position.set(60, 72, 0);
-  scene.add(screen);
-
-  const speaker = buildPerson();
-  speaker.position.set(-225, 10, 0);
-  scene.add(speaker);
-  const speakerLabel = createLabel('the team', 13, MUTED);
-  speakerLabel.position.set(-225, -30, 0);
-  scene.add(speakerLabel);
-
-  const rows = [-80, -118, -156].map((rowY, r) => {
-    const row = new THREE.Group();
-    for (let x = -190 + (r % 2) * 22; x <= 250; x += 44) {
-      const head = buildPerson(INK, 0.95 - r * 0.28);
-      head.scale.setScalar(0.55);
-      head.position.set(x, rowY, 0);
-      row.add(head);
-    }
-    scene.add(row);
-    return row;
-  });
-
-  return (time, progress) => {
-    settle(speaker, reveal(progress, 0.0, 0.2));
-    setGroupOpacity(speakerLabel, reveal(progress, 0.05, 0.2));
-    settle(screen, reveal(progress, 0.1, 0.25));
-    rows.forEach((row, r) => settle(row, reveal(progress, 0.3 + r * 0.12, 0.2)));
-
-    const grow = reveal(progress, 0.35, 0.3);
-    bars.forEach((column, i) => {
-      const wobble = reduceMotion ? 1 : 1 + Math.sin(time * 0.9 + i * 1.3) * 0.08;
-      const height = (column.userData.height as number) * grow * wobble;
-      column.scale.y = Math.max(0.01, height / (column.userData.height as number));
-      column.position.y = -70 + height / 2;
-    });
-
-    const t = reduceMotion ? 0.8 : time;
-    pointer.position.set(-20 + Math.sin(t * 0.7) * 95, 10 + Math.cos(t * 1.1) * 45, 0.3);
-    setGroupOpacity(pointer, grow);
-  };
-};
-
-/* ------------------------------------------------------------------ *
  * Why Y-A-S — you, talking straight to the people writing the code
  * ------------------------------------------------------------------ */
 
 const ownership: SceneBuilder = ({ scene, reduceMotion }) => {
-  const accent = BRAND.danger;
+  const accent = BRAND.primary;
 
   const you = buildPerson();
   you.scale.setScalar(1.2);
@@ -405,7 +326,7 @@ const blog: SceneBuilder = ({ scene, reduceMotion }) => {
   };
 };
 
-const SCENES: Record<SceneName, SceneBuilder> = { workflow, talks, ownership, blog };
+const SCENES: Record<SceneName, SceneBuilder> = { workflow, ownership, blog };
 
 /** How far the section has come into view, 0 as it enters and 1 once settled. */
 function sectionProgress(section: Element): number {

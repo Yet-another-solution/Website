@@ -1691,11 +1691,6 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ===== BLOG CTA SECTION (inside white panel) ===== */
 
-.blog-cta-section {
-    padding-top: 3rem;
-    margin-top: 0;
-}
-
 .blog-cta-heading {
     font-family: 'Rubik Mono One', monospace;
     font-size: 2rem;
