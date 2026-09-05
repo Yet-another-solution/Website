@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import StackStory from '../components/StackStory.astro';
+import SectionScene from '../components/SectionScene.astro';
 import { getCollection } from 'astro:content';
 
 const projects = await getCollection('projects', ({ data }) => !data.draft);
@@ -113,17 +114,24 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
         <div class="yas-rule"></div>
         <div class="reveal-section color-wash--green fade-in-up">
           <div class="reveal-inner reveal-inner--green">
-            <span class="intro-label">How We Work</span>
-            <h2 class="blog-cta-heading">From idea to shipped.</h2>
-            <p class="blog-cta-body" style="max-width: 640px;">
-              We move in small, focused iterations — spec, build, review, ship. Every project gets a clear
-              architecture, tested code, and documentation your team can actually use.
-            </p>
-            <div class="d-flex gap-2 flex-wrap mt-3">
-              <span class="outline-badge">Discovery</span>
-              <span class="outline-badge">Build</span>
-              <span class="outline-badge outline-badge--blue">Review</span>
-              <span class="outline-badge outline-badge--blue">Ship</span>
+            <div class="row align-items-center g-5">
+              <div class="col-lg-6">
+                <span class="intro-label">How We Work</span>
+                <h2 class="blog-cta-heading">From idea to shipped.</h2>
+                <p class="blog-cta-body" style="max-width: 640px;">
+                  We move in small, focused iterations — spec, build, review, ship. Every project gets a clear
+                  architecture, tested code, and documentation your team can actually use.
+                </p>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <span class="outline-badge">Discovery</span>
+                  <span class="outline-badge">Build</span>
+                  <span class="outline-badge outline-badge--blue">Review</span>
+                  <span class="outline-badge outline-badge--blue">Ship</span>
+                </div>
+              </div>
+              <div class="col-lg-6 d-none d-lg-block">
+                <SectionScene name="workflow" />
+              </div>
             </div>
           </div>
         </div>
@@ -132,33 +140,40 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
         <div class="yas-rule"></div>
         <div class="reveal-section color-wash--blue fade-in-up">
           <div class="reveal-inner reveal-inner--blue">
-            <span class="intro-label">Talks &amp; Presentations</span>
-            <h2 class="blog-cta-heading">We talk shop, too.</h2>
-            <p class="blog-cta-body" style="max-width: 640px;">
-              Conference talks, meetups, and workshop sessions from the team — mostly on Blazor, .NET, and the
-              hackathons we help run.
-            </p>
-            <div class="talks-list mt-4">
-              <div class="talk-item">
-                <span class="talk-date">2024</span>
-                <div>
-                  <h3 class="talk-title">Building Real-Time Apps with Blazor Server</h3>
-                  <p class="talk-venue">Hack Esbjerg — IT Hackathon</p>
+            <div class="row align-items-center g-5">
+              <div class="col-lg-6">
+                <span class="intro-label">Talks &amp; Presentations</span>
+                <h2 class="blog-cta-heading">We talk shop, too.</h2>
+                <p class="blog-cta-body" style="max-width: 640px;">
+                  Conference talks, meetups, and workshop sessions from the team — mostly on Blazor, .NET, and the
+                  hackathons we help run.
+                </p>
+                <div class="talks-list mt-4">
+                  <div class="talk-item">
+                    <span class="talk-date">2024</span>
+                    <div>
+                      <h3 class="talk-title">Building Real-Time Apps with Blazor Server</h3>
+                      <p class="talk-venue">Hack Esbjerg — IT Hackathon</p>
+                    </div>
+                  </div>
+                  <div class="talk-item">
+                    <span class="talk-date">2024</span>
+                    <div>
+                      <h3 class="talk-title">PostgreSQL Performance Patterns for .NET Developers</h3>
+                      <p class="talk-venue">Cod3rs Community Meetup</p>
+                    </div>
+                  </div>
+                  <div class="talk-item">
+                    <span class="talk-date">2023</span>
+                    <div>
+                      <h3 class="talk-title">From Zero to Cipher: Designing Hack The Flag</h3>
+                      <p class="talk-venue">Nordic DevFest</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="talk-item">
-                <span class="talk-date">2024</span>
-                <div>
-                  <h3 class="talk-title">PostgreSQL Performance Patterns for .NET Developers</h3>
-                  <p class="talk-venue">Cod3rs Community Meetup</p>
-                </div>
-              </div>
-              <div class="talk-item">
-                <span class="talk-date">2023</span>
-                <div>
-                  <h3 class="talk-title">From Zero to Cipher: Designing Hack The Flag</h3>
-                  <p class="talk-venue">Nordic DevFest</p>
-                </div>
+              <div class="col-lg-6 d-none d-lg-block">
+                <SectionScene name="talks" />
               </div>
             </div>
           </div>
@@ -168,17 +183,24 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
         <div class="yas-rule"></div>
         <div class="reveal-section color-wash--red fade-in-up">
           <div class="reveal-inner reveal-inner--red">
-            <span class="intro-label">Why Y-A-S</span>
-            <h2 class="blog-cta-heading">Small team, real ownership.</h2>
-            <p class="blog-cta-body" style="max-width: 640px;">
-              No hand-offs between account managers and engineers — you talk directly to the people writing
-              your code. We pick boring, reliable technology so your product stays maintainable long after launch.
-            </p>
-            <div class="d-flex gap-2 flex-wrap mt-3">
-              <span class="outline-badge">.NET &amp; C#</span>
-              <span class="outline-badge">PostgreSQL</span>
-              <span class="outline-badge outline-badge--blue">Cloud-native</span>
-              <span class="outline-badge outline-badge--blue">CI/CD</span>
+            <div class="row align-items-center g-5">
+              <div class="col-lg-6">
+                <span class="intro-label">Why Y-A-S</span>
+                <h2 class="blog-cta-heading">Small team, real ownership.</h2>
+                <p class="blog-cta-body" style="max-width: 640px;">
+                  No hand-offs between account managers and engineers — you talk directly to the people writing
+                  your code. We pick boring, reliable technology so your product stays maintainable long after launch.
+                </p>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <span class="outline-badge">.NET &amp; C#</span>
+                  <span class="outline-badge">PostgreSQL</span>
+                  <span class="outline-badge outline-badge--blue">Cloud-native</span>
+                  <span class="outline-badge outline-badge--blue">CI/CD</span>
+                </div>
+              </div>
+              <div class="col-lg-6 d-none d-lg-block">
+                <SectionScene name="ownership" />
+              </div>
             </div>
           </div>
         </div>
@@ -202,6 +224,9 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
                 </div>
               </div>
               <div class="col-md-4 text-center mt-3 mt-md-0">
+                <div class="d-none d-lg-block mb-4">
+                  <SectionScene name="blog" />
+                </div>
                 <a href="/blog/" class="cta-btn-primary cta-btn-large">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
                     <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>

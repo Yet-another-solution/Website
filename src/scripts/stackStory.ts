@@ -1,10 +1,20 @@
 import * as THREE from 'three';
+import { roundedRectGeometry, roundedRectOutlineGeometry, strokeGeometry } from './shapes';
 import {
-  dashedStrokeGeometry,
-  roundedRectGeometry,
-  roundedRectOutlineGeometry,
-  strokeGeometry,
-} from './shapes';
+  BRAND,
+  ON_DARK,
+  TEXTURE_SCALE,
+  createLabel,
+  createLink,
+  labelWidth,
+  mesh,
+  mono,
+  mountScene,
+  roundedPath,
+  setGroupOpacity,
+  smoothstep,
+  vec,
+} from './sceneKit';
 
 /**
  * The "how a Y-A-S build fits together" scroll story.
@@ -21,14 +31,14 @@ import {
 
 const DESIGN_HEIGHT = 1000;
 
-/** Mirrors the brand custom properties in src/styles/global.css. */
 const COLORS = {
-  outline: '#E5E2E1',
-  muted: '#7F8FA4',
-  screen: '#1E2532',
-  primary: '#66CC8A',
-  secondary: '#377CFB',
+  outline: ON_DARK.ink,
+  muted: ON_DARK.muted,
+  screen: BRAND.darkText,
+  primary: BRAND.primary,
+  secondary: BRAND.secondary,
 };
+
 
 /** One pose in a device's keyframe track. Positions are fractions of the view. */
 interface Keyframe {
@@ -45,11 +55,6 @@ interface AppState {
   latency: number;
   uptime: number;
   series: number[];
-}
-
-function smoothstep(t: number): number {
-  const c = Math.min(1, Math.max(0, t));
-  return c * c * (3 - 2 * c);
 }
 
 function sampleTrack(track: Keyframe[], progress: number): Keyframe {
@@ -73,62 +78,9 @@ function sampleTrack(track: Keyframe[], progress: number): Keyframe {
   return last;
 }
 
-function basicMaterial(color: string, opacity = 1): THREE.MeshBasicMaterial {
-  return new THREE.MeshBasicMaterial({
-    color: new THREE.Color(color),
-    transparent: true,
-    opacity,
-    depthWrite: false,
-    side: THREE.DoubleSide,
-  });
-}
-
-/** Records a mesh's design opacity so group fades stay relative to it. */
-function mesh(geometry: THREE.BufferGeometry, color: string, opacity = 1): THREE.Mesh {
-  const created = new THREE.Mesh(geometry, basicMaterial(color, opacity));
-  created.userData.baseOpacity = opacity;
-  return created;
-}
-
-function setGroupOpacity(group: THREE.Object3D, opacity: number): void {
-  group.visible = opacity > 0.002;
-  if (!group.visible) return;
-  group.traverse((child) => {
-    const material = (child as THREE.Mesh).material as THREE.MeshBasicMaterial | undefined;
-    if (!material || !material.isMaterial) return;
-    const base = (child.userData.baseOpacity as number) ?? 1;
-    material.opacity = base * opacity;
-  });
-}
-
-function vec(x: number, y: number): THREE.Vector2 {
-  return new THREE.Vector2(x, y);
-}
-
-function roundedPath(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  r: number
-): void {
-  // roundRect is well supported but still worth guarding — the fallback is a plain
-  // rect, which only costs the screen its corner radius.
-  if (typeof ctx.roundRect === 'function') {
-    ctx.beginPath();
-    ctx.roundRect(x, y, w, h, r);
-    return;
-  }
-  ctx.beginPath();
-  ctx.rect(x, y, w, h);
-}
-
 /* ------------------------------------------------------------------ *
  * Canvas-backed textures: screens and labels
  * ------------------------------------------------------------------ */
-
-const TEXTURE_SCALE = 3;
 
 interface Screen {
   mesh: THREE.Mesh;
@@ -166,39 +118,6 @@ function createScreen(
       texture.needsUpdate = true;
     },
   };
-}
-
-function mono(size: number, weight = 500): string {
-  return `${weight} ${size}px 'JetBrains Mono', ui-monospace, monospace`;
-}
-
-function labelWidth(label: THREE.Mesh): number {
-  return (label.geometry as THREE.PlaneGeometry).parameters.width;
-}
-
-function createLabel(text: string, size = 20, color = COLORS.muted): THREE.Mesh {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d')!;
-  ctx.font = mono(size * TEXTURE_SCALE, 500);
-  const width = Math.ceil(ctx.measureText(text).width) + 8 * TEXTURE_SCALE;
-  const height = Math.ceil(size * TEXTURE_SCALE * 1.6);
-  canvas.width = width;
-  canvas.height = height;
-
-  ctx.font = mono(size * TEXTURE_SCALE, 500);
-  ctx.fillStyle = color;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text, width / 2, height / 2);
-
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  const labelMesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(width / TEXTURE_SCALE, height / TEXTURE_SCALE),
-    new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false })
-  );
-  labelMesh.userData.baseOpacity = 1;
-  return labelMesh;
 }
 
 /* ------------------------------------------------------------------ *
@@ -469,101 +388,6 @@ function buildDatabase(): THREE.Group {
 }
 
 /* ------------------------------------------------------------------ *
- * Links between devices
- * ------------------------------------------------------------------ */
-
-interface Link {
-  group: THREE.Group;
-  /** Points the link at a pair of world positions and sets its fade. */
-  place(from: THREE.Vector2, to: THREE.Vector2, opacity: number): void;
-  /** Portrait viewports have no room for link captions. */
-  showLabel(visible: boolean): void;
-  tick(time: number): void;
-}
-
-/** Links are built along +X at this length, then rotated and stretched to fit. */
-const LINK_LENGTH = 1000;
-
-interface LinkOptions {
-  /** How many packets travel the link at once. */
-  packets?: number;
-  /** Where along the link the label sits, 0 at the start and 1 at the end. */
-  labelAt?: number;
-  /** How far the label sits off the line, signed so it can pick a side. */
-  labelOffset?: number;
-}
-
-function createLink(text: string, color: string, options: LinkOptions = {}): Link {
-  const { packets: packetCount = 3, labelAt = 0.5, labelOffset = -22 } = options;
-  const group = new THREE.Group();
-
-  // Built once along +X at a known length, then rotated and stretched into place —
-  // far cheaper than rebuilding dash geometry every frame.
-  const line = mesh(
-    dashedStrokeGeometry([vec(0, 0), vec(LINK_LENGTH, 0)], 3, 26, 20),
-    color,
-    0.55
-  );
-  const lineHolder = new THREE.Group();
-  lineHolder.add(line);
-  group.add(lineHolder);
-
-  const packets: THREE.Mesh[] = [];
-  for (let i = 0; i < packetCount; i++) {
-    const packet = mesh(new THREE.CircleGeometry(6, 16), color);
-    packets.push(packet);
-    group.add(packet);
-  }
-
-  const label = createLabel(text, 17, color);
-  group.add(label);
-
-  const from = vec(0, 0);
-  const to = vec(0, 0);
-  let labelVisible = true;
-
-  return {
-    group,
-    place(a, b, opacity) {
-      from.copy(a);
-      to.copy(b);
-      const delta = vec(b.x - a.x, b.y - a.y);
-      const distance = delta.length() || 1;
-      lineHolder.position.set(a.x, a.y, 0);
-      lineHolder.rotation.z = Math.atan2(delta.y, delta.x);
-      lineHolder.scale.x = distance / LINK_LENGTH;
-      // Offset along the line's normal, so a diagonal link pushes its label
-      // clear of the line rather than always straight up.
-      const normalX = delta.y / distance;
-      const normalY = -delta.x / distance;
-      label.position.set(
-        a.x + delta.x * labelAt + normalX * labelOffset,
-        a.y + delta.y * labelAt + normalY * labelOffset,
-        0.2
-      );
-      setGroupOpacity(group, opacity);
-      label.visible = labelVisible;
-    },
-    showLabel(visible) {
-      labelVisible = visible;
-    },
-    tick(time) {
-      packets.forEach((packet, i) => {
-        const t = ((time * 0.22 + i / packets.length) % 1);
-        packet.position.set(
-          from.x + (to.x - from.x) * t,
-          from.y + (to.y - from.y) * t,
-          0.3
-        );
-        const fade = Math.sin(t * Math.PI);
-        (packet.material as THREE.MeshBasicMaterial).opacity =
-          (packet.userData.baseOpacity as number) * fade;
-      });
-    },
-  };
-}
-
-/* ------------------------------------------------------------------ *
  * Act 1 backdrop: drifting grid and floating code windows
  * ------------------------------------------------------------------ */
 
@@ -682,256 +506,209 @@ export interface StackStoryOptions {
 }
 
 export function initStackStory({ canvas, runway, captions }: StackStoryOptions): void {
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-500, 500, 500, -500, 0.1, 100);
-  camera.position.z = 50;
-
   let viewWidth = DESIGN_HEIGHT;
   let viewHeight = DESIGN_HEIGHT;
   let unit = DESIGN_HEIGHT;
+  let onViewResize: () => void = () => {};
 
-  const ambience = new THREE.Group();
-  const grid = createDotGrid();
-  ambience.add(grid);
+  mountScene({
+    canvas,
+    designHeight: DESIGN_HEIGHT,
+    watch: runway,
+    onResize(view) {
+      viewWidth = view.viewWidth;
+      viewHeight = view.viewHeight;
+      unit = Math.min(viewWidth, viewHeight);
+      onViewResize();
+    },
+    build(view) {
+      const { scene, reduceMotion } = view;
 
-  const deskLine = mesh(strokeGeometry([vec(-300, 0), vec(300, 0)], 3), COLORS.outline, 0.4);
-  ambience.add(deskLine);
+      const ambience = new THREE.Group();
+      const grid = createDotGrid();
+      ambience.add(grid);
 
-  const windows = [
-    { node: buildCodeWindow(210, 150), depth: 0.35, x: -0.34, y: 0.24 },
-    { node: buildCodeWindow(170, 120), depth: 0.6, x: 0.3, y: 0.28 },
-    { node: buildCodeWindow(140, 100), depth: 0.9, x: 0.42, y: -0.14 },
-    { node: buildCodeWindow(190, 130), depth: 0.5, x: -0.42, y: -0.18 },
-  ];
-  windows.forEach(({ node }) => ambience.add(node));
-  scene.add(ambience);
+      const deskLine = mesh(strokeGeometry([vec(-300, 0), vec(300, 0)], 3), COLORS.outline, 0.4);
+      ambience.add(deskLine);
 
-  const links = {
-    sync: createLink('live sync · SignalR', COLORS.primary),
-    apiToMonitor: createLink('HTTPS', COLORS.secondary, { packets: 2, labelAt: 0.45, labelOffset: -30 }),
-    apiToPhone: createLink('HTTPS', COLORS.secondary, { packets: 2, labelAt: 0.45, labelOffset: 30 }),
-    data: createLink('EF Core', COLORS.outline, { packets: 2, labelAt: 0.32, labelOffset: 48 }),
-  };
-  Object.values(links).forEach((link) => scene.add(link.group));
+      const windows = [
+        { node: buildCodeWindow(210, 150), depth: 0.35, x: -0.34, y: 0.24 },
+        { node: buildCodeWindow(170, 120), depth: 0.6, x: 0.3, y: 0.28 },
+        { node: buildCodeWindow(140, 100), depth: 0.9, x: 0.42, y: -0.14 },
+        { node: buildCodeWindow(190, 130), depth: 0.5, x: -0.42, y: -0.18 },
+      ];
+      windows.forEach(({ node }) => ambience.add(node));
+      scene.add(ambience);
 
-  const monitor = buildMonitor();
-  const phone = buildPhone();
-  const server = buildApiServer();
-  const database = buildDatabase();
-  scene.add(monitor.group, phone.group, server, database);
+      const links = {
+        sync: createLink('live sync · SignalR', COLORS.primary),
+        apiToMonitor: createLink('HTTPS', COLORS.secondary, { packets: 2, labelAt: 0.45, labelOffset: -30 }),
+        apiToPhone: createLink('HTTPS', COLORS.secondary, { packets: 2, labelAt: 0.45, labelOffset: 30 }),
+        data: createLink('EF Core', COLORS.outline, { packets: 2, labelAt: 0.32, labelOffset: 48 }),
+      };
+      Object.values(links).forEach((link) => scene.add(link.group));
 
-  const devices: Record<string, THREE.Group> = {
-    monitor: monitor.group,
-    phone: phone.group,
-    server,
-    database,
-  };
+      const monitor = buildMonitor();
+      const phone = buildPhone();
+      const server = buildApiServer();
+      const database = buildDatabase();
+      scene.add(monitor.group, phone.group, server, database);
 
-  const state: AppState = {
-    requests: 1840,
-    latency: 42,
-    uptime: 99.98,
-    series: Array.from({ length: 26 }, (_, i) => 40 + Math.sin(i * 0.6) * 18 + Math.random() * 10),
-  };
+      const devices: Record<string, THREE.Group> = {
+        monitor: monitor.group,
+        phone: phone.group,
+        server,
+        database,
+      };
 
-  function redrawScreens(): void {
-    monitor.screen.redraw(state);
-    phone.screen.redraw(state);
-  }
-  redrawScreens();
+      const state: AppState = {
+        requests: 1840,
+        latency: 42,
+        uptime: 99.98,
+        series: Array.from({ length: 26 }, (_, i) => 40 + Math.sin(i * 0.6) * 18 + Math.random() * 10),
+      };
 
-  function resize(): void {
-    const width = canvas.clientWidth || window.innerWidth;
-    const height = canvas.clientHeight || window.innerHeight;
-    renderer.setSize(width, height, false);
+      function redrawScreens(): void {
+        monitor.screen.redraw(state);
+        phone.screen.redraw(state);
+      }
+      redrawScreens();
 
-    const aspect = width / height;
-    viewHeight = DESIGN_HEIGHT;
-    viewWidth = DESIGN_HEIGHT * aspect;
-    unit = Math.min(viewWidth, viewHeight);
+      function isPortrait(): boolean {
+        return viewWidth < viewHeight;
+      }
 
-    camera.left = -viewWidth / 2;
-    camera.right = viewWidth / 2;
-    camera.top = viewHeight / 2;
-    camera.bottom = -viewHeight / 2;
-    camera.updateProjectionMatrix();
+      onViewResize = () => {
+        grid.scale.set(viewWidth * 1.4, viewHeight * 1.4, 1);
+        const gridTexture = grid.userData.texture as THREE.Texture;
+        gridTexture.repeat.set((viewWidth * 1.4) / 64, (viewHeight * 1.4) / 64);
 
-    grid.scale.set(viewWidth * 1.4, viewHeight * 1.4, 1);
-    const gridTexture = grid.userData.texture as THREE.Texture;
-    gridTexture.repeat.set((viewWidth * 1.4) / 64, (viewHeight * 1.4) / 64);
-
-    // Portrait has no room beside the rack or along the links, so the rack's
-    // caption drops underneath it and the link captions step aside entirely.
-    const portrait = isPortrait();
-    const serverLabel = server.userData.label as THREE.Mesh;
-    serverLabel.position.set(portrait ? 0 : 105 + labelWidth(serverLabel) / 2 + 14, portrait ? -106 : 0, 0);
-    Object.values(links).forEach((link) => link.showLabel(!portrait));
-  }
-
-  /** How far the runway has scrolled through the sticky stage, 0 to 1. */
-  function scrollProgress(): number {
-    const rect = runway.getBoundingClientRect();
-    const travel = rect.height - window.innerHeight;
-    if (travel <= 0) return 0;
-    return Math.min(1, Math.max(0, -rect.top / travel));
-  }
-
-  function isPortrait(): boolean {
-    return viewWidth < viewHeight;
-  }
-
-  /**
-   * Maps a track's vertical fraction onto the view. Portrait viewports pull the
-   * diagram together and lift it, so it clears the full-width caption card.
-   */
-  function worldY(fraction: number): number {
-    const portrait = isPortrait();
-    return (fraction * (portrait ? 0.74 : 1) + (portrait ? 0.16 : 0.04)) * viewHeight;
-  }
-
-  /** A point on a device, given in that device's own units. */
-  function anchorOf(group: THREE.Group, dx: number, dy: number): THREE.Vector2 {
-    return vec(group.position.x + dx * group.scale.x, group.position.y + dy * group.scale.y);
-  }
-
-  function applyPose(name: string, progress: number): Keyframe {
-    const pose = sampleTrack(TRACKS[name], progress);
-    const group = devices[name];
-    group.position.set(pose.x * viewWidth, worldY(pose.y), 0);
-    const unitScale = unit / DESIGN_HEIGHT;
-    group.scale.setScalar(pose.scale * unitScale);
-    // Captions hold a constant size whether the device is parked small or
-    // filling the stage, and never shrink past legibility on narrow viewports.
-    const label = group.userData.label as THREE.Mesh | undefined;
-    if (label) label.scale.setScalar(Math.max(unitScale, 0.7) / (pose.scale * unitScale));
-    setGroupOpacity(group, pose.opacity);
-    return pose;
-  }
-
-  function update(time: number): void {
-    const progress = scrollProgress();
-
-    applyPose('monitor', progress);
-    applyPose('phone', progress);
-    applyPose('server', progress);
-    applyPose('database', progress);
-
-    const ambiencePose = sampleTrack(TRACKS.ambience, progress);
-    setGroupOpacity(ambience, ambiencePose.opacity);
-    if (ambience.visible) {
-      const drift = reduceMotion ? 0 : time * 0.02;
-      const gridTexture = grid.userData.texture as THREE.Texture;
-      gridTexture.offset.set(drift * 0.6, -drift * 0.2);
-      grid.position.y = ambiencePose.y * viewHeight;
-      deskLine.position.y = worldY(-0.2 + ambiencePose.y);
-      deskLine.scale.x = unit / DESIGN_HEIGHT;
-      windows.forEach(({ node, depth, x, y }) => {
-        // Wrap each card across the view so the drift never runs out of scenery.
-        const span = viewWidth + 400;
-        const travelled = (x * viewWidth + span / 2 - drift * 60 * depth) % span;
-        node.position.set(
-          (travelled + span) % span - span / 2,
-          worldY(y + ambiencePose.y),
+        // Portrait has no room beside the rack or along the links, so the rack's
+        // caption drops underneath it and the link captions step aside entirely.
+        const portrait = isPortrait();
+        const serverLabel = server.userData.label as THREE.Mesh;
+        serverLabel.position.set(
+          portrait ? 0 : 105 + labelWidth(serverLabel) / 2 + 14,
+          portrait ? -106 : 0,
           0
         );
-        node.scale.setScalar((unit / DESIGN_HEIGHT) * (0.6 + depth * 0.5));
-      });
-    }
+        Object.values(links).forEach((link) => link.showLabel(!portrait));
+      };
 
-    const syncOpacity = fadeAt(LINK_FADES.sync, progress);
-    links.sync.place(
-      anchorOf(devices.monitor, 175, 0),
-      anchorOf(devices.phone, -70, 0),
-      syncOpacity
-    );
+      /** How far the runway has scrolled through the sticky stage, 0 to 1. */
+      function scrollProgress(): number {
+        const rect = runway.getBoundingClientRect();
+        const travel = rect.height - window.innerHeight;
+        if (travel <= 0) return 0;
+        return Math.min(1, Math.max(0, -rect.top / travel));
+      }
 
-    const apiOpacity = fadeAt(LINK_FADES.api, progress);
-    links.apiToMonitor.place(
-      anchorOf(devices.server, -60, 80),
-      anchorOf(devices.monitor, 40, -160),
-      apiOpacity
-    );
-    links.apiToPhone.place(
-      anchorOf(devices.server, 60, 80),
-      anchorOf(devices.phone, -20, -130),
-      apiOpacity
-    );
+      /**
+       * Maps a track's vertical fraction onto the view. Portrait viewports pull
+       * the diagram together and lift it, so it clears the caption card.
+       */
+      function worldY(fraction: number): number {
+        const portrait = isPortrait();
+        return (fraction * (portrait ? 0.74 : 1) + (portrait ? 0.16 : 0.04)) * viewHeight;
+      }
 
-    const dataOpacity = fadeAt(LINK_FADES.data, progress);
-    links.data.place(
-      anchorOf(devices.database, 0, 70),
-      anchorOf(devices.server, 0, -75),
-      dataOpacity
-    );
+      /** A point on a device, given in that device's own units. */
+      function anchorOf(group: THREE.Group, dx: number, dy: number): THREE.Vector2 {
+        return vec(group.position.x + dx * group.scale.x, group.position.y + dy * group.scale.y);
+      }
 
-    // Frozen at t=0 the packets still space themselves along each link, so
-    // reduced motion gets a still diagram rather than dots piled at the origin.
-    Object.values(links).forEach((link) => link.tick(reduceMotion ? 0 : time));
+      function applyPose(name: string, progress: number): void {
+        const pose = sampleTrack(TRACKS[name], progress);
+        const group = devices[name];
+        group.position.set(pose.x * viewWidth, worldY(pose.y), 0);
+        const unitScale = unit / DESIGN_HEIGHT;
+        group.scale.setScalar(pose.scale * unitScale);
+        // Captions hold a constant size whether the device is parked small or
+        // filling the stage, and never shrink past legibility on narrow viewports.
+        const label = group.userData.label as THREE.Mesh | undefined;
+        if (label) label.scale.setScalar(Math.max(unitScale, 0.7) / (pose.scale * unitScale));
+        setGroupOpacity(group, pose.opacity);
+      }
 
-    // Captions cross-fade with their act; act boundaries are the quarter marks.
-    // The first and last acts hold rather than fade, so the section never opens or
-    // closes on an empty stage.
-    captions.forEach((caption, i) => {
-      const start = i * 0.25;
-      const fadeIn = i === 0 ? 1 : smoothstep((progress - start + 0.04) / 0.08);
-      const fadeOut =
-        i === captions.length - 1 ? 1 : 1 - smoothstep((progress - start - 0.21) / 0.08);
-      const opacity = fadeIn * fadeOut;
-      caption.style.opacity = String(opacity);
-      caption.style.transform = `translateY(${(1 - opacity) * 16}px)`;
-    });
-  }
+      let lastTick = 0;
 
-  let running = false;
-  let lastTick = 0;
+      return (time: number) => {
+        // The numbers are decoration, so they only need to move a few times a second.
+        if (!reduceMotion && time - lastTick > 0.2) {
+          lastTick = time;
+          state.requests += (Math.random() - 0.45) * 40;
+          state.requests = Math.min(2600, Math.max(900, state.requests));
+          state.latency = Math.min(90, Math.max(24, state.latency + (Math.random() - 0.5) * 6));
+          const next = state.series[state.series.length - 1] + (Math.random() - 0.5) * 14;
+          state.series.push(Math.min(95, Math.max(12, next)));
+          state.series.shift();
+          redrawScreens();
+        }
 
-  function frame(now: number): void {
-    if (!running) return;
-    requestAnimationFrame(frame);
-    const time = now / 1000;
+        const progress = scrollProgress();
 
-    // The numbers are decoration, so they only need to move a few times a second.
-    if (!reduceMotion && time - lastTick > 0.2) {
-      lastTick = time;
-      state.requests += (Math.random() - 0.45) * 40;
-      state.requests = Math.min(2600, Math.max(900, state.requests));
-      state.latency = Math.min(90, Math.max(24, state.latency + (Math.random() - 0.5) * 6));
-      state.series.push(state.series[state.series.length - 1] + (Math.random() - 0.5) * 14);
-      state.series[state.series.length - 1] = Math.min(
-        95,
-        Math.max(12, state.series[state.series.length - 1])
-      );
-      state.series.shift();
-      redrawScreens();
-    }
+        applyPose('monitor', progress);
+        applyPose('phone', progress);
+        applyPose('server', progress);
+        applyPose('database', progress);
 
-    update(time);
-    renderer.render(scene, camera);
-  }
+        const ambiencePose = sampleTrack(TRACKS.ambience, progress);
+        setGroupOpacity(ambience, ambiencePose.opacity);
+        if (ambience.visible) {
+          const drift = reduceMotion ? 0 : time * 0.02;
+          const gridTexture = grid.userData.texture as THREE.Texture;
+          gridTexture.offset.set(drift * 0.6, -drift * 0.2);
+          grid.position.y = ambiencePose.y * viewHeight;
+          deskLine.position.y = worldY(-0.2 + ambiencePose.y);
+          deskLine.scale.x = unit / DESIGN_HEIGHT;
+          windows.forEach(({ node, depth, x, y }) => {
+            // Wrap each card across the view so the drift never runs out of scenery.
+            const span = viewWidth + 400;
+            const travelled = (x * viewWidth + span / 2 - drift * 60 * depth) % span;
+            node.position.set((travelled + span) % span - span / 2, worldY(y + ambiencePose.y), 0);
+            node.scale.setScalar((unit / DESIGN_HEIGHT) * (0.6 + depth * 0.5));
+          });
+        }
 
-  function start(): void {
-    if (running) return;
-    running = true;
-    requestAnimationFrame(frame);
-  }
+        links.sync.place(
+          anchorOf(devices.monitor, 175, 0),
+          anchorOf(devices.phone, -70, 0),
+          fadeAt(LINK_FADES.sync, progress)
+        );
+        const apiOpacity = fadeAt(LINK_FADES.api, progress);
+        links.apiToMonitor.place(
+          anchorOf(devices.server, -60, 80),
+          anchorOf(devices.monitor, 40, -160),
+          apiOpacity
+        );
+        links.apiToPhone.place(
+          anchorOf(devices.server, 60, 80),
+          anchorOf(devices.phone, -20, -130),
+          apiOpacity
+        );
+        links.data.place(
+          anchorOf(devices.database, 0, 70),
+          anchorOf(devices.server, 0, -75),
+          fadeAt(LINK_FADES.data, progress)
+        );
 
-  function stop(): void {
-    running = false;
-  }
+        // Frozen at t=0 the packets still space themselves along each link, so
+        // reduced motion gets a still diagram rather than dots piled at the origin.
+        Object.values(links).forEach((link) => link.tick(reduceMotion ? 0 : time));
 
-  resize();
-  window.addEventListener('resize', resize);
-
-  // Nothing below the fold needs to burn a frame budget, so the loop only runs
-  // while the stage is actually on screen.
-  const observer = new IntersectionObserver(
-    ([entry]) => (entry.isIntersecting ? start() : stop()),
-    { rootMargin: '120px' }
-  );
-  observer.observe(runway);
+        // Captions cross-fade with their act; act boundaries are the quarter marks.
+        // The first and last acts hold rather than fade, so the section never opens
+        // or closes on an empty stage.
+        captions.forEach((caption, i) => {
+          const start = i * 0.25;
+          const fadeIn = i === 0 ? 1 : smoothstep((progress - start + 0.04) / 0.08);
+          const fadeOut =
+            i === captions.length - 1 ? 1 : 1 - smoothstep((progress - start - 0.21) / 0.08);
+          const opacity = fadeIn * fadeOut;
+          caption.style.opacity = String(opacity);
+          caption.style.transform = `translateY(${(1 - opacity) * 16}px)`;
+        });
+      };
+    },
+  });
 }
