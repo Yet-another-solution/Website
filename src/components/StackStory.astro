@@ -1,0 +1,218 @@
+---
+/**
+ * Scroll-driven Three.js story: a Y-A-S web app on a monitor, the same app on a
+ * phone, and the API and database underneath them. Everything but the phone is
+ * drawn as an outline so the section reads as a diagram of the parts working
+ * together.
+ *
+ * The stage is `position: sticky` inside a tall runway rather than `position:
+ * fixed` like the homepage hero, so the two canvases never compete for the same
+ * scroll or stacking context.
+ */
+
+const acts = [
+  {
+    label: 'In the wild',
+    title: 'It starts as a screen someone uses.',
+    body: 'A web app running on a real desk — the surface your users actually touch. Everything behind it exists to keep this screen fast and correct.',
+    tags: ['Blazor', 'C#'],
+  },
+  {
+    label: 'The build',
+    title: 'One interface, designed to be read.',
+    body: 'Components written in C#, laid out so the number that matters is the biggest thing on the page. No half-finished states, no framework churn.',
+    tags: ['Components', 'Design system'],
+  },
+  {
+    label: 'Everywhere',
+    title: 'The phone runs the same app.',
+    body: 'One codebase and one set of rules. The phone and the browser stay in step over a live connection instead of quietly drifting apart.',
+    tags: ['SignalR', 'Shared codebase'],
+  },
+  {
+    label: 'Underneath',
+    title: 'An API and a database you can trust.',
+    body: 'ASP.NET Core over PostgreSQL, deployed to Azure with CI/CD. Boring, reliable pieces — so the thing on the screen keeps working.',
+    tags: ['ASP.NET Core', 'PostgreSQL', 'Azure'],
+  },
+];
+---
+
+<section class="stack-story" id="stack">
+  <div class="stack-story-intro">
+    <span class="intro-label">Connected systems</span>
+    <h2 class="stack-story-heading">How a Y-A-S build fits together.</h2>
+    <p class="stack-story-lede">
+      Scroll to follow one app from the screen it runs on all the way down to the database
+      that feeds it.
+    </p>
+  </div>
+
+  <div class="stack-runway" data-stack-runway>
+    <div class="stack-stage">
+      <canvas class="stack-canvas" data-stack-canvas aria-hidden="true"></canvas>
+      <div class="stack-captions">
+        {
+          acts.map((act) => (
+            <article class="stack-act" data-stack-act>
+              <span class="intro-label">{act.label}</span>
+              <h3 class="stack-act-title">{act.title}</h3>
+              <p class="stack-act-body">{act.body}</p>
+              <div class="stack-act-tags">
+                {act.tags.map((tag) => (
+                  <span class="outline-badge outline-badge--blue">{tag}</span>
+                ))}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Sits outside the white panel column, so it is already full width. It must
+     also stay clear of any `overflow` ancestor — that would turn the page into a
+     scroll container and stop .stack-stage from sticking. */
+  .stack-story {
+    position: relative;
+    background-color: var(--main-dark-color);
+    color: var(--main-light-color);
+  }
+
+  .stack-story-intro {
+    box-sizing: border-box;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 1.75rem 1rem;
+    border-left: 3px solid var(--primary-color);
+  }
+
+  .stack-story-heading {
+    font-family: 'Rubik Mono One', monospace;
+    font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+    color: var(--main-light-color);
+    margin: 0.75rem 0 1rem;
+    line-height: 1.15;
+  }
+
+  .stack-story-lede {
+    color: var(--main-dark-text-color);
+    font-size: 1rem;
+    max-width: 44rem;
+    margin: 0;
+  }
+
+  /* The runway's extra height is the scroll budget the four acts play out over. */
+  .stack-runway {
+    height: 420vh;
+    position: relative;
+  }
+
+  .stack-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .stack-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* All four acts share one grid cell so they cross-fade in place. */
+  .stack-captions {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: grid;
+    box-sizing: border-box;
+    width: min(34rem, 46%);
+    padding: 0 1.75rem 3.5rem;
+    pointer-events: none;
+  }
+
+  .stack-act {
+    grid-area: 1 / 1;
+    opacity: 0;
+  }
+
+  /* Keeps the first act readable if the scene never initialises (no WebGL, or
+     the module failed to load) — the script takes over from the first frame. */
+  .stack-act:first-child {
+    opacity: 1;
+  }
+
+  .stack-act-title {
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    font-weight: 700;
+    color: var(--main-light-color);
+    margin: 0.6rem 0 0.5rem;
+    line-height: 1.25;
+  }
+
+  .stack-act-body {
+    color: var(--main-dark-text-color);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0 0 0.9rem;
+  }
+
+  .stack-act-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  /* The shared badge is built for the light panels; on this dark section it needs
+     the inverse treatment. */
+  .stack-act-tags :global(.outline-badge) {
+    border-color: rgba(229, 226, 225, 0.28);
+    color: var(--main-light-color);
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+  }
+
+  @media (max-width: 768px) {
+    .stack-story-intro {
+      padding: 3.5rem 1.25rem 1rem;
+    }
+
+    .stack-runway {
+      height: 380vh;
+    }
+
+    .stack-captions {
+      width: 100%;
+      padding: 0 1.25rem 2rem;
+      background: linear-gradient(to top, var(--main-dark-color) 55%, transparent);
+    }
+
+    .stack-act-body {
+      font-size: 0.82rem;
+    }
+  }
+</style>
+
+<script>
+  import { initStackStory } from '../scripts/stackStory';
+
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-stack-canvas]');
+  const runway = document.querySelector<HTMLElement>('[data-stack-runway]');
+  const captions = Array.from(document.querySelectorAll<HTMLElement>('[data-stack-act]'));
+
+  if (canvas && runway && captions.length) {
+    // The scene draws its labels to 2D canvases, so wait for the webfont rather
+    // than baking a fallback face into the textures.
+    const ready = document.fonts ? document.fonts.ready : Promise.resolve();
+    ready
+      .then(() => initStackStory({ canvas, runway, captions }))
+      .catch((error) => {
+        // Without WebGL the captions still tell the story, so fail quietly.
+        console.warn('Stack story animation unavailable:', error);
+      });
+  }
+</script>
