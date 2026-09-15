@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import StackStory from '../components/StackStory.astro';
 import SectionScene from '../components/SectionScene.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { getCollection } from 'astro:content';
@@ -214,11 +213,6 @@ const featuredProjects = (await getCollection('projects', ({ data }) => !data.dr
       </div>
     </div>
   </div>
-
-  <!-- Must stay a direct child of the layout slot: inside .yas-page-canvas its
-       overflow-x would turn the panel into a scroll container and break the
-       story's sticky stage. -->
-  <StackStory />
 
   <style>
     /* Guards against the full-bleed sections below introducing a stray
@@ -505,16 +499,6 @@ const featuredProjects = (await getCollection('projects', ({ data }) => !data.dr
       });
 
       const footer = document.querySelector('.yas-footer');
-      const stackRunway = document.querySelector('[data-stack-runway]');
-
-      // The stack story owns the screen once it scrolls in, so the shrunken
-      // squares hand off rather than sitting on top of its diagram.
-      function heroCanvasOpacity() {
-        if (!stackRunway) return 1;
-        const rect = stackRunway.getBoundingClientRect();
-        const fade = (height - rect.top) / (height * 0.5);
-        return Math.min(1, Math.max(0, 1 - fade));
-      }
 
       // How far each square has progressed toward "shrinking away", 0 (full
       // size) to 1 (smallest), driven by how far its color-matched section
@@ -575,7 +559,6 @@ const featuredProjects = (await getCollection('projects', ({ data }) => !data.dr
             }
           }
         } else {
-          canvas.style.opacity = String(heroCanvasOpacity());
           const removal = computeRemoval();
           groups.forEach((group, i) => {
             const base = stickyTargets[i];
