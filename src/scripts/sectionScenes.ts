@@ -31,8 +31,16 @@ const STROKE = 3.5;
 
 export type SceneName = 'workflow' | 'ownership' | 'blog';
 
+/**
+ * The words drawn into a scene, keyed the same way as the UI catalogue. They
+ * are baked into canvas textures rather than DOM text, so the page has to hand
+ * them in (via `data-scene-labels`) for the diagrams to speak the reader's
+ * language. Each lookup falls back to English if a key is missing.
+ */
+export type SceneLabels = Record<string, string>;
+
 type Updater = (time: number, progress: number) => void;
-type SceneBuilder = (view: SceneView) => Updater;
+type SceneBuilder = (view: SceneView, labels: SceneLabels) => Updater;
 
 /** 0→1 as the reveal window starting at `start` and lasting `span` passes. */
 function reveal(progress: number, start: number, span = 0.25): number {
@@ -73,9 +81,14 @@ function bar(width: number, height: number, color = INK, opacity = 1): THREE.Mes
  * How We Work — discovery → build → review → ship
  * ------------------------------------------------------------------ */
 
-const workflow: SceneBuilder = ({ scene, reduceMotion }) => {
+const workflow: SceneBuilder = ({ scene, reduceMotion }, labels) => {
   const accent = BRAND.secondary;
-  const steps = ['Discovery', 'Build', 'Review', 'Ship'];
+  const steps = [
+    labels.discovery ?? 'Discovery',
+    labels.build ?? 'Build',
+    labels.review ?? 'Review',
+    labels.ship ?? 'Ship',
+  ];
   const xs = [-225, -75, 75, 225];
   const y = 18;
 
@@ -172,14 +185,14 @@ const workflow: SceneBuilder = ({ scene, reduceMotion }) => {
  * Why Y-A-S — you, talking straight to the people writing the code
  * ------------------------------------------------------------------ */
 
-const ownership: SceneBuilder = ({ scene, reduceMotion }) => {
+const ownership: SceneBuilder = ({ scene, reduceMotion }, labels) => {
   const accent = BRAND.primary;
 
   const you = buildPerson();
   you.scale.setScalar(1.2);
   you.position.set(-230, 20, 0);
   scene.add(you);
-  const youLabel = createLabel('You', 14, MUTED);
+  const youLabel = createLabel(labels.you ?? 'You', 14, MUTED);
   youLabel.position.set(-230, -32, 0);
   scene.add(youLabel);
 
@@ -190,7 +203,7 @@ const ownership: SceneBuilder = ({ scene, reduceMotion }) => {
     scene.add(dev);
     return dev;
   });
-  const devLabel = createLabel('the developers', 14, MUTED);
+  const devLabel = createLabel(labels.developers ?? 'the developers', 14, MUTED);
   devLabel.position.set(230, -110, 0);
   scene.add(devLabel);
 
@@ -208,7 +221,7 @@ const ownership: SceneBuilder = ({ scene, reduceMotion }) => {
   // The middleman that isn't there.
   const middleman = new THREE.Group();
   middleman.add(mesh(roundedRectOutlineGeometry(132, 44, 8, 2.5), MUTED, 0.6));
-  const middlemanLabel = createLabel('account manager', 12, MUTED);
+  const middlemanLabel = createLabel(labels.accountManager ?? 'account manager', 12, MUTED);
   middleman.add(middlemanLabel);
   middleman.position.set(0, -128, 0);
   scene.add(middleman);
@@ -218,7 +231,7 @@ const ownership: SceneBuilder = ({ scene, reduceMotion }) => {
   cross.position.copy(middleman.position);
   cross.position.z = 0.3;
   scene.add(cross);
-  const crossLabel = createLabel('no hand-offs', 13, accent);
+  const crossLabel = createLabel(labels.noHandoffs ?? 'no hand-offs', 13, accent);
   crossLabel.position.set(0, -170, 0);
   scene.add(crossLabel);
 
@@ -335,7 +348,12 @@ function sectionProgress(section: Element): number {
   return Math.min(1, Math.max(0, (vh * 0.92 - rect.top) / (vh * 0.5)));
 }
 
-export function initSectionScene(canvas: HTMLCanvasElement, name: SceneName, section: Element): void {
+export function initSectionScene(
+  canvas: HTMLCanvasElement,
+  name: SceneName,
+  section: Element,
+  labels: SceneLabels = {}
+): void {
   const builder = SCENES[name];
   if (!builder) throw new Error(`Unknown section scene: ${name}`);
 
@@ -344,7 +362,7 @@ export function initSectionScene(canvas: HTMLCanvasElement, name: SceneName, sec
     designHeight: DESIGN_HEIGHT,
     watch: section,
     build(view) {
-      const update = builder(view);
+      const update = builder(view, labels);
       return (time) => update(time, view.reduceMotion ? 1 : sectionProgress(section));
     },
   });

@@ -56,6 +56,50 @@ The custom "yas-theme" uses:
 - Menu structure: Blog (/blog/), Projects (/projects/), Contact (/contact/)
 - Taxonomies configured: tags, series, categories for content organization
 
+## Internationalisation (English + Slovak)
+
+> Note: the rest of this file still describes an earlier Hugo version of the
+> site. The repository is an **Astro** project (see `astro.config.mjs`,
+> `src/pages/`), and this section describes the code as it actually is.
+
+The site ships in English and Slovak. English is the default locale and keeps
+the unprefixed URLs it has always had (`/blog/`, `/projects/cod3rs/`); Slovak is
+served from a `/sk/` prefix. Adding a language therefore breaks no existing link.
+
+### Where things live
+- `src/i18n/ui.ts` — the UI string catalogue for both languages, plus
+  `useTranslations`, `formatDate` and `pluralPosts` (Slovak has three plural
+  forms). A key missing from a locale falls back to English rather than
+  rendering the raw key.
+- `src/i18n/routing.ts` — `localizePath`, `switchLangPath`, `getLangFromUrl`.
+- `src/i18n/content.ts` — locale-aware access to the content collections.
+- `src/i18n/taxonomy.ts` — maps tag and series names between languages, so
+  `/tags/tutorial/` and `/sk/tags/navod/` can link to each other.
+- `src/components/LanguageSwitcher.astro` — the EN/SK switch.
+- `src/components/pages/` — one component per page, rendered by both the English
+  route and its Slovak twin. The routes under `src/pages/` and `src/pages/sk/`
+  are thin wrappers that pass `lang` and (for content pages) the alternate URLs.
+
+### Adding a translated page or post
+1. Write the English entry in `src/content/<collection>/` as usual.
+2. Write the Slovak entry in `src/content/<collection>/sk/`. The `sk/` folder is
+   what marks an entry's language; `entrySlug()` strips it back off so the URL is
+   `/sk/blog/<slug>/`, not `/sk/blog/sk/<slug>/`.
+3. Give both entries the same `translationKey` in their frontmatter. That is what
+   links them for the language switcher and the `hreflang` tags — the slugs
+   themselves may differ (and for Slovak posts, usually should).
+4. If the Slovak entry introduces a new tag or series name, add the term to
+   `TERMS` in `src/i18n/taxonomy.ts` so its taxonomy page cross-links correctly.
+
+### Adding a UI string
+Add the key to **both** `en` and `sk` in `src/i18n/ui.ts`. The catalogue is typed
+with `satisfies Record<Lang, ...>`, so a key missing from one language is a
+compile-time error. Never inline a user-visible English string into a component.
+
+Text drawn into the WebGL diagrams (`src/scripts/sectionScenes.ts`) cannot be
+translated by the markup — it is baked into canvas textures. `SectionScene.astro`
+passes those labels through a `data-scene-labels` attribute instead.
+
 ## Content Management
 
 ### Adding New Projects

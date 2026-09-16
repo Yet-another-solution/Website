@@ -1,30 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
-import { getCollection } from 'astro:content';
-
-const projects = (await getCollection('projects', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+import Page from '../../components/pages/ProjectsIndex.astro';
 ---
 
-<BaseLayout title="Projects" description="Explore projects built by the Y-A-S team using C#, Blazor, and more." section="projects">
-  <div class="yas-page-canvas">
-    <div class="yas-panel">
-      <div class="yas-panel-inner">
-
-        <div class="yas-panel-header">
-          <h1 class="yas-panel-title">Projects</h1>
-        </div>
-
-        <div class="row g-4">
-          {projects.map((project) => (
-            <div class="col-md-6 col-lg-4">
-              <ProjectCard project={project} />
-            </div>
-          ))}
-        </div>
-
-      </div>
-    </div>
-  </div>
-</BaseLayout>
+<Page lang="en" />

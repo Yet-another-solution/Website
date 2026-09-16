@@ -1,14 +1,14 @@
 ---
-/** Posts carrying one tag, in English. */
-import TagPage from '../../components/pages/TagPage.astro';
-import { getLocalizedCollection } from '../../i18n/content';
-import { getTaxonomyAlternates } from '../../i18n/taxonomy';
-import { slugify } from '../../utils/slugify';
+/** Posts carrying one tag, in Slovak. */
+import TagPage from '../../../components/pages/TagPage.astro';
+import { getLocalizedCollection } from '../../../i18n/content';
+import { getTaxonomyAlternates } from '../../../i18n/taxonomy';
+import { slugify } from '../../../utils/slugify';
 
-const LANG = 'en' as const;
+const LANG = 'sk' as const;
 
 export async function getStaticPaths() {
-  const posts = await getLocalizedCollection('blog', 'en');
+  const posts = await getLocalizedCollection('blog', 'sk');
   const tags = [...new Set(posts.flatMap((p) => p.data.tags ?? []))];
   return Promise.all(
     tags.map(async (tag) => ({
@@ -16,7 +16,7 @@ export async function getStaticPaths() {
       props: {
         tag,
         posts: posts.filter((p) => p.data.tags?.includes(tag)),
-        alternates: await getTaxonomyAlternates('tags', tag, 'en'),
+        alternates: await getTaxonomyAlternates('tags', tag, 'sk'),
       },
     }))
   );

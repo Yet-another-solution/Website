@@ -1,0 +1,75 @@
+---
+/** One series' posts in order, shared by `/series/[series]/` and `/sk/series/[series]/`. */
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { slugify } from '../../utils/slugify';
+import {
+  defaultLang,
+  formatDate,
+  pluralPosts,
+  useTranslations,
+  type Lang,
+} from '../../i18n/ui';
+import { localizePath } from '../../i18n/routing';
+import { entrySlug } from '../../i18n/content';
+
+interface Props {
+  seriesName: string;
+  posts: CollectionEntry<'blog'>[];
+  lang?: Lang;
+  alternates?: Partial<Record<Lang, string | null>>;
+}
+
+const { seriesName, posts, lang = defaultLang, alternates } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={seriesName}
+  description={t('blog.seriesAllPosts', { series: seriesName })}
+  section="blog"
+  lang={lang}
+  alternates={alternates}
+>
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+
+        <div class="yas-panel-header">
+          <h1 class="yas-panel-title">{seriesName}</h1>
+          <p class="mt-2 mb-0" style="color: var(--main-dark-text-color); font-size: 0.9rem;">
+            {posts.length} {pluralPosts(lang, posts.length)}
+          </p>
+        </div>
+
+        <div class="series-posts">
+          {posts.map((post, i) => (
+            <article class="series-post-item">
+              <div class="series-number">{i + 1}</div>
+              <div class="series-post-content">
+                <h3><a href={localizePath(`/blog/${entrySlug(post)}/`, lang)}>{post.data.title}</a></h3>
+                <div class="post-meta">
+                  <time datetime={post.data.date.toISOString()}>
+                    {formatDate(post.data.date, lang)}
+                  </time>
+                  {post.data.author && <span class="author">{t('blog.by')} {post.data.author}</span>}
+                </div>
+                {post.data.description && (
+                  <p class="post-description">{post.data.description}</p>
+                )}
+                {post.data.tags && (
+                  <div class="d-flex flex-wrap gap-2 mt-2">
+                    {post.data.tags.map(tag => (
+                      <a href={localizePath(`/tags/${slugify(tag)}/`, lang)} class="tag">{tag}</a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>

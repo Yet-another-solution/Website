@@ -1,0 +1,76 @@
+---
+/** Posts carrying one tag, shared by `/tags/[tag]/` and `/sk/tags/[tag]/`. */
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { slugify } from '../../utils/slugify';
+import {
+  defaultLang,
+  formatDate,
+  pluralPosts,
+  useTranslations,
+  type Lang,
+} from '../../i18n/ui';
+import { localizePath } from '../../i18n/routing';
+import { entrySlug } from '../../i18n/content';
+
+interface Props {
+  tag: string;
+  posts: CollectionEntry<'blog'>[];
+  lang?: Lang;
+  alternates?: Partial<Record<Lang, string | null>>;
+}
+
+const { tag, posts, lang = defaultLang, alternates } = Astro.props;
+const t = useTranslations(lang);
+const sorted = [...posts].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout
+  title={`${t('blog.tagPrefix')} ${tag}`}
+  description={`${t('blog.taggedWith')} ${tag}`}
+  section="blog"
+  lang={lang}
+  alternates={alternates}
+>
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+
+        <div class="yas-panel-header">
+          <h1 class="yas-panel-title">{tag}</h1>
+          <p class="mt-2 mb-0" style="color: var(--main-dark-text-color); font-size: 0.9rem;">
+            {sorted.length} {pluralPosts(lang, sorted.length)}
+          </p>
+        </div>
+
+        <div class="posts-container">
+          {sorted.map(post => (
+            <article class="post-preview">
+              <header class="post-header">
+                <h2><a href={localizePath(`/blog/${entrySlug(post)}/`, lang)}>{post.data.title}</a></h2>
+                <div class="post-meta">
+                  <time datetime={post.data.date.toISOString()}>
+                    {formatDate(post.data.date, lang)}
+                  </time>
+                  {post.data.author && <span class="author">{t('blog.by')} {post.data.author}</span>}
+                </div>
+              </header>
+              {post.data.description && (
+                <div class="post-summary"><p>{post.data.description}</p></div>
+              )}
+              <footer class="post-footer">
+                <div class="d-flex flex-wrap gap-2">
+                  {post.data.tags?.map(other => (
+                    <a href={localizePath(`/tags/${slugify(other)}/`, lang)} class="tag">{other}</a>
+                  ))}
+                </div>
+                <a href={localizePath(`/blog/${entrySlug(post)}/`, lang)} class="read-more">{t('blog.readMore')}</a>
+              </footer>
+            </article>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>

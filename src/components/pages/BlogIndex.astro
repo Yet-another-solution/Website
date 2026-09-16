@@ -1,0 +1,121 @@
+---
+/**
+ * The blog listing, shared by `/blog/` and `/sk/blog/`. Each language lists only
+ * its own posts — a Slovak reader never lands on an English summary.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { slugify } from '../../utils/slugify';
+import {
+  defaultLang,
+  formatDate,
+  pluralPosts,
+  useTranslations,
+  type Lang,
+} from '../../i18n/ui';
+import { localizePath } from '../../i18n/routing';
+import { entrySlug, getLocalizedCollection } from '../../i18n/content';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+
+const posts = (await getLocalizedCollection('blog', lang)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const allTags = [...new Set(posts.flatMap((p) => p.data.tags ?? []))].sort();
+const allSeries = [...new Set(posts.flatMap((p) => p.data.series ?? []))].sort();
+---
+
+<BaseLayout title={t('blog.title')} description={t('blog.description')} section="blog" lang={lang}>
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+
+        <div class="yas-panel-header">
+          <h1 class="yas-panel-title">{t('blog.title')}</h1>
+        </div>
+
+        <!-- Filters -->
+        {(allTags.length > 0 || allSeries.length > 0) && (
+          <div class="taxonomy-filters">
+            {allTags.length > 0 && (
+              <div class="filter-group">
+                <h3>{t('blog.browseTags')}</h3>
+                <div class="tag-cloud">
+                  {allTags.map(tag => (
+                    <a href={localizePath(`/tags/${slugify(tag)}/`, lang)} class="tag-link">
+                      {tag}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+            {allSeries.length > 0 && (
+              <div class="filter-group">
+                <h3>{t('blog.browseSeries')}</h3>
+                <div class="series-list">
+                  {allSeries.map(s => {
+                    const count = posts.filter(p => p.data.series?.includes(s)).length;
+                    return (
+                      <a href={localizePath(`/series/${slugify(s)}/`, lang)} class="series-link">
+                        {s} ({count} {pluralPosts(lang, count)})
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        <!-- Posts -->
+        <div class="posts-container">
+          {posts.map(post => (
+            <article class="post-preview">
+              <header class="post-header">
+                <h2><a href={localizePath(`/blog/${entrySlug(post)}/`, lang)}>{post.data.title}</a></h2>
+                <div class="post-meta">
+                  <time datetime={post.data.date.toISOString()}>
+                    {formatDate(post.data.date, lang)}
+                  </time>
+                  {post.data.author && <span class="author">{t('blog.by')} {post.data.author}</span>}
+                </div>
+              </header>
+
+              {post.data.images && post.data.images.length > 0 && (
+                <div class="post-image">
+                  <img src={post.data.images[0]} alt={post.data.title} loading="lazy" />
+                </div>
+              )}
+
+              <div class="post-summary">
+                {post.data.description && <p>{post.data.description}</p>}
+              </div>
+
+              <footer class="post-footer">
+                <div class="d-flex flex-wrap gap-2">
+                  {post.data.tags?.map(tag => (
+                    <a href={localizePath(`/tags/${slugify(tag)}/`, lang)} class="tag">{tag}</a>
+                  ))}
+                  {post.data.series?.map(s => (
+                    <a href={localizePath(`/series/${slugify(s)}/`, lang)} class="series">{s}</a>
+                  ))}
+                </div>
+                <a href={localizePath(`/blog/${entrySlug(post)}/`, lang)} class="read-more">{t('blog.readMore')}</a>
+              </footer>
+            </article>
+          ))}
+
+          {posts.length === 0 && (
+            <p style="color: var(--main-dark-text-color);">{t('blog.empty')}</p>
+          )}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>

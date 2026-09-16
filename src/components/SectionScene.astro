@@ -4,18 +4,45 @@
  * The scene itself lives in src/scripts/sectionScenes.ts; this component only
  * provides the canvas and wires it to the nearest `.reveal-section`, whose
  * position in the viewport drives the reveal.
+ *
+ * The scene's words are drawn into canvas textures, not DOM nodes, so they
+ * can't be translated by the page's markup. They ride along in a
+ * `data-scene-labels` attribute instead and are read back by the client script.
  */
 import type { SceneName } from '../scripts/sectionScenes';
+import { defaultLang, useTranslations, type Lang } from '../i18n/ui';
 
 interface Props {
   name: SceneName;
+  lang?: Lang;
 }
 
-const { name } = Astro.props;
+const { name, lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+
+const labelsByScene: Record<SceneName, Record<string, string>> = {
+  workflow: {
+    discovery: t('home.how.discovery'),
+    build: t('home.how.build'),
+    review: t('home.how.review'),
+    ship: t('home.how.ship'),
+  },
+  ownership: {
+    you: t('scene.you'),
+    developers: t('scene.developers'),
+    accountManager: t('scene.accountManager'),
+    noHandoffs: t('scene.noHandoffs'),
+  },
+  blog: {},
+};
 ---
 
 <div class="section-scene">
-  <canvas data-section-scene={name} aria-hidden="true"></canvas>
+  <canvas
+    data-section-scene={name}
+    data-scene-labels={JSON.stringify(labelsByScene[name])}
+    aria-hidden="true"
+  ></canvas>
 </div>
 
 <style>
@@ -34,7 +61,7 @@ const { name } = Astro.props;
 </style>
 
 <script>
-  import { initSectionScene, type SceneName } from '../scripts/sectionScenes';
+  import { initSectionScene, type SceneLabels, type SceneName } from '../scripts/sectionScenes';
 
   const canvases = Array.from(document.querySelectorAll<HTMLCanvasElement>('[data-section-scene]'));
 
@@ -45,8 +72,14 @@ const { name } = Astro.props;
     ready.then(() => {
       canvases.forEach((canvas) => {
         const section = canvas.closest('.reveal-section') ?? canvas;
+        let labels: SceneLabels = {};
         try {
-          initSectionScene(canvas, canvas.dataset.sectionScene as SceneName, section);
+          labels = JSON.parse(canvas.dataset.sceneLabels ?? '{}') as SceneLabels;
+        } catch {
+          // Fall through with no labels — each scene has an English default.
+        }
+        try {
+          initSectionScene(canvas, canvas.dataset.sectionScene as SceneName, section, labels);
         } catch (error) {
           // The section's text carries the message on its own, so fail quietly.
           console.warn('Section scene unavailable:', error);
