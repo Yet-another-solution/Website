@@ -1,0 +1,45 @@
+---
+/** The projects listing, shared by `/projects/` and `/sk/projects/`. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../ProjectCard.astro';
+import { defaultLang, useTranslations, type Lang } from '../../i18n/ui';
+import { getLocalizedCollection } from '../../i18n/content';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+
+const projects = (await getLocalizedCollection('projects', lang)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout
+  title={t('projects.title')}
+  description={t('projects.description')}
+  section="projects"
+  lang={lang}
+>
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+
+        <div class="yas-panel-header">
+          <h1 class="yas-panel-title">{t('projects.title')}</h1>
+        </div>
+
+        <div class="row g-4">
+          {projects.map((project) => (
+            <div class="col-md-6 col-lg-4">
+              <ProjectCard project={project} lang={lang} />
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>

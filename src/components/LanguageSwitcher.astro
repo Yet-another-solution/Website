@@ -1,0 +1,121 @@
+---
+/**
+ * EN / SK switch. Rendered as a two-segment pill so the alternative language is
+ * always one click away and always visible — no dropdown to open.
+ *
+ * `hrefs` carries the destination for each language. Most pages let it default
+ * to a prefix swap of the current path, but blog posts and projects pass in the
+ * translated entry's own URL because the Slovak slugs differ from the English
+ * ones. A language whose href is null renders as a disabled segment rather than
+ * a link to a page that doesn't exist.
+ *
+ * `variant="floating"` is for the homepage, which has no navbar: it pins the
+ * switch to the top-right corner above the hero canvas.
+ */
+import { languages, languageNames, useTranslations, type Lang } from '../i18n/ui';
+import { switchLangPath } from '../i18n/routing';
+
+interface Props {
+  lang: Lang;
+  hrefs?: Partial<Record<Lang, string | null>>;
+  variant?: 'inline' | 'floating';
+}
+
+const { lang, hrefs = {}, variant = 'inline' } = Astro.props;
+const t = useTranslations(lang);
+
+const entries = (Object.keys(languages) as Lang[]).map((code) => ({
+  code,
+  label: languages[code],
+  name: languageNames[code],
+  href:
+    hrefs[code] === undefined
+      ? switchLangPath(Astro.url.pathname, code)
+      : hrefs[code],
+  current: code === lang,
+}));
+---
+
+<div class:list={['lang-switch', variant === 'floating' && 'lang-switch--floating']}>
+  <nav class="lang-switch-inner" aria-label={t('nav.language')}>
+    {entries.map(({ code, label, name, href, current }) =>
+      current ? (
+        <span class="lang-option lang-option--active" aria-current="true" lang={code} title={name}>
+          {label}
+        </span>
+      ) : href ? (
+        <a class="lang-option" href={href} hreflang={code} lang={code} title={name}>
+          {label}
+        </a>
+      ) : (
+        <span class="lang-option lang-option--disabled" lang={code} title={name} aria-disabled="true">
+          {label}
+        </span>
+      )
+    )}
+  </nav>
+</div>
+
+<style>
+  .lang-switch-inner {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(51, 60, 77, 0.92);
+    /* Sharp corners, to match the navbar and panel treatment elsewhere. */
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .lang-option {
+    display: flex;
+    align-items: center;
+    padding: 0.35rem 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.65);
+    background: transparent;
+  }
+
+  .lang-option + .lang-option {
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  a.lang-option:hover,
+  a.lang-option:focus-visible {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .lang-option--active {
+    color: #fff;
+    background: var(--primary-color);
+    cursor: default;
+  }
+
+  .lang-option--disabled {
+    color: rgba(255, 255, 255, 0.28);
+    cursor: not-allowed;
+  }
+
+  /* Homepage: no navbar to sit in, so the switch floats over the hero. The
+     hero's WebGL canvas is fixed at z-index 2000 with its tooltip at 2001, so
+     the switch has to clear both to stay clickable through the intro. */
+  .lang-switch--floating {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2002;
+  }
+
+  @media (max-width: 575.98px) {
+    .lang-switch--floating {
+      top: 0.6rem;
+      right: 0.6rem;
+    }
+  }
+</style>

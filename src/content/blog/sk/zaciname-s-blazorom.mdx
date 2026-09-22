@@ -1,0 +1,98 @@
+---
+title: "Začíname s Blazorom: komplexný sprievodca"
+date: 2024-01-15T10:00:00+00:00
+lastmod: 2024-01-15T10:00:00+00:00
+draft: false
+author: "Tím Y-A-S"
+description: "Naučte sa, ako začať s Blazorom — webovým frameworkom od Microsoftu, ktorý vám umožní stavať interaktívne webové aplikácie v C# namiesto JavaScriptu."
+keywords: ["blazor", "csharp", "vývoj webu", "microsoft", "návod"]
+tags: ["Blazor", "C#", "Vývoj webu", "Návod"]
+series: ["Základy Blazoru"]
+categories: ["Blog"]
+seriesOrder: 1
+toc: true
+translationKey: "getting-started-with-blazor"
+---
+
+## Úvod
+
+Blazor je webový framework od Microsoftu, ktorý vývojárom umožňuje stavať interaktívne webové aplikácie v C# namiesto JavaScriptu. Tento sprievodca vás prevedie vašou prvou Blazor aplikáciou.
+
+## Čo je Blazor?
+
+Blazor je bezplatný open-source webový framework, ktorý umožňuje tvoriť interaktívne webové rozhrania v C#. Ponúka dva modely hostovania:
+
+- **Blazor Server**: beží na serveri a zmeny rozhrania posiela cez SignalR
+- **Blazor WebAssembly**: beží celý v prehliadači pomocou WebAssembly
+
+## Prečo si vybrať Blazor?
+
+### Jednotný vývojový stack
+Používajte C# na klientskej aj serverovej strane a ušetrite si neustále prepínanie medzi jazykmi.
+
+### Bohatý komponentový model
+Stavajte znovupoužiteľné komponenty rozhrania s jasným oddelením zodpovedností.
+
+### Silná typovosť
+Získate kontrolu chýb počas kompilácie a výbornú podporu IntelliSense.
+
+## Rýchly štart
+
+### Predpoklady
+- **.NET 8 SDK** alebo novší
+- **Visual Studio 2022** alebo **Visual Studio Code**
+
+### Vytvorte svoj prvý projekt
+
+```bash
+dotnet new blazorserver -n MyBlazorApp
+cd MyBlazorApp
+dotnet run
+```
+
+Otvorte `https://localhost:5001` a uvidíte svoju bežiacu Blazor aplikáciu.
+
+## Základný Blazor komponent
+
+Tu je jednoduchý komponent počítadla:
+
+```csharp
+@page "/counter"
+
+<h3>Počítadlo</h3>
+
+<p>Aktuálny počet: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Klikni na mňa</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}
+```
+
+## Kľúčové vlastnosti
+
+- **Architektúra založená na komponentoch** pre stavbu modulárnych rozhraní
+- **Data binding** s automatickou aktualizáciou rozhrania
+- **Spracovanie udalostí** pomocou C# metód
+- **Dependency injection** priamo v jadre frameworku
+- **Routovanie** pre jednostránkové aplikácie
+
+## Ďalšie kroky
+
+Teraz, keď vám Blazor beží, preskúmajte:
+
+1. **Komponenty** — stavajte znovupoužiteľné prvky rozhrania
+2. **Data binding** — prepojte rozhranie s dátami
+3. **Služby** — pridajte biznis logiku
+4. **Formuláre** — spracujte vstup od používateľa
+5. **Autentifikácia** — zabezpečte svoju aplikáciu
+
+## Záver
+
+Blazor ponúka silný spôsob, ako stavať moderné webové aplikácie v C#. Vďaka komponentovému modelu a známemu vývojárskemu prostrediu je výbornou voľbou pre .NET vývojárov, ktorí chcú tvoriť interaktívne webové rozhrania.

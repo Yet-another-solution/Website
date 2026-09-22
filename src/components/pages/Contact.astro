@@ -1,0 +1,46 @@
+---
+/** The contact page, shared by `/contact/` and `/sk/contact/`. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { defaultLang, useTranslations, type Lang } from '../../i18n/ui';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={t('contact.title')}
+  description={t('contact.description')}
+  section="contact"
+  lang={lang}
+>
+  <div class="yas-page-canvas">
+    <div class="yas-panel">
+      <div class="yas-panel-inner">
+
+        <div class="yas-panel-header">
+          <h1 class="yas-panel-title">{t('contact.title')}</h1>
+        </div>
+
+        <div class="post-content" style="max-width: 600px;">
+          <h2>{t('contact.heading')}</h2>
+          <p>{t('contact.body')}</p>
+          <p>
+            <strong>{t('contact.github')}</strong>{' '}
+            <a href="https://github.com/Yet-another-solution" target="_blank">
+              Yet-another-solution
+            </a>
+          </p>
+          <div class="yas-rule"></div>
+          <p style="color: var(--main-dark-text-color); font-size: 0.9rem;">
+            {t('contact.closing')}
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>

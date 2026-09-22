@@ -1,5 +1,15 @@
 ---
 import '../styles/global.css';
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import {
+  defaultLang,
+  languages,
+  localeTags,
+  ogLocales,
+  useTranslations,
+  type Lang,
+} from '../i18n/ui';
+import { localizePath, switchLangPath } from '../i18n/routing';
 
 interface Props {
   title?: string;
@@ -7,40 +17,90 @@ interface Props {
   image?: string;
   isHome?: boolean;
   section?: string;
+  lang?: Lang;
+  /**
+   * Per-language URLs for this exact page, feeding both the switcher and the
+   * hreflang tags. Pages whose translated slug differs (blog posts, projects)
+   * pass them explicitly; everything else defaults to a `/sk/` prefix swap.
+   * A null entry means "not translated" — no alternate is advertised.
+   */
+  alternates?: Partial<Record<Lang, string | null>>;
 }
 
 const {
-  title = 'Y-A-S',
-  description = 'Yet Another Solution - A team of developers creating innovative software solutions using C#, Blazor, and PostgreSQL.',
+  title,
+  description,
   image = '/img/Logo.png',
   isHome = false,
   section = '',
+  lang = defaultLang,
+  alternates = {},
 } = Astro.props;
 
+const t = useTranslations(lang);
+
 const fullTitle = isHome ? 'Y-A-S' : `${title} | Y-A-S`;
+const pageDescription = description ?? t('site.description');
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
+
+const langCodes = Object.keys(languages) as Lang[];
+
+// Resolved once so the switcher and the hreflang tags can never disagree.
+const alternateHrefs = Object.fromEntries(
+  langCodes.map((code) => [
+    code,
+    alternates[code] === undefined ? switchLangPath(Astro.url.pathname, code) : alternates[code],
+  ])
+) as Record<Lang, string | null>;
+
+const hreflangLinks = langCodes
+  .filter((code) => alternateHrefs[code])
+  .map((code) => ({
+    hreflang: localeTags[code],
+    href: new URL(alternateHrefs[code] as string, Astro.site).href,
+  }));
+
+const xDefault = alternateHrefs[defaultLang]
+  ? new URL(alternateHrefs[defaultLang] as string, Astro.site).href
+  : null;
+
+const navItems = [
+  { key: 'nav.home', path: '/', section: 'home' },
+  { key: 'nav.blog', path: '/blog/', section: 'blog' },
+  { key: 'nav.projects', path: '/projects/', section: 'projects' },
+  { key: 'nav.contact', path: '/contact/', section: 'contact' },
+] as const;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang={localeTags[lang]}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <meta name="description" content={description} />
+  <meta name="description" content={pageDescription} />
   <meta name="author" content="Y-A-S Team" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href={canonicalURL} />
 
+  {hreflangLinks.map(({ hreflang, href }) => (
+    <link rel="alternate" hreflang={hreflang} href={href} />
+  ))}
+  {xDefault && <link rel="alternate" hreflang="x-default" href={xDefault} />}
+
   <meta property="og:type" content={isHome ? 'website' : 'article'} />
   <meta property="og:url" content={canonicalURL} />
   <meta property="og:title" content={fullTitle} />
-  <meta property="og:description" content={description} />
+  <meta property="og:description" content={pageDescription} />
   <meta property="og:image" content={ogImage} />
+  <meta property="og:locale" content={ogLocales[lang]} />
+  {langCodes
+    .filter((code) => code !== lang && alternateHrefs[code])
+    .map((code) => <meta property="og:locale:alternate" content={ogLocales[code]} />)}
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={fullTitle} />
-  <meta name="twitter:description" content={description} />
+  <meta name="twitter:description" content={pageDescription} />
   <meta name="twitter:image" content={ogImage} />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -54,30 +114,33 @@ const ogImage = new URL(image, Astro.site);
   <slot name="head" />
 </head>
 <body>
-  {!isHome && (
+  {isHome ? (
+    <LanguageSwitcher lang={lang} hrefs={alternateHrefs} variant="floating" />
+  ) : (
     <nav class="navbar navbar-expand-lg navbar-dark yas-navbar">
       <div class="container-fluid px-4">
-        <a class="navbar-brand yas-navbar-brand" href="/" aria-label="Y-A-S Homepage">
+        <a class="navbar-brand yas-navbar-brand" href={localizePath('/', lang)} aria-label={t('nav.homeAria')}>
           <img src="/img/Logo.png" alt="Y-A-S Logo" height="30" width="30" class="d-inline-block align-text-top yas-logo" loading="eager" />
           <span class="rubik">Y-A-S</span>
         </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="d-flex align-items-center gap-2 ms-auto order-lg-3">
+          <LanguageSwitcher lang={lang} hrefs={alternateHrefs} />
+          <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label={t('nav.toggle')}>
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+        <div class="collapse navbar-collapse order-lg-2" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link yas-nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class={`nav-link yas-nav-link${section === 'blog' ? ' yas-nav-active' : ''}`} href="/blog/">Blog</a>
-            </li>
-            <li class="nav-item">
-              <a class={`nav-link yas-nav-link${section === 'projects' ? ' yas-nav-active' : ''}`} href="/projects/">Projects</a>
-            </li>
-            <li class="nav-item">
-              <a class={`nav-link yas-nav-link${section === 'contact' ? ' yas-nav-active' : ''}`} href="/contact/">Contact</a>
-            </li>
+            {navItems.map((item) => (
+              <li class="nav-item">
+                <a
+                  class={`nav-link yas-nav-link${section === item.section ? ' yas-nav-active' : ''}`}
+                  href={localizePath(item.path, lang)}
+                >
+                  {t(item.key)}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -95,7 +158,7 @@ const ogImage = new URL(image, Astro.site);
             <span class="rubik fs-5 text-white">Y-A-S</span>
           </div>
           <p class="jet-brains-mono footer-description">
-            Yet Another Solution - A team of developers creating innovative software solutions using C#, Blazor, and PostgreSQL.
+            {t('site.description')}
           </p>
           <a href="https://github.com/Yet-another-solution" target="_blank" class="footer-gh-btn mt-3 d-inline-flex align-items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -105,16 +168,15 @@ const ogImage = new URL(image, Astro.site);
           </a>
         </div>
         <div class="col-md-3">
-          <h6 class="footer-section-title">Navigation</h6>
+          <h6 class="footer-section-title">{t('footer.navigation')}</h6>
           <ul class="list-unstyled footer-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/blog/">Blog</a></li>
-            <li><a href="/projects/">Projects</a></li>
-            <li><a href="/contact/">Contact</a></li>
+            {navItems.map((item) => (
+              <li><a href={localizePath(item.path, lang)}>{t(item.key)}</a></li>
+            ))}
           </ul>
         </div>
         <div class="col-md-4">
-          <h6 class="footer-section-title">The Team</h6>
+          <h6 class="footer-section-title">{t('footer.team')}</h6>
           <div class="footer-team">
             <a href="https://github.com/MatejMa2ur" target="_blank" class="footer-team-member">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="me-2" viewBox="0 0 16 16">
@@ -128,7 +190,7 @@ const ogImage = new URL(image, Astro.site);
       <hr class="footer-divider my-4" />
       <div class="row">
         <div class="col text-center">
-          <p class="jet-brains-mono footer-copy">&copy; {new Date().getFullYear()} Y-A-S. Built with Astro &amp; hosted on Cloudflare Pages.</p>
+          <p class="jet-brains-mono footer-copy">&copy; {new Date().getFullYear()} Y-A-S. {t('footer.builtWith')}</p>
         </div>
       </div>
     </div>

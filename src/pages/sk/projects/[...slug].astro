@@ -1,0 +1,24 @@
+---
+/**
+ * A project page in Slovak. The English twin of this route lives at
+ * src/pages/projects/[...slug].astro; both render the same component.
+ */
+import ProjectDetail from '../../../components/pages/ProjectDetail.astro';
+import { entrySlug, getEntryAlternates, getLocalizedCollection } from '../../../i18n/content';
+
+const LANG = 'sk' as const;
+
+export async function getStaticPaths() {
+  const projects = await getLocalizedCollection('projects', 'sk');
+  return Promise.all(
+    projects.map(async (project) => ({
+      params: { slug: entrySlug(project) },
+      props: { project, alternates: await getEntryAlternates('projects', project, '/projects') },
+    }))
+  );
+}
+
+const { project, alternates } = Astro.props;
+---
+
+<ProjectDetail project={project} lang={LANG} alternates={alternates} />

@@ -1,14 +1,14 @@
 ---
-/** One series' posts in order, in English. */
-import SeriesPage from '../../components/pages/SeriesPage.astro';
-import { getLocalizedCollection } from '../../i18n/content';
-import { getTaxonomyAlternates } from '../../i18n/taxonomy';
-import { slugify } from '../../utils/slugify';
+/** One series' posts in order, in Slovak. */
+import SeriesPage from '../../../components/pages/SeriesPage.astro';
+import { getLocalizedCollection } from '../../../i18n/content';
+import { getTaxonomyAlternates } from '../../../i18n/taxonomy';
+import { slugify } from '../../../utils/slugify';
 
-const LANG = 'en' as const;
+const LANG = 'sk' as const;
 
 export async function getStaticPaths() {
-  const posts = await getLocalizedCollection('blog', 'en');
+  const posts = await getLocalizedCollection('blog', 'sk');
   const seriesNames = [...new Set(posts.flatMap((p) => p.data.series ?? []))];
   return Promise.all(
     seriesNames.map(async (name) => ({
@@ -18,7 +18,7 @@ export async function getStaticPaths() {
         posts: posts
           .filter((p) => p.data.series?.includes(name))
           .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0)),
-        alternates: await getTaxonomyAlternates('series', name, 'en'),
+        alternates: await getTaxonomyAlternates('series', name, 'sk'),
       },
     }))
   );
