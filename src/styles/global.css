@@ -1983,6 +1983,11 @@ h1, h2, h3, h4, h5, h6 {
     opacity: 0.6;
 }
 
+/* The legally required company line: not dimmed like the rest of the copy. */
+.footer-legal { opacity: 1; }
+
+.footer-copy a { color: inherit; }
+
 /* ===== BREADCRUMBS ===== */
 
 .breadcrumb {
