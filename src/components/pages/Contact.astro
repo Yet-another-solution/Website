@@ -1,6 +1,7 @@
 ---
 /** The contact page, shared by `/contact/` and `/sk/contact/`. */
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { company } from '../../company';
 import { defaultLang, useTranslations, type Lang } from '../../i18n/ui';
 
 interface Props {
@@ -29,11 +30,22 @@ const t = useTranslations(lang);
           <h2>{t('contact.heading')}</h2>
           <p>{t('contact.body')}</p>
           <p>
+            <strong>{t('contact.email')}</strong>{' '}
+            <a href={`mailto:${company.email}`}>{company.email}</a>
+          </p>
+          <p>
             <strong>{t('contact.github')}</strong>{' '}
             <a href="https://github.com/Yet-another-solution" target="_blank">
               Yet-another-solution
             </a>
           </p>
+          <h2>{t('contact.company')}</h2>
+          <address>
+            {company.name}<br />
+            {t('company.cvr')} {company.cvr}<br />
+            {company.street}<br />
+            {company.city}, {t('company.country')}
+          </address>
           <div class="yas-rule"></div>
           <p style="color: var(--main-dark-text-color); font-size: 0.9rem;">
             {t('contact.closing')}

@@ -52,6 +52,11 @@ export const ui = {
     'footer.navigation': 'Navigation',
     'footer.team': 'The Team',
     'footer.builtWith': 'Built with Astro & hosted on Cloudflare Pages.',
+    'footer.privacy': 'Privacy policy',
+
+    // --- Company details (the values themselves live in src/company.ts) ---
+    'company.cvr': 'CVR',
+    'company.country': 'Denmark',
 
     // --- Home: hero -----------------------------------------------------
     'home.hero.projectsTitle': 'See our projects',
@@ -143,9 +148,43 @@ export const ui = {
     'contact.description': 'Get in touch with the Y-A-S team.',
     'contact.heading': 'Get in Touch',
     'contact.body':
-      "The best way to reach us is through GitHub. We're always open to collaboration, questions, and feedback.",
+      "Write to us by email, or find us on GitHub. We're always open to collaboration, questions, and feedback.",
+    'contact.email': 'Email:',
     'contact.github': 'GitHub:',
+    'contact.company': 'Company details',
     'contact.closing': 'Looking forward to connecting with you.',
+
+    // --- Privacy policy ------------------------------------------------------
+    'privacy.title': 'Privacy Policy',
+    'privacy.description': 'How Y-A-S ApS handles personal data on y-a-s.net.',
+    'privacy.who.heading': 'Who we are',
+    'privacy.who.body':
+      'This website is run by the company below, which is the data controller for the personal data described on this page.',
+    'privacy.collect.heading': 'What we collect',
+    'privacy.collect.body':
+      'The site is hosted by Cloudflare. When you open a page, Cloudflare processes technical request data on our behalf: your IP address, browser type, the page requested and the time. If you email us, we receive your email address and whatever you choose to write.',
+    'privacy.not.heading': 'What we do not do',
+    'privacy.not.body':
+      'This site sets no cookies and uses no analytics, tracking or advertising. It has no forms, accounts or newsletter. Fonts, scripts and images are served from our own domain, so opening a page contacts no company other than our hosting provider.',
+    'privacy.why.heading': 'Why we process it',
+    'privacy.why.body':
+      'Request data is processed to deliver the site and keep it secure, and emails are processed to answer you. The legal basis for both is our legitimate interest (GDPR Article 6(1)(f)); if your enquiry is about a contract with us, it is Article 6(1)(b).',
+    'privacy.recipients.heading': 'Who receives it',
+    'privacy.recipients.body':
+      'Cloudflare, as our hosting provider, and Google, whose Google Workspace service handles our email. Both act on our instructions as data processors. We do not sell personal data or share it with anyone else.',
+    'privacy.transfers.heading': 'Transfers outside the EU',
+    'privacy.transfers.body':
+      'Cloudflare and Google are companies based in the United States, so personal data may be processed outside the EU/EEA. Such transfers are covered by the EU–US Data Privacy Framework and by the European Commission’s standard contractual clauses.',
+    'privacy.retention.heading': 'How long we keep it',
+    'privacy.retention.body':
+      'We keep emails for as long as it takes to handle your enquiry, and longer only where the law requires it, for example for bookkeeping. We keep no visitor logs of our own; Cloudflare retains request data only for a short time, according to its own retention rules.',
+    'privacy.rights.heading': 'Your rights',
+    'privacy.rights.body':
+      'You can ask for access to the personal data we hold about you, have it corrected or deleted, object to or restrict its processing, and receive it in a portable format. We make no automated decisions about you. To use your rights, write to',
+    'privacy.complaints.heading': 'Complaints',
+    'privacy.complaints.body':
+      'If you think we handle your data wrongly, you can complain to the Danish Data Protection Agency (Datatilsynet):',
+    'privacy.updated': 'Last updated:',
   },
 
   sk: {
@@ -164,6 +203,11 @@ export const ui = {
     'footer.navigation': 'Navigácia',
     'footer.team': 'Tím',
     'footer.builtWith': 'Postavené v Astre a hostované na Cloudflare Pages.',
+    'footer.privacy': 'Ochrana súkromia',
+
+    // --- Údaje o spoločnosti (samotné hodnoty sú v src/company.ts) ---------
+    'company.cvr': 'CVR',
+    'company.country': 'Dánsko',
 
     // --- Domov: hero --------------------------------------------------------
     'home.hero.projectsTitle': 'Pozrite si naše projekty',
@@ -256,9 +300,43 @@ export const ui = {
     'contact.description': 'Spojte sa s tímom Y-A-S.',
     'contact.heading': 'Ozvite sa nám',
     'contact.body':
-      'Najlepší spôsob, ako nás zastihnúť, je cez GitHub. Sme vždy otvorení spolupráci, otázkam aj spätnej väzbe.',
+      'Napíšte nám e-mail alebo nás nájdite na GitHube. Sme vždy otvorení spolupráci, otázkam aj spätnej väzbe.',
+    'contact.email': 'E-mail:',
     'contact.github': 'GitHub:',
+    'contact.company': 'Údaje o spoločnosti',
     'contact.closing': 'Tešíme sa na spojenie s vami.',
+
+    // --- Ochrana súkromia -----------------------------------------------------
+    'privacy.title': 'Ochrana súkromia',
+    'privacy.description': 'Ako Y-A-S ApS zaobchádza s osobnými údajmi na y-a-s.net.',
+    'privacy.who.heading': 'Kto sme',
+    'privacy.who.body':
+      'Túto webovú stránku prevádzkuje nižšie uvedená spoločnosť, ktorá je prevádzkovateľom osobných údajov opísaných na tejto stránke.',
+    'privacy.collect.heading': 'Čo zbierame',
+    'privacy.collect.body':
+      'Stránku hostuje Cloudflare. Keď otvoríte stránku, Cloudflare v našom mene spracúva technické údaje o požiadavke: vašu IP adresu, typ prehliadača, požadovanú stránku a čas. Ak nám napíšete e-mail, dostaneme vašu e-mailovú adresu a to, čo sa rozhodnete napísať.',
+    'privacy.not.heading': 'Čo nerobíme',
+    'privacy.not.body':
+      'Táto stránka neukladá žiadne cookies a nepoužíva analytiku, sledovanie ani reklamu. Nemá formuláre, účty ani newsletter. Písma, skripty a obrázky sa načítavajú z našej vlastnej domény, takže otvorenie stránky nekontaktuje žiadnu inú spoločnosť okrem nášho poskytovateľa hostingu.',
+    'privacy.why.heading': 'Prečo údaje spracúvame',
+    'privacy.why.body':
+      'Údaje o požiadavke spracúvame, aby sme stránku doručili a udržali ju bezpečnú, a e-maily, aby sme vám odpovedali. Právnym základom je v oboch prípadoch náš oprávnený záujem (článok 6 ods. 1 písm. f) GDPR); ak sa vaša otázka týka zmluvy s nami, je ním článok 6 ods. 1 písm. b).',
+    'privacy.recipients.heading': 'Kto údaje dostáva',
+    'privacy.recipients.body':
+      'Cloudflare ako náš poskytovateľ hostingu a Google, ktorého služba Google Workspace zabezpečuje náš e-mail. Obaja konajú podľa našich pokynov ako sprostredkovatelia. Osobné údaje nepredávame ani ich nezdieľame s nikým ďalším.',
+    'privacy.transfers.heading': 'Prenosy mimo EÚ',
+    'privacy.transfers.body':
+      'Cloudflare a Google sú spoločnosti so sídlom v Spojených štátoch, takže osobné údaje môžu byť spracúvané mimo EÚ/EHP. Tieto prenosy sú kryté Rámcom ochrany osobných údajov medzi EÚ a USA a štandardnými zmluvnými doložkami Európskej komisie.',
+    'privacy.retention.heading': 'Ako dlho údaje uchovávame',
+    'privacy.retention.body':
+      'E-maily uchovávame tak dlho, ako je potrebné na vybavenie vašej otázky, a dlhšie iba vtedy, keď to vyžaduje zákon, napríklad pre účtovníctvo. Vlastné záznamy o návštevníkoch nevedieme; Cloudflare uchováva údaje o požiadavkách len krátko, podľa vlastných pravidiel uchovávania.',
+    'privacy.rights.heading': 'Vaše práva',
+    'privacy.rights.body':
+      'Môžete požiadať o prístup k osobným údajom, ktoré o vás máme, o ich opravu alebo vymazanie, namietať proti ich spracúvaniu alebo ho nechať obmedziť a získať ich v prenosnom formáte. Nerobíme o vás žiadne automatizované rozhodnutia. Svoje práva uplatníte e-mailom na',
+    'privacy.complaints.heading': 'Sťažnosti',
+    'privacy.complaints.body':
+      'Ak si myslíte, že s vašimi údajmi zaobchádzame nesprávne, môžete podať sťažnosť dánskemu úradu na ochranu údajov (Datatilsynet):',
+    'privacy.updated': 'Naposledy aktualizované:',
   },
 } as const satisfies Record<Lang, Record<string, string>>;
 

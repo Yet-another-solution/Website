@@ -60,20 +60,26 @@ The site is served at `https://y-a-s.net` (`site` in `astro.config.mjs`), with
   `sectionScenes.ts` (the homepage diagrams).
 - `src/styles/global.css` — all site CSS, imported once by `BaseLayout`.
 - `src/utils/slugify.ts` — tag and series URL segments.
+- `src/company.ts` — the legal company details (name, CVR, address, email) shown
+  in the footer, on the contact page and in the privacy policy.
 - `public/` — static assets copied verbatim (images live in `public/img/`).
 - `dist/` — build output, git-ignored.
 
 ### Styling
-Bootstrap 5.3.2 (CSS and JS bundle) is loaded from jsDelivr, and the fonts
-— JetBrains Mono, Rubik Mono One and Nunito — from Google Fonts. Everything else
-is in `src/styles/global.css`, which defines the brand palette as custom
-properties on `:root` (`--main-dark-color`, `--primary-color`, …). JetBrains
-Mono is the default face site-wide; `.rubik` is the display face used for the
-wordmark and panel titles.
+Bootstrap 5.3.2 (its CSS, plus only the `collapse` JS plugin for the navbar
+toggler) and the fonts — JetBrains Mono, Rubik Mono
+One and Nunito, via `@fontsource/*` — are npm dependencies, imported at the top
+of `BaseLayout.astro` and bundled into `dist/_astro/`. Everything else is in
+`src/styles/global.css`, which defines the brand palette as custom properties on
+`:root` (`--main-dark-color`, `--primary-color`, …). JetBrains Mono is the
+default face site-wide; `.rubik` is the display face used for the wordmark and
+panel titles.
 
-Because both Bootstrap and the fonts come from a CDN, a sandboxed or offline
-environment renders the site unstyled. That is an environment artefact, not a
-bug — vendor them locally if you need an accurate screenshot.
+**Do not load anything from a third-party origin** (CDN stylesheets, hosted
+fonts, analytics, embeds, hot-linked images). The privacy policy at `/privacy/` states that a page
+view contacts no other company and that the site sets no cookies; adding either
+means updating that policy, and possibly a consent banner. Only the font weights
+imported in `BaseLayout.astro` are shipped — a new weight needs its own import.
 
 ### Homepage WebGL
 The homepage hero animates the five squares of the brand mark out of a single

@@ -9,7 +9,11 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^3.1.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/nunito": "^5.3.0",
+    "@fontsource/rubik-mono-one": "^5.3.0",
     "astro": "^4.16.0",
+    "bootstrap": "5.3.2",
     "three": "^0.185.1"
   }
 }
