@@ -6,6 +6,7 @@
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Backdrop from '../Backdrop.astro';
+import SectionScene from '../SectionScene.astro';
 import PostCard from '../PostCard.astro';
 import ProjectCard from '../ProjectCard.astro';
 import { defaultLang, useTranslations, type Lang } from '../../i18n/ui';
@@ -24,10 +25,10 @@ const featuredProjects = (await getLocalizedCollection('projects', lang))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-// The two most recent posts fill the blog band.
+// The most recent post sits beside the blog band's diagram.
 const latestPosts = (await getLocalizedCollection('blog', lang))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 2);
+  .slice(0, 1);
 
 const steps = ['discovery', 'build', 'review', 'ship'] as const;
 ---
@@ -123,23 +124,31 @@ const steps = ['discovery', 'build', 'review', 'ship'] as const;
 
     <section class="home-band home-band--alt home-band--mirror reveal-section">
       <Backdrop variant="arcs" />
-      <div class="yas-container home-band-inner home-why">
-        <div>
-          <div class="accent-bar"></div>
-          <p class="eyebrow">{t('home.why.label')}</p>
-          <h2 class="home-heading">{t('home.why.heading')}</h2>
+      <div class="yas-container home-band-inner">
+        <div class="home-split">
+          <div class="home-split-text">
+            <div class="accent-bar"></div>
+            <p class="eyebrow">{t('home.why.label')}</p>
+            <h2 class="home-heading">{t('home.why.heading')}</h2>
+            <p class="lead-text">{t('home.why.body')}</p>
+          </div>
+          <div class="home-split-scene"><SectionScene name="ownership" lang={lang} /></div>
         </div>
-        <p class="lead-text">{t('home.why.body')}</p>
       </div>
     </section>
 
     <section class="home-band reveal-section">
       <Backdrop variant="grid" />
       <div class="yas-container home-band-inner">
-        <div class="accent-bar"></div>
-        <p class="eyebrow">{t('home.how.label')}</p>
-        <h2 class="home-heading">{t('home.how.heading')}</h2>
-        <p class="lead-text">{t('home.how.body')}</p>
+        <div class="home-split">
+          <div class="home-split-text">
+            <div class="accent-bar"></div>
+            <p class="eyebrow">{t('home.how.label')}</p>
+            <h2 class="home-heading">{t('home.how.heading')}</h2>
+            <p class="lead-text">{t('home.how.body')}</p>
+          </div>
+          <div class="home-split-scene"><SectionScene name="workflow" lang={lang} /></div>
+        </div>
         <ol class="step-grid list-unstyled">
           {steps.map((step, i) => (
             <li class="step-card">
@@ -174,8 +183,11 @@ const steps = ['discovery', 'build', 'review', 'ship'] as const;
         <p class="eyebrow">{t('home.blog.label')}</p>
         <h2 class="home-heading">{t('home.blog.heading')}</h2>
         <p class="lead-text">{t('home.blog.body')}</p>
-        <div class="post-grid">
-          {latestPosts.map((post) => <PostCard post={post} lang={lang} heading="h3" />)}
+        <div class="home-split">
+          <div class="home-split-text">
+            {latestPosts.map((post) => <PostCard post={post} lang={lang} heading="h3" />)}
+          </div>
+          <div class="home-split-scene"><SectionScene name="blog" lang={lang} /></div>
         </div>
         <div class="btn-row">
           <a href={localizePath('/blog/', lang)} class="btn-yas btn-yas--navy">{t('home.blog.explore')}</a>
@@ -186,8 +198,8 @@ const steps = ['discovery', 'build', 'review', 'ship'] as const;
 
   <script>
     // Full-screen bands: the one crossing the middle of the viewport is the
-    // active one. Its text fades in and its backdrop cross-fades with the
-    // previous band's (see "HOMEPAGE BANDS" in global.css). The styles only
+    // active one. Its text fades in, its diagram draws itself, and its
+    // backdrop cross-fades with the previous band's (see "HOMEPAGE BANDS" in global.css). The styles only
     // hide anything once `home-anim` is set, so without JS, or with reduced
     // motion, every band is simply visible.
     const bands = document.querySelectorAll('.home-band');

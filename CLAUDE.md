@@ -29,7 +29,7 @@ output in `dist/`, not by assuming a green build means correct.
 npm i --no-save @astrojs/check typescript && npx astro check
 ```
 
-It reports two pre-existing errors, both from `three` shipping no type
+It reports a handful of pre-existing errors, all from `three` shipping no type
 declarations — that is the known baseline, not a regression.
 
 ## Deployment
@@ -50,14 +50,16 @@ The site is served at `https://y-a-s.net` (`site` in `astro.config.mjs`), with
 - `src/components/pages/` — one component per page, holding the actual markup.
 - `src/components/` — shared components: `PageHero` (the title block on every
   inner page), `Backdrop` (the line art behind a page), `PostCard`,
-  `ProjectCard`, `BlogFilters`, `LanguageSwitcher`.
+  `ProjectCard`, `BlogFilters`, `LanguageSwitcher`, `SectionScene` (the
+  animated diagrams in the homepage bands).
 - `src/layouts/BaseLayout.astro` — the single layout: `<head>`, SEO and social
   tags, navbar, footer.
 - `src/content/` — the `blog` and `projects` content collections, with their
   Zod schemas in `src/content/config.ts`.
 - `src/i18n/` — the translation catalogue and locale helpers (see below).
-- `src/scripts/shapes.ts` — the rounded-rectangle helper for the homepage
-  hero's Three.js scene.
+- `src/scripts/` — the Three.js code: `sceneKit.ts` (renderer, camera and
+  visibility-gated render loop), `shapes.ts` (geometry helpers), and
+  `sectionScenes.ts` (the homepage diagrams).
 - `src/styles/global.css` — all site CSS, imported once by `BaseLayout`.
 - `src/utils/slugify.ts` — tag and series URL segments.
 - `src/company.ts` — the legal company details (name, CVR, address, email) shown
@@ -102,8 +104,13 @@ where. Each band's `.eyebrow` is also what the hero tooltip reads. Once the hero
 scrolls away, the stack slides into the page gutter (measured from
 `.home-band-inner`) so it does not cover the bands' headings.
 
-It respects `prefers-reduced-motion` and falls back to a static image if WebGL
-throws.
+The bands are full-screen and snap page by page on large screens. A small
+script in `Home.astro` marks the band crossing the middle of the viewport
+`is-active`; that fades its text in, cross-fades its `Backdrop`, and starts its
+`SectionScene` diagram drawing itself (timed, in `sectionScenes.ts`).
+
+All of it respects `prefers-reduced-motion` and falls back to static content if
+WebGL throws.
 
 ### SEO
 `BaseLayout` emits description, canonical, Open Graph, Twitter Card and
@@ -145,6 +152,10 @@ served from a `/sk/` prefix. Adding a language therefore breaks no existing link
 Add the key to **both** `en` and `sk` in `src/i18n/ui.ts`. The catalogue is typed
 with `satisfies Record<Lang, ...>`, so a key missing from one language is a
 compile-time error. Never inline a user-visible English string into a component.
+
+Text drawn into the WebGL diagrams (`src/scripts/sectionScenes.ts`) cannot be
+translated by the markup — it is baked into canvas textures. `SectionScene.astro`
+passes those labels through a `data-scene-labels` attribute instead.
 
 ## Content Management
 

@@ -101,6 +101,12 @@ export const ui = {
       'Tutorials and deep dives on Blazor, .NET, and the way we build software.',
     'home.blog.explore': 'Explore Blog',
 
+    // --- Scene labels (drawn into the WebGL diagrams) ----------------------
+    'scene.you': 'You',
+    'scene.developers': 'the developers',
+    'scene.accountManager': 'account manager',
+    'scene.noHandoffs': 'no hand-offs',
+
     // --- Blog -------------------------------------------------------------
     'blog.title': 'Blog',
     'blog.description':
@@ -242,6 +248,12 @@ export const ui = {
     'home.blog.body':
       'Návody a hlbšie pohľady na Blazor, .NET a spôsob, akým staviame softvér.',
     'home.blog.explore': 'Preskúmať blog',
+
+    // --- Popisky v diagramoch -------------------------------------------------
+    'scene.you': 'Vy',
+    'scene.developers': 'vývojári',
+    'scene.accountManager': 'account manager',
+    'scene.noHandoffs': 'žiadne odovzdávanie',
 
     // --- Blog -----------------------------------------------------------------
     'blog.title': 'Blog',

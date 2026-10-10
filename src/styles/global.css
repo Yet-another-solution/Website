@@ -1021,27 +1021,30 @@ a.chip:focus-visible {
 
 .pill--static { background: transparent; }
 
-/* Heading on the left, paragraph on the right. */
-.home-why {
-    flex-direction: row;
-    gap: clamp(40px, 8.33vw, 120px);
+/* Text beside one of the animated diagrams (SectionScene). The diagram only
+   shows where there is room for two columns. */
+.home-split {
+    display: flex;
+    align-items: center;
+    gap: clamp(40px, 5.5vw, 80px);
+    width: 100%;
 }
 
-.home-why > div {
+.home-split-text {
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
-    gap: 20px;
-    max-width: 560px;
+    align-items: flex-start;
+    gap: 24px;
+    min-width: 0;
 }
 
-.home-why > .lead-text {
-    flex: 1 1 0;
-    padding-top: 44px;
+.home-split-scene {
+    flex: 0 1 520px;
+    min-width: 0;
 }
 
 .home-band .project-grid,
-.home-band .post-grid,
 .step-grid {
     width: 100%;
     margin-top: 32px;
@@ -1225,10 +1228,7 @@ a.chip:focus-visible {
     .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .step-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
-    .home-why { flex-direction: column; gap: 24px; }
-    .home-why > div,
-    .home-why > .lead-text { flex-basis: auto; }
-    .home-why > .lead-text { padding-top: 0; }
+    .home-split-scene { display: none; }
 }
 
 @media (max-width: 767.98px) {
