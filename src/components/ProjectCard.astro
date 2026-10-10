@@ -2,7 +2,9 @@
 /**
  * One project card, as shown on /projects/ and in the homepage's Selected Work
  * band: a flat navy tile with the tech list as its category line. The whole
- * tile is one link to the project page.
+ * tile is one link to the project page. Its accent colour comes from its
+ * position in `.project-grid`, cycling through the brand mark's green, blue
+ * and red (see global.css).
  */
 import type { CollectionEntry } from 'astro:content';
 import { defaultLang, useTranslations, type Lang } from '../i18n/ui';

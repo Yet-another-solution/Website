@@ -132,6 +132,7 @@ export const ui = {
     'projects.githubRepo': 'GitHub Repository',
     'projects.back': '← Back to Projects',
     'projects.view': 'View project →',
+    'projects.gallery': 'Screenshots',
 
     // --- Contact -----------------------------------------------------------
     'contact.title': 'Contact',
@@ -274,6 +275,7 @@ export const ui = {
     'projects.githubRepo': 'GitHub repozitár',
     'projects.back': '← Späť na projekty',
     'projects.view': 'Zobraziť projekt →',
+    'projects.gallery': 'Snímky obrazovky',
 
     // --- Kontakt ----------------------------------------------------------------
     'contact.title': 'Kontakt',

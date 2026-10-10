@@ -63,6 +63,8 @@ The site is served at `https://y-a-s.net` (`site` in `astro.config.mjs`), with
 - `src/company.ts` — the legal company details (name, CVR, address, email) shown
   in the footer, on the contact page and in the privacy policy.
 - `public/` — static assets copied verbatim (images live in `public/img/`).
+  Every image in `public/img/projects/<translationKey>/` is shown as that
+  project's gallery, in file-name order; aim for at least three per project.
 - `dist/` — build output, git-ignored.
 
 ### Styling

@@ -185,6 +185,23 @@ const steps = ['discovery', 'build', 'review', 'ship'] as const;
   </main>
 
   <script>
+    // Full-screen bands: the one crossing the middle of the viewport is the
+    // active one. Its text fades in and its backdrop cross-fades with the
+    // previous band's (see "HOMEPAGE BANDS" in global.css). The styles only
+    // hide anything once `home-anim` is set, so without JS, or with reduced
+    // motion, every band is simply visible.
+    const bands = document.querySelectorAll('.home-band');
+    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('home-anim');
+      const observer = new IntersectionObserver(
+        (entries) => entries.forEach((entry) => entry.target.classList.toggle('is-active', entry.isIntersecting)),
+        { rootMargin: '-45% 0px -45% 0px' }
+      );
+      bands.forEach((band) => observer.observe(band));
+    }
+  </script>
+
+  <script>
     import * as THREE from 'three';
     import { roundedRectShape } from '../../scripts/shapes';
 

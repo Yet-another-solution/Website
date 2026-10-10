@@ -1,11 +1,13 @@
 ---
 /** A single project, shared by `/projects/[slug]/` and `/sk/projects/[slug]/`. */
+import fs from 'node:fs';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Backdrop from '../Backdrop.astro';
 import PageHero from '../PageHero.astro';
 import { defaultLang, formatDate, useTranslations, type Lang } from '../../i18n/ui';
 import { localizePath } from '../../i18n/routing';
+import { entrySlug } from '../../i18n/content';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -17,6 +19,20 @@ const { project, lang = defaultLang, alternates } = Astro.props;
 const t = useTranslations(lang);
 const { Content } = await project.render();
 const techs = project.data.tech?.split(',').map(tech => tech.trim()).filter(Boolean) ?? [];
+
+// Every image in public/img/projects/<translationKey>/ is shown as the
+// project's gallery, in file-name order — so both languages share one set and
+// adding a screenshot is just dropping a file in. The lead image is skipped.
+const galleryKey = project.data.translationKey ?? entrySlug(project);
+const galleryDir = `public/img/projects/${galleryKey}`;
+const gallery = fs.existsSync(galleryDir)
+  ? fs
+      .readdirSync(galleryDir)
+      .filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      .map((file) => `/img/projects/${galleryKey}/${file}`)
+      .filter((src) => src !== project.data.image)
+  : [];
 ---
 
 <BaseLayout
@@ -44,6 +60,24 @@ const techs = project.data.tech?.split(',').map(tech => tech.trim()).filter(Bool
           <div class="prose">
             <Content />
           </div>
+          {gallery.length > 0 && (
+            <section class="gallery">
+              <h2 class="eyebrow eyebrow--muted">{t('projects.gallery')}</h2>
+              <div class="gallery-grid">
+                {gallery.map((src, i) => (
+                  <a href={src} target="_blank" rel="noopener">
+                    <img
+                      src={src}
+                      alt={`${project.data.title} – ${t('projects.gallery')} ${i + 1}`}
+                      width="1440"
+                      height="900"
+                      loading="lazy"
+                    />
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
         <aside class="dark-card split-side">
