@@ -1,8 +1,10 @@
 ---
 /**
  * One project card, as shown on /projects/ and in the homepage's Selected Work
- * band: a flat navy tile with the tech list as its category line. The whole
- * tile is one link to the project page. Its accent colour comes from its
+ * band: a navy tile with the project's image as a darkened backdrop and the
+ * tech list as its category line. The whole tile is one link to the project
+ * page. The navy scrim sits on the card itself, so a missing or broken image
+ * still leaves a readable surface. Its accent colour comes from its
  * position in `.project-grid`, cycling through the brand mark's green, blue
  * and red (see global.css).
  */
@@ -25,6 +27,9 @@ const href = localizePath(`/projects/${entrySlug(project)}/`, lang);
 ---
 
 <a href={href} class="project-card">
+  {project.data.image && (
+    <img src={project.data.image} alt="" class="project-card-bg" loading="lazy" onerror="this.remove()" />
+  )}
   {techs.length > 0 && <p class="project-card-category">{techs.join(' · ')}</p>}
   <Heading class="project-card-title">{project.data.title}</Heading>
   <p class="project-card-desc">{project.data.description}</p>
