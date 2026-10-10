@@ -11,7 +11,6 @@ import '@fontsource/jetbrains-mono/600.css';
 import '@fontsource/jetbrains-mono/700.css';
 import '@fontsource/jetbrains-mono/700-italic.css';
 import '@fontsource/rubik-mono-one/400.css';
-import '@fontsource/nunito/700.css';
 import '../styles/global.css';
 import { company } from '../company';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
@@ -127,11 +126,8 @@ const navItems = [
     <LanguageSwitcher lang={lang} hrefs={alternateHrefs} variant="floating" />
   ) : (
     <nav class="navbar navbar-expand-lg navbar-dark yas-navbar">
-      <div class="container-fluid px-4">
-        <a class="navbar-brand yas-navbar-brand" href={localizePath('/', lang)} aria-label={t('nav.homeAria')}>
-          <img src="/img/Logo.png" alt="Y-A-S Logo" height="30" width="30" class="d-inline-block align-text-top yas-logo" loading="eager" />
-          <span class="rubik">Y-A-S</span>
-        </a>
+      <div class="yas-container yas-navbar-inner">
+        <a class="yas-navbar-brand rubik" href={localizePath('/', lang)} aria-label={t('nav.homeAria')}>Y-A-S</a>
         <div class="d-flex align-items-center gap-2 ms-auto order-lg-3">
           <LanguageSwitcher lang={lang} hrefs={alternateHrefs} />
           <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label={t('nav.toggle')}>
@@ -145,6 +141,7 @@ const navItems = [
                 <a
                   class={`nav-link yas-nav-link${section === item.section ? ' yas-nav-active' : ''}`}
                   href={localizePath(item.path, lang)}
+                  aria-current={section === item.section ? 'page' : undefined}
                 >
                   {t(item.key)}
                 </a>
@@ -158,26 +155,18 @@ const navItems = [
 
   <slot />
 
-  <footer class="yas-footer mt-5">
-    <div class="container py-5">
-      <div class="row g-4">
-        <div class="col-md-5">
-          <div class="d-flex align-items-center mb-3 gap-2">
-            <img src="/img/Logo.png" alt="Y-A-S Logo" height="32" width="32" loading="lazy" />
-            <span class="rubik fs-5 text-white">Y-A-S</span>
-          </div>
-          <p class="jet-brains-mono footer-description">
-            {t('site.description')}
-          </p>
-          <a href="https://github.com/Yet-another-solution" target="_blank" class="footer-gh-btn mt-3 d-inline-flex align-items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
-            </svg>
+  <footer class="yas-footer">
+    <div class="yas-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="rubik footer-logo">Y-A-S</span>
+          <p class="footer-description">{t('site.description')}</p>
+          <a href="https://github.com/Yet-another-solution" target="_blank" rel="noopener" class="footer-gh">
             Yet-another-solution
           </a>
         </div>
-        <div class="col-md-3">
-          <h6 class="footer-section-title">{t('footer.navigation')}</h6>
+        <div>
+          <h2 class="footer-section-title">{t('footer.navigation')}</h2>
           <ul class="list-unstyled footer-links">
             {navItems.map((item) => (
               <li><a href={localizePath(item.path, lang)}>{t(item.key)}</a></li>
@@ -185,28 +174,20 @@ const navItems = [
             <li><a href={localizePath('/privacy/', lang)}>{t('footer.privacy')}</a></li>
           </ul>
         </div>
-        <div class="col-md-4">
-          <h6 class="footer-section-title">{t('footer.team')}</h6>
-          <div class="footer-team">
-            <a href="https://github.com/MatejMa2ur" target="_blank" class="footer-team-member">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="me-2" viewBox="0 0 16 16">
-                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
-              </svg>
-              MatejMa2ur
-            </a>
-          </div>
+        <div>
+          <h2 class="footer-section-title">{t('footer.team')}</h2>
+          <ul class="list-unstyled footer-links">
+            <li><a href="https://github.com/MatejMa2ur" target="_blank" rel="noopener">MatejMa2ur</a></li>
+          </ul>
         </div>
       </div>
-      <hr class="footer-divider my-4" />
-      <div class="row">
-        <div class="col text-center">
-          <p class="jet-brains-mono footer-copy footer-legal mb-1">
-            &copy; {new Date().getFullYear()} {company.name} &middot; {t('company.cvr')} {company.cvr} &middot;
-            {company.street}, {company.city}, {t('company.country')} &middot;
-            <a href={`mailto:${company.email}`}>{company.email}</a>
-          </p>
-          <p class="jet-brains-mono footer-copy">{t('footer.builtWith')}</p>
-        </div>
+      <div class="footer-bottom">
+        <p class="footer-legal">
+          &copy; {new Date().getFullYear()} {company.name} &middot; {t('company.cvr')} {company.cvr} &middot;
+          {company.street}, {company.city}, {t('company.country')} &middot;
+          <a href={`mailto:${company.email}`}>{company.email}</a>
+        </p>
+        <p class="footer-built">{t('footer.builtWith')}</p>
       </div>
     </div>
   </footer>

@@ -341,6 +341,9 @@ const blog: SceneBuilder = ({ scene, reduceMotion }) => {
 
 const SCENES: Record<SceneName, SceneBuilder> = { workflow, ownership, blog };
 
+/** How long a diagram takes to draw itself once its band is on screen. */
+const DRAW_SECONDS = 1.8;
+
 /** How far the section has come into view, 0 as it enters and 1 once settled. */
 function sectionProgress(section: Element): number {
   const rect = section.getBoundingClientRect();
@@ -363,7 +366,22 @@ export function initSectionScene(
     watch: section,
     build(view) {
       const update = builder(view, labels);
-      return (time) => update(time, view.reduceMotion ? 1 : sectionProgress(section));
+      // The homepage marks the band on screen `is-active` (and the page
+      // `home-anim` while it does so). The diagram then draws itself over
+      // DRAW_SECONDS and wipes quickly when the band leaves, so each visit
+      // replays it. Without that marking, fall back to the scroll position.
+      const timed = document.documentElement.classList.contains('home-anim');
+      let progress = 0;
+      let previous: number | null = null;
+      return (time) => {
+        if (view.reduceMotion) return update(time, 1);
+        if (!timed) return update(time, sectionProgress(section));
+        const delta = previous === null ? 0 : Math.max(0, time - previous);
+        previous = time;
+        const step = section.classList.contains('is-active') ? delta / DRAW_SECONDS : -delta / 0.4;
+        progress = Math.min(1, Math.max(0, progress + step));
+        update(time, progress);
+      };
     },
   });
 }

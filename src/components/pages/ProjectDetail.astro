@@ -1,9 +1,13 @@
 ---
 /** A single project, shared by `/projects/[slug]/` and `/sk/projects/[slug]/`. */
+import fs from 'node:fs';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Backdrop from '../Backdrop.astro';
+import PageHero from '../PageHero.astro';
 import { defaultLang, formatDate, useTranslations, type Lang } from '../../i18n/ui';
 import { localizePath } from '../../i18n/routing';
+import { entrySlug } from '../../i18n/content';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -15,6 +19,20 @@ const { project, lang = defaultLang, alternates } = Astro.props;
 const t = useTranslations(lang);
 const { Content } = await project.render();
 const techs = project.data.tech?.split(',').map(tech => tech.trim()).filter(Boolean) ?? [];
+
+// Every image in public/img/projects/<translationKey>/ is shown as the
+// project's gallery, in file-name order — so both languages share one set and
+// adding a screenshot is just dropping a file in. The lead image is skipped.
+const galleryKey = project.data.translationKey ?? entrySlug(project);
+const galleryDir = `public/img/projects/${galleryKey}`;
+const gallery = fs.existsSync(galleryDir)
+  ? fs
+      .readdirSync(galleryDir)
+      .filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      .map((file) => `/img/projects/${galleryKey}/${file}`)
+      .filter((src) => src !== project.data.image)
+  : [];
 ---
 
 <BaseLayout
@@ -25,76 +43,74 @@ const techs = project.data.tech?.split(',').map(tech => tech.trim()).filter(Bool
   lang={lang}
   alternates={alternates}
 >
-  <div class="yas-page-canvas">
-    <div class="yas-panel">
-      <div class="yas-panel-inner">
-
-        <nav aria-label="breadcrumb" class="mb-4">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href={localizePath('/', lang)}>{t('nav.home')}</a></li>
-            <li class="breadcrumb-item"><a href={localizePath('/projects/', lang)}>{t('projects.title')}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{project.data.title}</li>
-          </ol>
-        </nav>
-
-        <div class="row">
-          <div class="col-md-8">
-            <h1 class="mb-4">{project.data.title}</h1>
-
-            {project.data.image && (
-              <div class="mb-5 d-flex justify-content-center">
-                <img
-                  src={project.data.image}
-                  alt={`${project.data.title}`}
-                  class="img-fluid"
-                  style="max-height: 500px; border: 1px solid var(--border-color);"
-                  loading="lazy"
-                />
-              </div>
-            )}
-
-            <div class="post-content">
-              <Content />
-            </div>
+  <main class="yas-page">
+    <Backdrop variant="squares" />
+    <PageHero
+      label={techs.join(' · ') || t('projects.title')}
+      title={project.data.title}
+      subtitle={project.data.description}
+    />
+    <div class="yas-container page-content">
+      <a href={localizePath('/projects/', lang)} class="text-link">{t('projects.back')}</a>
+      <div class="split">
+        <div class="split-main">
+          {project.data.image && (
+            <img src={project.data.image} alt={project.data.title} class="project-image" loading="lazy" />
+          )}
+          <div class="prose">
+            <Content />
           </div>
-
-          <div class="col-md-4">
-            <div class="project-details-panel mb-4">
-              <h5>{t('projects.details')}</h5>
-
-              {techs.length > 0 && (
-                <div class="mb-3">
-                  <strong>{t('projects.technologies')}</strong>
-                  <div class="tech-badges mt-2">
-                    {techs.map(tech => <span class="tech-badge">{tech}</span>)}
-                  </div>
-                </div>
-              )}
-
-              <div class="mb-3">
-                <strong>{t('projects.date')}</strong>
-                <p class="mb-0 mt-1">{formatDate(project.data.date, lang)}</p>
+          {gallery.length > 0 && (
+            <section class="gallery">
+              <h2 class="eyebrow eyebrow--muted">{t('projects.gallery')}</h2>
+              <div class="gallery-grid">
+                {gallery.map((src, i) => (
+                  <a href={src} target="_blank" rel="noopener">
+                    <img
+                      src={src}
+                      alt={`${project.data.title} – ${t('projects.gallery')} ${i + 1}`}
+                      width="1440"
+                      height="900"
+                      loading="lazy"
+                    />
+                  </a>
+                ))}
               </div>
-
-              {project.data.webUrl && (
-                <a href={project.data.webUrl} target="_blank" class="cta-btn-outline d-flex justify-content-center mb-2">
-                  {t('projects.visitPage')}
-                </a>
-              )}
-              {project.data.github && (
-                <a href={project.data.github} target="_blank" class="cta-btn-primary d-flex justify-content-center mb-2">
-                  {t('projects.githubRepo')}
-                </a>
-              )}
-            </div>
-
-            <a href={localizePath('/projects/', lang)} class="cta-btn-outline d-flex justify-content-center">
-              {t('projects.back')}
-            </a>
-          </div>
+            </section>
+          )}
         </div>
 
+        <aside class="dark-card split-side">
+          <p class="eyebrow eyebrow--green">{t('projects.details')}</p>
+
+          {techs.length > 0 && (
+            <div>
+              <p class="eyebrow eyebrow--dim">{t('projects.technologies')}</p>
+              <ul class="tech-list">
+                {techs.map((tech) => <li class="chip chip--ghost">{tech}</li>)}
+              </ul>
+            </div>
+          )}
+
+          <div>
+            <p class="eyebrow eyebrow--dim">{t('projects.date')}</p>
+            <p class="dark-card-value">{formatDate(project.data.date, lang)}</p>
+          </div>
+
+          {project.data.webUrl && (
+            <a href={project.data.webUrl} target="_blank" rel="noopener" class="btn-yas btn-yas--green btn-yas--icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+              {t('projects.visitPage')}
+            </a>
+          )}
+          {project.data.github && (
+            <a href={project.data.github} target="_blank" rel="noopener" class="btn-yas btn-yas--ghost btn-yas--icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+              {t('projects.githubRepo')}
+            </a>
+          )}
+        </aside>
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>

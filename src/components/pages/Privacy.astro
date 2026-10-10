@@ -1,6 +1,8 @@
 ---
 /** The privacy policy, shared by `/privacy/` and `/sk/privacy/`. */
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Backdrop from '../Backdrop.astro';
+import PageHero from '../PageHero.astro';
 import { company } from '../../company';
 import { defaultLang, formatDate, useTranslations, type Lang } from '../../i18n/ui';
 
@@ -24,51 +26,43 @@ const sections = ['collect', 'not', 'why', 'recipients', 'transfers', 'retention
   description={t('privacy.description')}
   lang={lang}
 >
-  <div class="yas-page-canvas">
-    <div class="yas-panel">
-      <div class="yas-panel-inner">
+  <main class="yas-page">
+    <Backdrop variant="lines" />
+    <PageHero
+      label={t('privacy.label')}
+      title={t('privacy.title')}
+      subtitle={`${t('privacy.updated')} ${formatDate(lastUpdated, lang)}`}
+    />
+    <div class="yas-container page-content">
+      <div class="prose">
+        <p>{t('privacy.who.body')}</p>
+        <address class="light-card">
+          {company.name}<br />
+          {t('company.cvr')} {company.cvr}<br />
+          {company.street}<br />
+          {company.city}, {t('company.country')}<br />
+          <a href={`mailto:${company.email}`}>{company.email}</a>
+        </address>
 
-        <div class="yas-panel-header">
-          <h1 class="yas-panel-title">{t('privacy.title')}</h1>
-        </div>
+        {sections.map((section) => (
+          <>
+            <h2>{t(`privacy.${section}.heading` as const)}</h2>
+            <p>{t(`privacy.${section}.body` as const)}</p>
+          </>
+        ))}
 
-        <div class="post-content" style="max-width: 720px;">
-          <h2>{t('privacy.who.heading')}</h2>
-          <p>{t('privacy.who.body')}</p>
-          <address>
-            {company.name}<br />
-            {t('company.cvr')} {company.cvr}<br />
-            {company.street}<br />
-            {company.city}, {t('company.country')}<br />
-            <a href={`mailto:${company.email}`}>{company.email}</a>
-          </address>
+        <h2>{t('privacy.rights.heading')}</h2>
+        <p>
+          {t('privacy.rights.body')}{' '}
+          <a href={`mailto:${company.email}`}>{company.email}</a>.
+        </p>
 
-          {sections.map((section) => (
-            <>
-              <h2>{t(`privacy.${section}.heading` as const)}</h2>
-              <p>{t(`privacy.${section}.body` as const)}</p>
-            </>
-          ))}
-
-          <h2>{t('privacy.rights.heading')}</h2>
-          <p>
-            {t('privacy.rights.body')}{' '}
-            <a href={`mailto:${company.email}`}>{company.email}</a>.
-          </p>
-
-          <h2>{t('privacy.complaints.heading')}</h2>
-          <p>
-            {t('privacy.complaints.body')}{' '}
-            <a href="https://www.datatilsynet.dk" target="_blank" rel="noopener">datatilsynet.dk</a>.
-          </p>
-
-          <div class="yas-rule"></div>
-          <p style="color: var(--main-dark-text-color); font-size: 0.9rem;">
-            {t('privacy.updated')} {formatDate(lastUpdated, lang)}
-          </p>
-        </div>
-
+        <h2>{t('privacy.complaints.heading')}</h2>
+        <p>
+          {t('privacy.complaints.body')}{' '}
+          <a href="https://www.datatilsynet.dk" target="_blank" rel="noopener">datatilsynet.dk</a>.
+        </p>
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>

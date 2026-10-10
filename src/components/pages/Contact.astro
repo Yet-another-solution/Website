@@ -1,6 +1,8 @@
 ---
 /** The contact page, shared by `/contact/` and `/sk/contact/`. */
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Backdrop from '../Backdrop.astro';
+import PageHero from '../PageHero.astro';
 import { company } from '../../company';
 import { defaultLang, useTranslations, type Lang } from '../../i18n/ui';
 
@@ -18,41 +20,35 @@ const t = useTranslations(lang);
   section="contact"
   lang={lang}
 >
-  <div class="yas-page-canvas">
-    <div class="yas-panel">
-      <div class="yas-panel-inner">
-
-        <div class="yas-panel-header">
-          <h1 class="yas-panel-title">{t('contact.title')}</h1>
-        </div>
-
-        <div class="post-content" style="max-width: 600px;">
-          <h2>{t('contact.heading')}</h2>
-          <p>{t('contact.body')}</p>
-          <p>
-            <strong>{t('contact.email')}</strong>{' '}
-            <a href={`mailto:${company.email}`}>{company.email}</a>
-          </p>
-          <p>
-            <strong>{t('contact.github')}</strong>{' '}
-            <a href="https://github.com/Yet-another-solution" target="_blank">
+  <main class="yas-page">
+    <Backdrop variant="arcs" />
+    <PageHero label={t('contact.title')} title={t('contact.heading')} subtitle={t('contact.body')} />
+    <div class="yas-container page-content">
+      <div class="split">
+        <div class="split-main contact-links">
+          <div>
+            <p class="eyebrow eyebrow--muted">{t('contact.email')}</p>
+            <a href={`mailto:${company.email}`} class="contact-value">{company.email}</a>
+          </div>
+          <div>
+            <p class="eyebrow eyebrow--muted">{t('contact.github')}</p>
+            <a href="https://github.com/Yet-another-solution" target="_blank" rel="noopener" class="contact-value">
               Yet-another-solution
             </a>
-          </p>
-          <h2>{t('contact.company')}</h2>
-          <address>
-            {company.name}<br />
-            {t('company.cvr')} {company.cvr}<br />
-            {company.street}<br />
-            {company.city}, {t('company.country')}
-          </address>
-          <div class="yas-rule"></div>
-          <p style="color: var(--main-dark-text-color); font-size: 0.9rem;">
-            {t('contact.closing')}
-          </p>
+          </div>
+          <p class="lead-text">{t('contact.closing')}</p>
         </div>
 
+        <aside class="dark-card split-side split-side--wide">
+          <p class="eyebrow eyebrow--green">{t('contact.company')}</p>
+          <address class="company-card">
+            <span class="company-card-name">{company.name}</span>
+            <span>{t('company.cvr')} {company.cvr}</span>
+            <span>{company.street}</span>
+            <span>{company.city}, {t('company.country')}</span>
+          </address>
+        </aside>
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>

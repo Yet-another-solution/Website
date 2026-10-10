@@ -1,9 +1,9 @@
 ---
 /**
- * A small outline diagram for one of the homepage's colour-washed sections.
+ * A small outline diagram for one of the homepage's bands.
  * The scene itself lives in src/scripts/sectionScenes.ts; this component only
  * provides the canvas and wires it to the nearest `.reveal-section`, whose
- * position in the viewport drives the reveal.
+ * `is-active` state starts the diagram drawing itself (see sectionScenes.ts).
  *
  * The scene's words are drawn into canvas textures, not DOM nodes, so they
  * can't be translated by the page's markup. They ride along in a

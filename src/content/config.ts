@@ -30,7 +30,8 @@ const projects = defineCollection({
     draft: z.boolean().default(false),
     image: z.string().optional(),
     tech: z.string().optional(),
-    description: z.string().optional(),
+    // Required: it is the project card's text, the page subtitle and the meta description.
+    description: z.string().min(1),
     github: z.string().optional(),
     webUrl: z.string().optional(),
     // See the blog collection — links an entry to its translations.

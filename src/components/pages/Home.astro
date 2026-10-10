@@ -5,7 +5,9 @@
  * WebGL choreography, which keys off section document order — lives here once.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Backdrop from '../Backdrop.astro';
 import SectionScene from '../SectionScene.astro';
+import PostCard from '../PostCard.astro';
 import ProjectCard from '../ProjectCard.astro';
 import { defaultLang, useTranslations, type Lang } from '../../i18n/ui';
 import { localizePath } from '../../i18n/routing';
@@ -22,6 +24,13 @@ const t = useTranslations(lang);
 const featuredProjects = (await getLocalizedCollection('projects', lang))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
+
+// The most recent post sits beside the blog band's diagram.
+const latestPosts = (await getLocalizedCollection('blog', lang))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 1);
+
+const steps = ['discovery', 'build', 'review', 'ship'] as const;
 ---
 
 <BaseLayout isHome={true} lang={lang}>
@@ -91,185 +100,118 @@ const featuredProjects = (await getLocalizedCollection('projects', lang))
   <!-- Transition line -->
   <div id="start"></div>
 
-  <!-- Content panel -->
-  <div class="yas-page-canvas">
-    <div class="yas-panel">
-      <div class="yas-panel-inner" id="what">
-
-        <!-- Intro — the only full-height band; this is the canonical tech list -->
-        <div class="homepage-intro reveal-section reveal-section--tall color-wash--neutral fade-in-up">
-          <div class="reveal-inner reveal-inner--neutral">
-            <div class="row align-items-center g-5">
-              <div class="col-lg-6">
-                <span class="intro-label">{t('home.intro.label')}</span>
-                <h2 class="intro-heading">{t('home.intro.heading')}<span class="accent-dot">.</span></h2>
-                <p class="intro-body">
-                  {t('home.intro.body')}
-                </p>
-                <div class="tech-badges mb-4">
-                  <span class="tech-badge">C#</span>
-                  <span class="tech-badge">Blazor</span>
-                  <span class="tech-badge">PostgreSQL</span>
-                  <span class="tech-badge">Azure</span>
-                  <span class="tech-badge">GitHub</span>
-                </div>
-                <div class="d-flex gap-3 flex-wrap">
-                  <a href={localizePath('/projects/', lang)} class="cta-btn-primary">{t('home.intro.viewProjects')}</a>
-                  <a href={localizePath('/contact/', lang)} class="cta-btn-outline">{t('home.intro.contactUs')}</a>
-                </div>
-              </div>
-              <div class="col-lg-6 d-none d-lg-block">
-                <div class="tech-stack-wrapper">
-                  <img src="/img/TechStack.png" class="img-fluid tech-stack-img" alt={t('home.intro.techAlt')} loading="lazy" />
-                </div>
-              </div>
-            </div>
-          </div>
+  <!-- The five bands below. The hero script pairs each of its squares with a
+       `.reveal-section` by document order and reads the band's `.eyebrow` for
+       the square's tooltip, so the order, the count and those two class names
+       are load-bearing. -->
+  <main id="what">
+    <section class="home-band reveal-section">
+      <Backdrop variant="rings" />
+      <div class="yas-container home-band-inner">
+        <div class="accent-bar"></div>
+        <p class="eyebrow">{t('home.intro.label')}</p>
+        <h2 class="home-heading home-heading--xl">{t('home.intro.heading')}<span class="accent-dot">.</span></h2>
+        <p class="lead-text">{t('home.intro.body')}</p>
+        <ul class="chip-row list-unstyled">
+          {['C#', 'Blazor', 'PostgreSQL', 'Azure', 'GitHub'].map((tech) => <li class="pill pill--static">{tech}</li>)}
+        </ul>
+        <div class="btn-row">
+          <a href={localizePath('/projects/', lang)} class="btn-yas btn-yas--navy">{t('home.intro.viewProjects')}</a>
+          <a href={localizePath('/contact/', lang)} class="btn-yas btn-yas--outline">{t('home.intro.contactUs')}</a>
         </div>
-
-        <!-- Why Y-A-S -->
-        <div class="yas-rule"></div>
-        <div class="reveal-section color-wash--green fade-in-up">
-          <div class="reveal-inner reveal-inner--green">
-            <div class="row align-items-center g-5">
-              <div class="col-lg-6">
-                <span class="intro-label">{t('home.why.label')}</span>
-                <h2 class="blog-cta-heading">{t('home.why.heading')}</h2>
-                <p class="blog-cta-body" style="max-width: 640px;">
-                  {t('home.why.body')}
-                </p>
-              </div>
-              <div class="col-lg-6 d-none d-lg-block">
-                <SectionScene name="ownership" lang={lang} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- How We Work -->
-        <div class="yas-rule"></div>
-        <div class="reveal-section color-wash--blue fade-in-up">
-          <div class="reveal-inner reveal-inner--blue">
-            <div class="row align-items-center g-5">
-              <div class="col-lg-6">
-                <span class="intro-label">{t('home.how.label')}</span>
-                <h2 class="blog-cta-heading">{t('home.how.heading')}</h2>
-                <p class="blog-cta-body" style="max-width: 640px;">
-                  {t('home.how.body')}
-                </p>
-                <div class="d-flex gap-2 flex-wrap mt-3">
-                  <span class="outline-badge">{t('home.how.discovery')}</span>
-                  <span class="outline-badge">{t('home.how.build')}</span>
-                  <span class="outline-badge outline-badge--blue">{t('home.how.review')}</span>
-                  <span class="outline-badge outline-badge--blue">{t('home.how.ship')}</span>
-                </div>
-              </div>
-              <div class="col-lg-6 d-none d-lg-block">
-                <SectionScene name="workflow" lang={lang} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Selected Work -->
-        <div class="yas-rule"></div>
-        <div class="reveal-section color-wash--red fade-in-up">
-          <div class="reveal-inner reveal-inner--red">
-            <span class="intro-label">{t('home.work.label')}</span>
-            <h2 class="blog-cta-heading">{t('home.work.heading')}</h2>
-            <p class="blog-cta-body" style="max-width: 640px;">
-              {t('home.work.body')}
-            </p>
-            <div class="row g-4 mt-1">
-              {featuredProjects.map((project) => (
-                <div class="col-md-6 col-lg-4">
-                  <ProjectCard project={project} lang={lang} />
-                </div>
-              ))}
-            </div>
-            <div class="mt-4">
-              <a href={localizePath('/projects/', lang)} class="cta-btn-outline">{t('home.work.viewAll')}</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Blog CTA -->
-        <div class="yas-rule"></div>
-        <div class="reveal-section color-wash--navy fade-in-up">
-          <div class="reveal-inner reveal-inner--navy">
-            <div class="row align-items-center g-4">
-              <div class="col-md-8">
-                <span class="intro-label">{t('home.blog.label')}</span>
-                <h2 class="blog-cta-heading">{t('home.blog.heading')}</h2>
-                <p class="blog-cta-body">
-                  {t('home.blog.body')}
-                </p>
-              </div>
-              <div class="col-md-4 text-center mt-3 mt-md-0">
-                <div class="d-none d-lg-block mb-4">
-                  <SectionScene name="blog" lang={lang} />
-                </div>
-                <a href={localizePath('/blog/', lang)} class="cta-btn-primary cta-btn-large">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
-                    <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
-                    <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
-                    <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
-                  </svg>
-                  {t('home.blog.explore')}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
-    </div>
-  </div>
+    </section>
 
-  <style>
-    /* Guards against the full-bleed sections below introducing a stray
-       horizontal scrollbar on some browsers (100vw includes scrollbar width). */
-    .yas-page-canvas { overflow-x: hidden; }
+    <section class="home-band home-band--alt home-band--mirror reveal-section">
+      <Backdrop variant="arcs" />
+      <div class="yas-container home-band-inner">
+        <div class="home-split">
+          <div class="home-split-text">
+            <div class="accent-bar"></div>
+            <p class="eyebrow">{t('home.why.label')}</p>
+            <h2 class="home-heading">{t('home.why.heading')}</h2>
+            <p class="lead-text">{t('home.why.body')}</p>
+          </div>
+          <div class="home-split-scene"><SectionScene name="ownership" lang={lang} /></div>
+        </div>
+      </div>
+    </section>
 
-    /* The 5 sections below the hero are full-width bands tinted to match one
-       of the stacked squares, so scrolling through the page echoes the logo's
-       own colour order (neutral, green, blue, red, navy). The hero script
-       pairs each square with a section by document order, so that order is
-       load-bearing. Only the intro is a full screen; the rest size to their
-       content so the page stays short. The bleed trick below breaks the band
-       out of .yas-panel-inner's centered, max-width column while
-       .reveal-inner keeps the actual content readable at that same width. */
-    .reveal-section {
-      position: relative;
-      left: 50%;
-      right: 50%;
-      width: 100vw;
-      margin-left: -50vw;
-      margin-right: -50vw;
-      min-height: 0;
-      padding: 4rem 0;
-      display: flex;
-      align-items: center;
+    <section class="home-band reveal-section">
+      <Backdrop variant="grid" />
+      <div class="yas-container home-band-inner">
+        <div class="home-split">
+          <div class="home-split-text">
+            <div class="accent-bar"></div>
+            <p class="eyebrow">{t('home.how.label')}</p>
+            <h2 class="home-heading">{t('home.how.heading')}</h2>
+            <p class="lead-text">{t('home.how.body')}</p>
+          </div>
+          <div class="home-split-scene"><SectionScene name="workflow" lang={lang} /></div>
+        </div>
+        <ol class="step-grid list-unstyled">
+          {steps.map((step, i) => (
+            <li class="step-card">
+              <span class="step-number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="step-title">{t(`home.how.${step}` as const)}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="home-band home-band--alt reveal-section">
+      <Backdrop variant="diamonds" />
+      <div class="yas-container home-band-inner">
+        <div class="accent-bar"></div>
+        <p class="eyebrow">{t('home.work.label')}</p>
+        <h2 class="home-heading">{t('home.work.heading')}</h2>
+        <p class="lead-text">{t('home.work.body')}</p>
+        <div class="project-grid">
+          {featuredProjects.map((project) => <ProjectCard project={project} lang={lang} />)}
+        </div>
+        <div class="btn-row">
+          <a href={localizePath('/projects/', lang)} class="btn-yas btn-yas--outline">{t('home.work.viewAll')}</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-band reveal-section">
+      <Backdrop variant="lines" />
+      <div class="yas-container home-band-inner">
+        <div class="accent-bar"></div>
+        <p class="eyebrow">{t('home.blog.label')}</p>
+        <h2 class="home-heading">{t('home.blog.heading')}</h2>
+        <p class="lead-text">{t('home.blog.body')}</p>
+        <div class="home-split">
+          <div class="home-split-text">
+            {latestPosts.map((post) => <PostCard post={post} lang={lang} heading="h3" />)}
+          </div>
+          <div class="home-split-scene"><SectionScene name="blog" lang={lang} /></div>
+        </div>
+        <div class="btn-row">
+          <a href={localizePath('/blog/', lang)} class="btn-yas btn-yas--navy">{t('home.blog.explore')}</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Full-screen bands: the one crossing the middle of the viewport is the
+    // active one. Its text fades in, its diagram draws itself, and its
+    // backdrop cross-fades with the previous band's (see "HOMEPAGE BANDS" in global.css). The styles only
+    // hide anything once `home-anim` is set, so without JS, or with reduced
+    // motion, every band is simply visible.
+    const bands = document.querySelectorAll('.home-band');
+    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('home-anim');
+      const observer = new IntersectionObserver(
+        (entries) => entries.forEach((entry) => entry.target.classList.toggle('is-active', entry.isIntersecting)),
+        { rootMargin: '-45% 0px -45% 0px' }
+      );
+      bands.forEach((band) => observer.observe(band));
     }
-    .reveal-section--tall { min-height: 100vh; }
-    .reveal-inner {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2.5rem 1.5rem 2.5rem 1.75rem;
-      border-left: 3px solid transparent;
-    }
-    .color-wash--neutral { background: rgba(229, 226, 225, 0.35); }
-    .color-wash--green { background: rgba(102, 204, 138, 0.08); }
-    .color-wash--blue { background: rgba(55, 124, 251, 0.08); }
-    .color-wash--red { background: rgba(234, 82, 52, 0.08); }
-    .color-wash--navy { background: rgba(51, 60, 77, 0.07); }
-    .reveal-inner--neutral { border-left-color: var(--border-color); }
-    .reveal-inner--green { border-left-color: var(--primary-color); }
-    .reveal-inner--blue { border-left-color: var(--secondary-color); }
-    .reveal-inner--red { border-left-color: var(--danger-color); }
-    .reveal-inner--navy { border-left-color: var(--main-dark-color); }
-  </style>
+  </script>
 
   <script>
     import * as THREE from 'three';
@@ -412,7 +354,7 @@ const featuredProjects = (await getLocalizedCollection('projects', lang))
 
       function sectionLabel(i: number) {
         const section = revealSections[i];
-        const label = section ? section.querySelector('.intro-label') : null;
+        const label = section ? section.querySelector('.eyebrow') : null;
         return label ? label.textContent ?? '' : '';
       }
 
@@ -475,7 +417,10 @@ const featuredProjects = (await getLocalizedCollection('projects', lang))
         const halfDiamond = (diamondSize * Math.SQRT2) / 2;
         const step = diamondSize * stepRatio;
         const baseX = frameRect.left + inset + halfDiamond;
-        const baseY = frameRect.bottom - inset - halfDiamond;
+        // The rects are viewport-relative, so add the scroll offset back: the
+        // stack is pinned where the hero frame sits at the top of the page,
+        // even when this runs (on resize) after the hero has scrolled away.
+        const baseY = frameRect.bottom + window.scrollY - inset - halfDiamond;
         // Row 0 (neutral) sits on top, row 4 (navy) on the bottom — matching
         // the brand mark's own top-to-bottom order.
         return rows.map((_, i) => ({
@@ -510,36 +455,33 @@ const featuredProjects = (await getLocalizedCollection('projects', lang))
         if (settled) stickyTargets = computeTargets();
       });
 
-      const footer = document.querySelector('.yas-footer');
+      // Distance from the viewport's left edge to where the bands' text
+      // starts, i.e. the free margin the settled stack may occupy.
+      const bandInner = document.querySelector('.home-band-inner');
+      function gutterWidth() {
+        if (!bandInner) return 0;
+        return bandInner.getBoundingClientRect().left + parseFloat(getComputedStyle(bandInner).paddingLeft);
+      }
+      // Horizontal, so scrolling never changes it: measured once, then on resize.
+      let gutter = gutterWidth();
+      window.addEventListener('resize', () => { gutter = gutterWidth(); });
 
-      // How far each square has progressed toward "shrinking away", 0 (full
-      // size) to 1 (smallest), driven by how far its color-matched section
-      // has scrolled into view rather than a one-shot trigger — so it scrubs
-      // cleanly both ways as you scroll up and down.
-      function computeRemoval() {
-        const removal = [0, 0, 0, 0, 0];
-        const startLine = height * 0.9;
-        const endLine = height * 0.3;
-        revealSections.forEach((section, k) => {
-          if (k > 4) return;
+      // Size of a square that is not the current one, relative to full size.
+      const restingSize = 0.4;
+
+      // How much each square is "the current one", 0 to 1: 1 while its
+      // section covers the middle of the viewport, falling off over half a
+      // screen on either side so it scrubs smoothly both ways as you scroll.
+      // Above the first band and down in the footer nothing is current.
+      function computeFocus() {
+        const middle = height / 2;
+        return groups.map((_, k) => {
+          const section = revealSections[k];
+          if (!section) return 0;
           const rect = section.getBoundingClientRect();
-          const t = (startLine - rect.top) / (startLine - endLine);
-          removal[k] = Math.min(1, Math.max(0, t));
+          const distance = Math.max(rect.top - middle, middle - rect.bottom, 0);
+          return Math.max(0, 1 - distance / (height / 2));
         });
-        // The last section's own threshold may not be reachable on a short
-        // page (there's simply no more room to scroll it further up), which
-        // would otherwise leave the last square full-size and overlapping
-        // the footer. Once the footer itself comes into view, force every
-        // square the rest of the way down regardless of section position.
-        if (footer) {
-          const footerRect = footer.getBoundingClientRect();
-          const footerProgress = (height * 0.9 - footerRect.top) / (height * 0.6);
-          const clamped = Math.min(1, Math.max(0, footerProgress));
-          for (let i = 0; i < removal.length; i++) {
-            removal[i] = Math.max(removal[i], clamped);
-          }
-        }
-        return removal;
       }
 
       function animate(now: number) {
@@ -571,15 +513,29 @@ const featuredProjects = (await getLocalizedCollection('projects', lang))
             }
           }
         } else {
-          const removal = computeRemoval();
+          const focus = computeFocus();
+          // Below the hero the bands' text starts at the page gutter, so the
+          // stack slides into that gutter (and shrinks to fit it) as the hero
+          // scrolls away, instead of sitting on top of the headings.
+          const leave = ease(Math.min(1, Math.max(0, window.scrollY / (height * 0.6))));
+          const bottom = stickyTargets[stickyTargets.length - 1];
+          const halfDiagonal = (bottom.scale * baseSize * Math.SQRT2) / 2;
+          // Too narrow a gutter (phones) would leave five stray dots, so there
+          // the stack shrinks away entirely.
+          const fit = gutter < 56 ? 0 : Math.min(1, (gutter / 2 - 8) / halfDiagonal);
+          // One factor for size and row spacing alike, so the stack scales as
+          // a single mark instead of drifting apart.
+          const stack = 1 + (fit - 1) * leave;
           groups.forEach((group, i) => {
             const base = stickyTargets[i];
-            // Squares stay put and simply shrink as their matching section
-            // scrolls past, rather than flying off screen.
-            const shrink = ease(removal[i]);
-            group.position.set(base.x, base.y, group.position.z);
+            const x = base.x + (gutter / 2 - base.x) * leave;
+            const y = bottom.y - (bottom.y - base.y) * stack;
+            group.position.set(x, y, group.position.z);
             group.rotation.set(0, 0, Math.PI / 4);
-            const s = base.scale * (1 - shrink * 0.7);
+            // Full size in the hero. Past it every square is small, and only
+            // the one whose section is on screen grows back.
+            const size = restingSize + (1 - restingSize) * ease(focus[i]);
+            const s = base.scale * stack * (1 + (size - 1) * leave);
             group.scale.set(s, s, 1);
           });
         }
