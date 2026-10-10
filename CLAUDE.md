@@ -29,7 +29,7 @@ output in `dist/`, not by assuming a green build means correct.
 npm i --no-save @astrojs/check typescript && npx astro check
 ```
 
-It reports six pre-existing errors, all from `three` shipping no type
+It reports two pre-existing errors, both from `three` shipping no type
 declarations — that is the known baseline, not a regression.
 
 ## Deployment
@@ -48,16 +48,16 @@ The site is served at `https://y-a-s.net` (`site` in `astro.config.mjs`), with
 - `src/pages/` — routes. English routes sit at the root; their Slovak twins live
   under `src/pages/sk/`. Both are thin wrappers around `src/components/pages/`.
 - `src/components/pages/` — one component per page, holding the actual markup.
-- `src/components/` — shared components (`ProjectCard`, `SectionScene`,
-  `LanguageSwitcher`).
+- `src/components/` — shared components: `PageHero` (the title block on every
+  inner page), `Backdrop` (the line art behind a page), `PostCard`,
+  `ProjectCard`, `BlogFilters`, `LanguageSwitcher`.
 - `src/layouts/BaseLayout.astro` — the single layout: `<head>`, SEO and social
   tags, navbar, footer.
 - `src/content/` — the `blog` and `projects` content collections, with their
   Zod schemas in `src/content/config.ts`.
 - `src/i18n/` — the translation catalogue and locale helpers (see below).
-- `src/scripts/` — the Three.js code: `sceneKit.ts` (renderer, camera and
-  visibility-gated render loop), `shapes.ts` (geometry helpers), and
-  `sectionScenes.ts` (the homepage diagrams).
+- `src/scripts/shapes.ts` — the rounded-rectangle helper for the homepage
+  hero's Three.js scene.
 - `src/styles/global.css` — all site CSS, imported once by `BaseLayout`.
 - `src/utils/slugify.ts` — tag and series URL segments.
 - `src/company.ts` — the legal company details (name, CVR, address, email) shown
@@ -67,13 +67,22 @@ The site is served at `https://y-a-s.net` (`site` in `astro.config.mjs`), with
 
 ### Styling
 Bootstrap 5.3.2 (its CSS, plus only the `collapse` JS plugin for the navbar
-toggler) and the fonts — JetBrains Mono, Rubik Mono
-One and Nunito, via `@fontsource/*` — are npm dependencies, imported at the top
+toggler) and the fonts — JetBrains Mono and Rubik Mono
+One, via `@fontsource/*` — are npm dependencies, imported at the top
 of `BaseLayout.astro` and bundled into `dist/_astro/`. Everything else is in
 `src/styles/global.css`, which defines the brand palette as custom properties on
 `:root` (`--main-dark-color`, `--primary-color`, …). JetBrains Mono is the
-default face site-wide; `.rubik` is the display face used for the wordmark and
-panel titles.
+default face site-wide; Rubik Mono One is the display face used for the
+wordmark, page titles and card titles.
+
+Pages are light (white, with `--page-alt-color` for alternate bands) between a
+navy header and footer; corners are square. Every inner page is a
+`<main class="yas-page">` holding a `Backdrop`, a `PageHero` and a
+`.yas-container` — the 1440px frame with 120px gutters that everything lines up
+on. `Backdrop` takes a `variant`; each page type uses a different one. It needs
+a positioned, clipping ancestor (`.yas-page`, `.home-band`) and spans its full
+width: the large shapes are pinned to the right edge and the small ones to the
+left, so they pass behind titles, not body text.
 
 **Do not load anything from a third-party origin** (CDN stylesheets, hosted
 fonts, analytics, embeds, hot-linked images). The privacy policy at `/privacy/` states that a page
@@ -87,12 +96,11 @@ stack (inline script in `src/components/pages/Home.astro`), then pins them to
 the viewport and shrinks each one as its colour-matched section scrolls past.
 **The five `.reveal-section` bands below the hero are paired with the squares by
 document order**, so reordering or adding a band changes which square points
-where. Each band's `.intro-label` is also what the hero tooltip reads.
+where. Each band's `.eyebrow` is also what the hero tooltip reads. Once the hero
+scrolls away, the stack slides into the page gutter (measured from
+`.home-band-inner`) so it does not cover the bands' headings.
 
-`SectionScene.astro` renders the smaller per-section diagrams; they sit in the
-same `.reveal-section` whose scroll position drives their reveal.
-
-Both respect `prefers-reduced-motion` and fall back to static content if WebGL
+It respects `prefers-reduced-motion` and falls back to a static image if WebGL
 throws.
 
 ### SEO
@@ -135,10 +143,6 @@ served from a `/sk/` prefix. Adding a language therefore breaks no existing link
 Add the key to **both** `en` and `sk` in `src/i18n/ui.ts`. The catalogue is typed
 with `satisfies Record<Lang, ...>`, so a key missing from one language is a
 compile-time error. Never inline a user-visible English string into a component.
-
-Text drawn into the WebGL diagrams (`src/scripts/sectionScenes.ts`) cannot be
-translated by the markup — it is baked into canvas textures. `SectionScene.astro`
-passes those labels through a `data-scene-labels` attribute instead.
 
 ## Content Management
 

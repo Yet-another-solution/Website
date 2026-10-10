@@ -2,6 +2,8 @@
 /** A single project, shared by `/projects/[slug]/` and `/sk/projects/[slug]/`. */
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Backdrop from '../Backdrop.astro';
+import PageHero from '../PageHero.astro';
 import { defaultLang, formatDate, useTranslations, type Lang } from '../../i18n/ui';
 import { localizePath } from '../../i18n/routing';
 
@@ -25,76 +27,54 @@ const techs = project.data.tech?.split(',').map(tech => tech.trim()).filter(Bool
   lang={lang}
   alternates={alternates}
 >
-  <div class="yas-page-canvas">
-    <div class="yas-panel">
-      <div class="yas-panel-inner">
-
-        <nav aria-label="breadcrumb" class="mb-4">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href={localizePath('/', lang)}>{t('nav.home')}</a></li>
-            <li class="breadcrumb-item"><a href={localizePath('/projects/', lang)}>{t('projects.title')}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{project.data.title}</li>
-          </ol>
-        </nav>
-
-        <div class="row">
-          <div class="col-md-8">
-            <h1 class="mb-4">{project.data.title}</h1>
-
-            {project.data.image && (
-              <div class="mb-5 d-flex justify-content-center">
-                <img
-                  src={project.data.image}
-                  alt={`${project.data.title}`}
-                  class="img-fluid"
-                  style="max-height: 500px; border: 1px solid var(--border-color);"
-                  loading="lazy"
-                />
-              </div>
-            )}
-
-            <div class="post-content">
-              <Content />
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <div class="project-details-panel mb-4">
-              <h5>{t('projects.details')}</h5>
-
-              {techs.length > 0 && (
-                <div class="mb-3">
-                  <strong>{t('projects.technologies')}</strong>
-                  <div class="tech-badges mt-2">
-                    {techs.map(tech => <span class="tech-badge">{tech}</span>)}
-                  </div>
-                </div>
-              )}
-
-              <div class="mb-3">
-                <strong>{t('projects.date')}</strong>
-                <p class="mb-0 mt-1">{formatDate(project.data.date, lang)}</p>
-              </div>
-
-              {project.data.webUrl && (
-                <a href={project.data.webUrl} target="_blank" class="cta-btn-outline d-flex justify-content-center mb-2">
-                  {t('projects.visitPage')}
-                </a>
-              )}
-              {project.data.github && (
-                <a href={project.data.github} target="_blank" class="cta-btn-primary d-flex justify-content-center mb-2">
-                  {t('projects.githubRepo')}
-                </a>
-              )}
-            </div>
-
-            <a href={localizePath('/projects/', lang)} class="cta-btn-outline d-flex justify-content-center">
-              {t('projects.back')}
-            </a>
+  <main class="yas-page">
+    <Backdrop variant="squares" />
+    <PageHero
+      label={techs.join(' · ') || t('projects.title')}
+      title={project.data.title}
+      subtitle={project.data.description}
+    />
+    <div class="yas-container page-content">
+      <a href={localizePath('/projects/', lang)} class="text-link">{t('projects.back')}</a>
+      <div class="split">
+        <div class="split-main">
+          {project.data.image && (
+            <img src={project.data.image} alt={project.data.title} class="project-image" loading="lazy" />
+          )}
+          <div class="prose">
+            <Content />
           </div>
         </div>
 
+        <aside class="dark-card split-side">
+          <p class="eyebrow eyebrow--green">{t('projects.details')}</p>
+
+          {techs.length > 0 && (
+            <div>
+              <p class="eyebrow eyebrow--dim">{t('projects.technologies')}</p>
+              <ul class="tech-list">
+                {techs.map((tech) => <li class="chip chip--ghost">{tech}</li>)}
+              </ul>
+            </div>
+          )}
+
+          <div>
+            <p class="eyebrow eyebrow--dim">{t('projects.date')}</p>
+            <p class="dark-card-value">{formatDate(project.data.date, lang)}</p>
+          </div>
+
+          {project.data.webUrl && (
+            <a href={project.data.webUrl} target="_blank" rel="noopener" class="btn-yas btn-yas--green">
+              {t('projects.visitPage')}
+            </a>
+          )}
+          {project.data.github && (
+            <a href={project.data.github} target="_blank" rel="noopener" class="btn-yas btn-yas--ghost">
+              {t('projects.githubRepo')}
+            </a>
+          )}
+        </aside>
       </div>
     </div>
-  </div>
+  </main>
 </BaseLayout>

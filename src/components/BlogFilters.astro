@@ -1,0 +1,55 @@
+---
+/**
+ * The "browse by tag / by series" pill rows above a post grid, shared by the
+ * blog index and the tag pages. On a tag page the current tag is filled in.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { slugify } from '../utils/slugify';
+import { defaultLang, pluralPosts, useTranslations, type Lang } from '../i18n/ui';
+import { localizePath } from '../i18n/routing';
+
+interface Props {
+  /** Every post in this language; the tag and series lists are built from it. */
+  allPosts: CollectionEntry<'blog'>[];
+  activeTag?: string;
+  lang?: Lang;
+}
+
+const { allPosts, activeTag, lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+
+const allTags = [...new Set(allPosts.flatMap((p) => p.data.tags ?? []))].sort();
+const allSeries = [...new Set(allPosts.flatMap((p) => p.data.series ?? []))].sort();
+---
+
+{(allTags.length > 0 || allSeries.length > 0) && (
+  <div class="filter-bar">
+    {allTags.length > 0 && (
+      <div class="filter-group">
+        <span class="filter-label">{t('blog.browseTags')}</span>
+        {allTags.map((tag) => (
+          <a
+            href={localizePath(`/tags/${slugify(tag)}/`, lang)}
+            class:list={['pill', tag === activeTag && 'pill--active']}
+            aria-current={tag === activeTag ? 'page' : undefined}
+          >
+            {tag}
+          </a>
+        ))}
+      </div>
+    )}
+    {allSeries.length > 0 && (
+      <div class="filter-group">
+        <span class="filter-label">{t('blog.browseSeries')}</span>
+        {allSeries.map((s) => {
+          const count = allPosts.filter((p) => p.data.series?.includes(s)).length;
+          return (
+            <a href={localizePath(`/series/${slugify(s)}/`, lang)} class="pill">
+              {`${s} (${count} ${pluralPosts(lang, count)})`}
+            </a>
+          );
+        })}
+      </div>
+    )}
+  </div>
+)}

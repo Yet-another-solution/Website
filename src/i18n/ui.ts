@@ -68,7 +68,6 @@ export const ui = {
     'home.intro.heading': 'We build software',
     'home.intro.body':
       'A team of developers crafting full-stack applications with modern tools — from backend APIs to polished web interfaces.',
-    'home.intro.techAlt': 'Technology stack: C#, Blazor, PostgreSQL, GitHub',
     'home.intro.viewProjects': 'View Projects',
     'home.intro.contactUs': 'Contact Us',
 
@@ -102,12 +101,6 @@ export const ui = {
       'Tutorials and deep dives on Blazor, .NET, and the way we build software.',
     'home.blog.explore': 'Explore Blog',
 
-    // --- Scene labels (drawn into the WebGL diagrams) ----------------------
-    'scene.you': 'You',
-    'scene.developers': 'the developers',
-    'scene.accountManager': 'account manager',
-    'scene.noHandoffs': 'no hand-offs',
-
     // --- Blog -------------------------------------------------------------
     'blog.title': 'Blog',
     'blog.description':
@@ -119,15 +112,12 @@ export const ui = {
     'blog.empty': 'No posts yet — check back soon.',
     'blog.backToBlog': 'Back to Blog',
     'blog.published': 'Published',
-    'blog.author': 'Author',
-    'blog.tags': 'Tags:',
-    'blog.series': 'Series:',
-    'blog.seriesNav': 'Series Navigation',
-    'blog.progress': 'Progress:',
+    'blog.seriesLabel': 'Series',
     // Wrap around the linked series name: "Part 1 of <Blazor Fundamentals> series".
     'blog.seriesPartBefore': 'Part {order} of',
     'blog.seriesPartAfter': 'series',
     'blog.tagPrefix': 'Tag:',
+    'blog.tagLabel': 'Tag',
     'blog.taggedWith': 'Posts tagged with',
     'blog.seriesAllPosts': 'All posts in the {series} series',
 
@@ -136,12 +126,12 @@ export const ui = {
     'projects.description':
       'Explore projects built by the Y-A-S team using C#, Blazor, and more.',
     'projects.details': 'Project Details',
-    'projects.technologies': 'Technologies:',
-    'projects.date': 'Date:',
+    'projects.technologies': 'Technologies',
+    'projects.date': 'Date',
     'projects.visitPage': 'Visit Page',
     'projects.githubRepo': 'GitHub Repository',
     'projects.back': '← Back to Projects',
-    'projects.learnMore': 'Learn More',
+    'projects.view': 'View project →',
 
     // --- Contact -----------------------------------------------------------
     'contact.title': 'Contact',
@@ -149,15 +139,14 @@ export const ui = {
     'contact.heading': 'Get in Touch',
     'contact.body':
       "Write to us by email, or find us on GitHub. We're always open to collaboration, questions, and feedback.",
-    'contact.email': 'Email:',
-    'contact.github': 'GitHub:',
+    'contact.email': 'Email',
+    'contact.github': 'GitHub',
     'contact.company': 'Company details',
     'contact.closing': 'Looking forward to connecting with you.',
 
     // --- Privacy policy ------------------------------------------------------
     'privacy.title': 'Privacy Policy',
     'privacy.description': 'How Y-A-S ApS handles personal data on y-a-s.net.',
-    'privacy.who.heading': 'Who we are',
     'privacy.who.body':
       'This website is run by the company below, which is the data controller for the personal data described on this page.',
     'privacy.collect.heading': 'What we collect',
@@ -185,6 +174,7 @@ export const ui = {
     'privacy.complaints.body':
       'If you think we handle your data wrongly, you can complain to the Danish Data Protection Agency (Datatilsynet):',
     'privacy.updated': 'Last updated:',
+    'privacy.label': 'Legal',
   },
 
   sk: {
@@ -219,7 +209,6 @@ export const ui = {
     'home.intro.heading': 'Tvoríme softvér',
     'home.intro.body':
       'Tím vývojárov, ktorý stavia full-stack aplikácie s modernými nástrojmi — od backendových API až po vyladené webové rozhrania.',
-    'home.intro.techAlt': 'Technologický stack: C#, Blazor, PostgreSQL, GitHub',
     'home.intro.viewProjects': 'Zobraziť projekty',
     'home.intro.contactUs': 'Kontaktujte nás',
 
@@ -253,12 +242,6 @@ export const ui = {
       'Návody a hlbšie pohľady na Blazor, .NET a spôsob, akým staviame softvér.',
     'home.blog.explore': 'Preskúmať blog',
 
-    // --- Popisky v diagramoch -------------------------------------------------
-    'scene.you': 'Vy',
-    'scene.developers': 'vývojári',
-    'scene.accountManager': 'account manager',
-    'scene.noHandoffs': 'žiadne odovzdávanie',
-
     // --- Blog -----------------------------------------------------------------
     'blog.title': 'Blog',
     'blog.description':
@@ -270,16 +253,13 @@ export const ui = {
     'blog.empty': 'Zatiaľ žiadne príspevky — vráťte sa čoskoro.',
     'blog.backToBlog': 'Späť na blog',
     'blog.published': 'Publikované',
-    'blog.author': 'Autor',
-    'blog.tags': 'Tagy:',
-    'blog.series': 'Séria:',
-    'blog.seriesNav': 'Navigácia v sérii',
-    'blog.progress': 'Postup:',
+    'blog.seriesLabel': 'Séria',
     // Slovak puts the whole relation before the name — "Časť 1 zo série <X>" —
     // so the trailing half is deliberately empty.
     'blog.seriesPartBefore': 'Časť {order} zo série',
     'blog.seriesPartAfter': '',
     'blog.tagPrefix': 'Tag:',
+    'blog.tagLabel': 'Tag',
     'blog.taggedWith': 'Príspevky označené tagom',
     'blog.seriesAllPosts': 'Všetky príspevky v sérii {series}',
 
@@ -288,12 +268,12 @@ export const ui = {
     'projects.description':
       'Preskúmajte projekty, ktoré tím Y-A-S postavil v C#, Blazore a ďalších technológiách.',
     'projects.details': 'Detaily projektu',
-    'projects.technologies': 'Technológie:',
-    'projects.date': 'Dátum:',
+    'projects.technologies': 'Technológie',
+    'projects.date': 'Dátum',
     'projects.visitPage': 'Navštíviť stránku',
     'projects.githubRepo': 'GitHub repozitár',
     'projects.back': '← Späť na projekty',
-    'projects.learnMore': 'Zistiť viac',
+    'projects.view': 'Zobraziť projekt →',
 
     // --- Kontakt ----------------------------------------------------------------
     'contact.title': 'Kontakt',
@@ -301,15 +281,14 @@ export const ui = {
     'contact.heading': 'Ozvite sa nám',
     'contact.body':
       'Napíšte nám e-mail alebo nás nájdite na GitHube. Sme vždy otvorení spolupráci, otázkam aj spätnej väzbe.',
-    'contact.email': 'E-mail:',
-    'contact.github': 'GitHub:',
+    'contact.email': 'E-mail',
+    'contact.github': 'GitHub',
     'contact.company': 'Údaje o spoločnosti',
     'contact.closing': 'Tešíme sa na spojenie s vami.',
 
     // --- Ochrana súkromia -----------------------------------------------------
     'privacy.title': 'Ochrana súkromia',
     'privacy.description': 'Ako Y-A-S ApS zaobchádza s osobnými údajmi na y-a-s.net.',
-    'privacy.who.heading': 'Kto sme',
     'privacy.who.body':
       'Túto webovú stránku prevádzkuje nižšie uvedená spoločnosť, ktorá je prevádzkovateľom osobných údajov opísaných na tejto stránke.',
     'privacy.collect.heading': 'Čo zbierame',
@@ -337,6 +316,7 @@ export const ui = {
     'privacy.complaints.body':
       'Ak si myslíte, že s vašimi údajmi zaobchádzame nesprávne, môžete podať sťažnosť dánskemu úradu na ochranu údajov (Datatilsynet):',
     'privacy.updated': 'Naposledy aktualizované:',
+    'privacy.label': 'Právne informácie',
   },
 } as const satisfies Record<Lang, Record<string, string>>;
 

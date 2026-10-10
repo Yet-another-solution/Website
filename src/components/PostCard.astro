@@ -1,0 +1,40 @@
+---
+/**
+ * One blog post summary card, as shown on the blog index, the tag pages and in
+ * the homepage's blog band.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { slugify } from '../utils/slugify';
+import { defaultLang, formatDate, useTranslations, type Lang } from '../i18n/ui';
+import { localizePath } from '../i18n/routing';
+import { entrySlug } from '../i18n/content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  lang?: Lang;
+  /** Heading level of the title, so the card fits the outline of its page. */
+  heading?: 'h2' | 'h3';
+}
+
+const { post, lang = defaultLang, heading: Heading = 'h2' } = Astro.props;
+const t = useTranslations(lang);
+const href = localizePath(`/blog/${entrySlug(post)}/`, lang);
+---
+
+<article class="post-card">
+  <p class="post-card-meta">
+    <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, lang)}</time>
+    {post.data.author && <span> · {t('blog.by')} {post.data.author}</span>}
+  </p>
+  <Heading class="post-card-title"><a href={href}>{post.data.title}</a></Heading>
+  {post.data.description && <p class="post-card-desc">{post.data.description}</p>}
+  {post.data.tags && post.data.tags.length > 0 && (
+    <div class="chip-row">
+      {post.data.tags.map((tag) => (
+        <a href={localizePath(`/tags/${slugify(tag)}/`, lang)} class="chip">{tag}</a>
+      ))}
+    </div>
+  )}
+  {/* A second link to the same page as the title: kept for sighted mouse users only. */}
+  <a href={href} class="text-link" aria-hidden="true" tabindex="-1">{t('blog.readMore')}</a>
+</article>

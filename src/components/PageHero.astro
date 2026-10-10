@@ -1,0 +1,27 @@
+---
+/**
+ * The title block at the top of every inner page: accent bar, uppercase label,
+ * display title and a short subtitle. Pages that need more than plain text in
+ * the block (the blog post's meta row and tags) put it in the default slot.
+ */
+interface Props {
+  label?: string;
+  title: string;
+  subtitle?: string;
+  /** The blog post uses a slightly smaller title, since post titles run long. */
+  compact?: boolean;
+}
+
+const { label, title, subtitle, compact = false } = Astro.props;
+---
+
+<header class:list={['page-hero', compact && 'page-hero--compact']}>
+  <div class="yas-container">
+    <slot name="before" />
+    <div class="accent-bar"></div>
+    {label && <p class="eyebrow">{label}</p>}
+    <h1 class="page-hero-title">{title}</h1>
+    {subtitle && <p class="page-hero-subtitle">{subtitle}</p>}
+    <slot />
+  </div>
+</header>
