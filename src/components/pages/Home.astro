@@ -443,8 +443,6 @@ const steps = ['discovery', 'build', 'review', 'ship'] as const;
         if (settled) stickyTargets = computeTargets();
       });
 
-      const footer = document.querySelector('.yas-footer');
-
       // Distance from the viewport's left edge to where the bands' text
       // starts, i.e. the free margin the settled stack may occupy.
       const bandInner = document.querySelector('.home-band-inner');
@@ -456,34 +454,22 @@ const steps = ['discovery', 'build', 'review', 'ship'] as const;
       let gutter = gutterWidth();
       window.addEventListener('resize', () => { gutter = gutterWidth(); });
 
-      // How far each square has progressed toward "shrinking away", 0 (full
-      // size) to 1 (smallest), driven by how far its color-matched section
-      // has scrolled into view rather than a one-shot trigger — so it scrubs
-      // cleanly both ways as you scroll up and down.
-      function computeRemoval() {
-        const removal = [0, 0, 0, 0, 0];
-        const startLine = height * 0.9;
-        const endLine = height * 0.3;
-        revealSections.forEach((section, k) => {
-          if (k > 4) return;
+      // Size of a square that is not the current one, relative to full size.
+      const restingSize = 0.4;
+
+      // How much each square is "the current one", 0 to 1: 1 while its
+      // section covers the middle of the viewport, falling off over half a
+      // screen on either side so it scrubs smoothly both ways as you scroll.
+      // Above the first band and down in the footer nothing is current.
+      function computeFocus() {
+        const middle = height / 2;
+        return groups.map((_, k) => {
+          const section = revealSections[k];
+          if (!section) return 0;
           const rect = section.getBoundingClientRect();
-          const t = (startLine - rect.top) / (startLine - endLine);
-          removal[k] = Math.min(1, Math.max(0, t));
+          const distance = Math.max(rect.top - middle, middle - rect.bottom, 0);
+          return Math.max(0, 1 - distance / (height / 2));
         });
-        // The last section's own threshold may not be reachable on a short
-        // page (there's simply no more room to scroll it further up), which
-        // would otherwise leave the last square full-size and overlapping
-        // the footer. Once the footer itself comes into view, force every
-        // square the rest of the way down regardless of section position.
-        if (footer) {
-          const footerRect = footer.getBoundingClientRect();
-          const footerProgress = (height * 0.9 - footerRect.top) / (height * 0.6);
-          const clamped = Math.min(1, Math.max(0, footerProgress));
-          for (let i = 0; i < removal.length; i++) {
-            removal[i] = Math.max(removal[i], clamped);
-          }
-        }
-        return removal;
       }
 
       function animate(now: number) {
@@ -515,7 +501,7 @@ const steps = ['discovery', 'build', 'review', 'ship'] as const;
             }
           }
         } else {
-          const removal = computeRemoval();
+          const focus = computeFocus();
           // Below the hero the bands' text starts at the page gutter, so the
           // stack slides into that gutter (and shrinks to fit it) as the hero
           // scrolls away, instead of sitting on top of the headings.
@@ -530,14 +516,14 @@ const steps = ['discovery', 'build', 'review', 'ship'] as const;
           const stack = 1 + (fit - 1) * leave;
           groups.forEach((group, i) => {
             const base = stickyTargets[i];
-            // Squares stay put vertically and simply shrink as their matching
-            // section scrolls past, rather than flying off screen.
-            const shrink = ease(removal[i]);
             const x = base.x + (gutter / 2 - base.x) * leave;
             const y = bottom.y - (bottom.y - base.y) * stack;
             group.position.set(x, y, group.position.z);
             group.rotation.set(0, 0, Math.PI / 4);
-            const s = base.scale * stack * (1 - shrink * 0.7);
+            // Full size in the hero. Past it every square is small, and only
+            // the one whose section is on screen grows back.
+            const size = restingSize + (1 - restingSize) * ease(focus[i]);
+            const s = base.scale * stack * (1 + (size - 1) * leave);
             group.scale.set(s, s, 1);
           });
         }
