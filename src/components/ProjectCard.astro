@@ -25,6 +25,6 @@ const href = localizePath(`/projects/${entrySlug(project)}/`, lang);
 <a href={href} class="project-card">
   {techs.length > 0 && <p class="project-card-category">{techs.join(' · ')}</p>}
   <Heading class="project-card-title">{project.data.title}</Heading>
-  {project.data.description && <p class="project-card-desc">{project.data.description}</p>}
+  <p class="project-card-desc">{project.data.description}</p>
   <span class="project-card-link">{t('projects.view')}</span>
 </a>
