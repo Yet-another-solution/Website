@@ -1,0 +1,39 @@
+---
+/**
+ * The 404 page, served as `/404.html` and `/sk/404.html`. Cloudflare Pages
+ * serves the nearest one for a missing path; without a top-level `404.html` it
+ * answers every unknown URL with the homepage and a 200. The Slovak file is
+ * moved into place after the build — see `slovak404` in astro.config.mjs.
+ *
+ * The missing URL has no translation to offer, so the language switcher leads
+ * to each language's homepage.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Backdrop from '../Backdrop.astro';
+import PageHero from '../PageHero.astro';
+import { defaultLang, useTranslations, type Lang } from '../../i18n/ui';
+import { localizePath } from '../../i18n/routing';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={t('notFound.title')}
+  description={t('notFound.body')}
+  lang={lang}
+  alternates={{ en: '/', sk: '/sk/' }}
+  noindex
+>
+  <main class="yas-page">
+    <Backdrop variant="diamonds" />
+    <PageHero label="404" title={t('notFound.heading')} subtitle={t('notFound.body')} />
+    <div class="yas-container page-content">
+      <a href={localizePath('/', lang)} class="btn-yas btn-yas--navy">{t('notFound.home')}</a>
+    </div>
+  </main>
+</BaseLayout>

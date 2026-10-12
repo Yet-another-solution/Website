@@ -46,6 +46,7 @@ export const ui = {
     'nav.toggle': 'Toggle navigation',
     'nav.language': 'Change language',
 
+    'site.title': 'Y-A-S | Yet Another Solution — C# and Blazor developers',
     'site.description':
       'Yet Another Solution - A team of developers creating innovative software solutions using C#, Blazor, and PostgreSQL.',
 
@@ -109,6 +110,8 @@ export const ui = {
 
     // --- Blog -------------------------------------------------------------
     'blog.title': 'Blog',
+    // The <title>; `blog.title` stays short for the nav and the page heading.
+    'blog.metaTitle': 'Blog — Blazor and .NET tutorials',
     'blog.description':
       'Insights, tutorials, and thoughts on software development from the Y-A-S team.',
     'blog.browseTags': 'Browse by Tags:',
@@ -129,6 +132,7 @@ export const ui = {
 
     // --- Projects ---------------------------------------------------------
     'projects.title': 'Projects',
+    'projects.metaTitle': 'Projects built with C# and Blazor',
     'projects.description':
       'Explore projects built by the Y-A-S team using C#, Blazor, and more.',
     'projects.details': 'Project Details',
@@ -142,7 +146,8 @@ export const ui = {
 
     // --- Contact -----------------------------------------------------------
     'contact.title': 'Contact',
-    'contact.description': 'Get in touch with the Y-A-S team.',
+    'contact.description':
+      'Contact Y-A-S ApS, a software development team in Esbjerg, Denmark — by email or on GitHub.',
     'contact.heading': 'Get in Touch',
     'contact.body':
       "Write to us by email, or find us on GitHub. We're always open to collaboration, questions, and feedback.",
@@ -150,6 +155,12 @@ export const ui = {
     'contact.github': 'GitHub',
     'contact.company': 'Company details',
     'contact.closing': 'Looking forward to connecting with you.',
+
+    // --- Not found (404) ----------------------------------------------------
+    'notFound.title': 'Page not found',
+    'notFound.heading': 'Nothing here',
+    'notFound.body': 'The page you are looking for does not exist or has moved.',
+    'notFound.home': 'Back to the homepage',
 
     // --- Privacy policy ------------------------------------------------------
     'privacy.title': 'Privacy Policy',
@@ -194,6 +205,7 @@ export const ui = {
     'nav.toggle': 'Prepnúť navigáciu',
     'nav.language': 'Zmeniť jazyk',
 
+    'site.title': 'Y-A-S | Yet Another Solution — vývojári v C# a Blazore',
     'site.description':
       'Yet Another Solution – tím vývojárov, ktorý tvorí inovatívne softvérové riešenia v C#, Blazore a PostgreSQL.',
 
@@ -257,6 +269,7 @@ export const ui = {
 
     // --- Blog -----------------------------------------------------------------
     'blog.title': 'Blog',
+    'blog.metaTitle': 'Blog — návody na Blazor a .NET',
     'blog.description':
       'Postrehy, návody a úvahy o vývoji softvéru od tímu Y-A-S.',
     'blog.browseTags': 'Prehľadávať podľa tagov:',
@@ -278,6 +291,7 @@ export const ui = {
 
     // --- Projekty --------------------------------------------------------------
     'projects.title': 'Projekty',
+    'projects.metaTitle': 'Projekty postavené v C# a Blazore',
     'projects.description':
       'Preskúmajte projekty, ktoré tím Y-A-S postavil v C#, Blazore a ďalších technológiách.',
     'projects.details': 'Detaily projektu',
@@ -291,7 +305,8 @@ export const ui = {
 
     // --- Kontakt ----------------------------------------------------------------
     'contact.title': 'Kontakt',
-    'contact.description': 'Spojte sa s tímom Y-A-S.',
+    'contact.description':
+      'Kontaktujte Y-A-S ApS, tím vývojárov softvéru z dánskeho Esbjergu — e-mailom alebo na GitHube.',
     'contact.heading': 'Ozvite sa nám',
     'contact.body':
       'Napíšte nám e-mail alebo nás nájdite na GitHube. Sme vždy otvorení spolupráci, otázkam aj spätnej väzbe.',
@@ -299,6 +314,12 @@ export const ui = {
     'contact.github': 'GitHub',
     'contact.company': 'Údaje o spoločnosti',
     'contact.closing': 'Tešíme sa na spojenie s vami.',
+
+    // --- Nenájdené (404) --------------------------------------------------------
+    'notFound.title': 'Stránka sa nenašla',
+    'notFound.heading': 'Nič tu nie je',
+    'notFound.body': 'Stránka, ktorú hľadáte, neexistuje alebo bola presunutá.',
+    'notFound.home': 'Späť na domovskú stránku',
 
     // --- Ochrana súkromia -----------------------------------------------------
     'privacy.title': 'Ochrana súkromia',

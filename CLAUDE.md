@@ -114,8 +114,28 @@ WebGL throws.
 
 ### SEO
 `BaseLayout` emits description, canonical, Open Graph, Twitter Card and
-`hreflang` tags. There is **no** sitemap, `robots.txt` or JSON-LD structured
-data — add `@astrojs/sitemap` if a sitemap is wanted.
+`hreflang` tags, plus JSON-LD: `Organization` on the homepage and `BlogPosting`
+on a blog post (which passes the `article` prop, also setting `og:type` and the
+article dates). The homepage `<title>` is `site.title`; the blog and projects
+indexes use their `*.metaTitle` key, so the nav label and heading stay short.
+
+`@astrojs/sitemap` writes `sitemap-index.xml` and `sitemap-0.xml` at build time;
+`public/robots.txt` points at the index, and `public/_redirects` (Cloudflare
+Pages) sends the conventional `/sitemap.xml` there.
+
+The sitemap carries no `hreflang` alternates on purpose: the integration's
+`i18n` option pairs pages by `/sk/` prefix swap, which is wrong for entries whose
+Slovak slug differs, and every page already emits the right tags itself.
+
+`@astrojs/sitemap` is pinned to 3.2.1: later versions need Astro 5 and fail the
+build here.
+
+`src/pages/404.astro` must stay: without a top-level `404.html`, Cloudflare
+Pages treats the site as a single-page app and answers every missing URL with
+the homepage and a 200. Astro builds the Slovak twin to `/sk/404/index.html`,
+so the `slovak404` hook in `astro.config.mjs` moves it to `/sk/404.html`, where
+Cloudflare picks it up for missing `/sk/*` paths. Both pages are `noindex` and
+filtered out of the sitemap.
 
 ## Internationalisation (English + Slovak)
 

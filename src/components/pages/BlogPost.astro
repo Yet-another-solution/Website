@@ -45,6 +45,7 @@ const nextPost = currentIndex >= 0 ? seriesPosts[currentIndex + 1] : undefined;
   title={post.data.title}
   description={post.data.description}
   image={post.data.images?.[0]}
+  article={{ published: post.data.date, modified: post.data.lastmod, author: post.data.author }}
   section="blog"
   lang={lang}
   alternates={alternates}
