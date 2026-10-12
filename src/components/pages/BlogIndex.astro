@@ -23,7 +23,7 @@ const posts = (await getLocalizedCollection('blog', lang)).sort(
 );
 ---
 
-<BaseLayout title={t('blog.title')} description={t('blog.description')} section="blog" lang={lang}>
+<BaseLayout title={t('blog.metaTitle')} description={t('blog.description')} section="blog" lang={lang}>
   <main class="yas-page">
     <Backdrop variant="rings" />
     <PageHero label={t('blog.title')} title={t('blog.title')} subtitle={t('home.blog.body')} />

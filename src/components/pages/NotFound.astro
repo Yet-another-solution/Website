@@ -1,13 +1,12 @@
 ---
 /**
- * The 404 page, built to `/404.html`. Cloudflare Pages serves it for any
- * missing path; without a top-level `404.html` it answers every unknown URL
- * with the homepage and a 200.
+ * The 404 page, served as `/404.html` and `/sk/404.html`. Cloudflare Pages
+ * serves the nearest one for a missing path; without a top-level `404.html` it
+ * answers every unknown URL with the homepage and a 200. The Slovak file is
+ * moved into place after the build — see `slovak404` in astro.config.mjs.
  *
- * There is no Slovak twin: Astro builds `sk/404.astro` to `/sk/404/index.html`,
- * an ordinary page Cloudflare would not use. The language switcher therefore
- * leads to each language's homepage, so a visitor who came from a `/sk/` URL
- * still has a way back into Slovak.
+ * The missing URL has no translation to offer, so the language switcher leads
+ * to each language's homepage.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Backdrop from '../Backdrop.astro';

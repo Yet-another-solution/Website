@@ -40,6 +40,8 @@ interface Props {
   alternates?: Partial<Record<Lang, string | null>>;
   /** Keeps the page out of search results — the 404 page sets it. */
   noindex?: boolean;
+  /** Marks the page as a blog post: `og:type` article, dates and BlogPosting JSON-LD. */
+  article?: { published: Date; modified?: Date; author: string };
 }
 
 const {
@@ -51,11 +53,12 @@ const {
   lang = defaultLang,
   alternates = {},
   noindex = false,
+  article,
 } = Astro.props;
 
 const t = useTranslations(lang);
 
-const fullTitle = isHome ? 'Y-A-S' : `${title} | Y-A-S`;
+const fullTitle = isHome ? t('site.title') : `${title} | Y-A-S`;
 const pageDescription = description ?? t('site.description');
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
@@ -81,6 +84,46 @@ const xDefault = alternateHrefs[defaultLang]
   ? new URL(alternateHrefs[defaultLang] as string, Astro.site).href
   : null;
 
+const organization = {
+  '@type': 'Organization',
+  name: 'Y-A-S',
+  legalName: company.name,
+  url: new URL('/', Astro.site).href,
+  logo: new URL('/img/Logo.png', Astro.site).href,
+};
+
+// Structured data: the company on the homepage, the post on a blog post.
+const jsonLd = isHome
+  ? {
+      '@context': 'https://schema.org',
+      ...organization,
+      description: pageDescription,
+      email: company.email,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: company.street,
+        postalCode: company.city.split(' ')[0],
+        addressLocality: company.city.split(' ').slice(1).join(' '),
+        addressCountry: 'DK',
+      },
+      sameAs: ['https://github.com/Yet-another-solution'],
+    }
+  : article
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: title,
+        description: pageDescription,
+        image: ogImage.href,
+        datePublished: article.published.toISOString(),
+        dateModified: (article.modified ?? article.published).toISOString(),
+        inLanguage: localeTags[lang],
+        mainEntityOfPage: canonicalURL.href,
+        author: { '@type': 'Organization', name: article.author },
+        publisher: organization,
+      }
+    : null;
+
 const navItems = [
   { key: 'nav.home', path: '/', section: 'home' },
   { key: 'nav.blog', path: '/blog/', section: 'blog' },
@@ -105,7 +148,9 @@ const navItems = [
   ))}
   {xDefault && <link rel="alternate" hreflang="x-default" href={xDefault} />}
 
-  <meta property="og:type" content={isHome ? 'website' : 'article'} />
+  <meta property="og:type" content={article ? 'article' : 'website'} />
+  {article && <meta property="article:published_time" content={article.published.toISOString()} />}
+  {article?.modified && <meta property="article:modified_time" content={article.modified.toISOString()} />}
   <meta property="og:url" content={canonicalURL} />
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={pageDescription} />
@@ -121,6 +166,10 @@ const navItems = [
 
   <link rel="icon" href="/img/Logo.png" type="image/png" />
   <title>{fullTitle}</title>
+
+  {jsonLd && (
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
+  )}
 
   <slot name="head" />
 </head>
