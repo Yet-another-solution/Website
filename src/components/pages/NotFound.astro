@@ -1,0 +1,40 @@
+---
+/**
+ * The 404 page, built to `/404.html`. Cloudflare Pages serves it for any
+ * missing path; without a top-level `404.html` it answers every unknown URL
+ * with the homepage and a 200.
+ *
+ * There is no Slovak twin: Astro builds `sk/404.astro` to `/sk/404/index.html`,
+ * an ordinary page Cloudflare would not use. The language switcher therefore
+ * leads to each language's homepage, so a visitor who came from a `/sk/` URL
+ * still has a way back into Slovak.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Backdrop from '../Backdrop.astro';
+import PageHero from '../PageHero.astro';
+import { defaultLang, useTranslations, type Lang } from '../../i18n/ui';
+import { localizePath } from '../../i18n/routing';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  title={t('notFound.title')}
+  description={t('notFound.body')}
+  lang={lang}
+  alternates={{ en: '/', sk: '/sk/' }}
+  noindex
+>
+  <main class="yas-page">
+    <Backdrop variant="diamonds" />
+    <PageHero label="404" title={t('notFound.heading')} subtitle={t('notFound.body')} />
+    <div class="yas-container page-content">
+      <a href={localizePath('/', lang)} class="btn-yas btn-yas--navy">{t('notFound.home')}</a>
+    </div>
+  </main>
+</BaseLayout>

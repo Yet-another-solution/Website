@@ -38,6 +38,8 @@ interface Props {
    * A null entry means "not translated" — no alternate is advertised.
    */
   alternates?: Partial<Record<Lang, string | null>>;
+  /** Keeps the page out of search results — the 404 page sets it. */
+  noindex?: boolean;
 }
 
 const {
@@ -48,6 +50,7 @@ const {
   section = '',
   lang = defaultLang,
   alternates = {},
+  noindex = false,
 } = Astro.props;
 
 const t = useTranslations(lang);
@@ -94,7 +97,7 @@ const navItems = [
 
   <meta name="description" content={pageDescription} />
   <meta name="author" content="Y-A-S Team" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content={noindex ? 'noindex' : 'index, follow'} />
   <link rel="canonical" href={canonicalURL} />
 
   {hreflangLinks.map(({ hreflang, href }) => (

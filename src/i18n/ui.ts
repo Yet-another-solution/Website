@@ -151,6 +151,12 @@ export const ui = {
     'contact.company': 'Company details',
     'contact.closing': 'Looking forward to connecting with you.',
 
+    // --- Not found (404) ----------------------------------------------------
+    'notFound.title': 'Page not found',
+    'notFound.heading': 'Nothing here',
+    'notFound.body': 'The page you are looking for does not exist or has moved.',
+    'notFound.home': 'Back to the homepage',
+
     // --- Privacy policy ------------------------------------------------------
     'privacy.title': 'Privacy Policy',
     'privacy.description': 'How Y-A-S ApS handles personal data on y-a-s.net.',
@@ -299,6 +305,12 @@ export const ui = {
     'contact.github': 'GitHub',
     'contact.company': 'Údaje o spoločnosti',
     'contact.closing': 'Tešíme sa na spojenie s vami.',
+
+    // --- Nenájdené (404) --------------------------------------------------------
+    'notFound.title': 'Stránka sa nenašla',
+    'notFound.heading': 'Nič tu nie je',
+    'notFound.body': 'Stránka, ktorú hľadáte, neexistuje alebo bola presunutá.',
+    'notFound.home': 'Späť na domovskú stránku',
 
     // --- Ochrana súkromia -----------------------------------------------------
     'privacy.title': 'Ochrana súkromia',

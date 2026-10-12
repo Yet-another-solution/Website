@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://y-a-s.net',
@@ -11,6 +12,6 @@ export default defineConfig({
     locales: ['en', 'sk'],
     routing: { prefixDefaultLocale: false },
   },
-  integrations: [mdx()],
+  integrations: [mdx(), sitemap()],
   output: 'static',
 });
