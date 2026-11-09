@@ -130,9 +130,18 @@ indexes use their `*.metaTitle` key, so the nav label and heading stay short.
 `public/robots.txt` points at the index, and `public/_redirects` (Cloudflare
 Pages) sends the conventional `/sitemap.xml` there.
 
-The sitemap carries no `hreflang` alternates on purpose: the integration's
-`i18n` option pairs pages by `/sk/` prefix swap, which is wrong for entries whose
-Slovak slug differs, and every page already emits the right tags itself.
+The sitemap does not use the integration's `i18n` option (it pairs pages by
+`/sk/` prefix swap, which is wrong where the Slovak slug differs). Instead
+`serialize` in `astro.config.mjs` copies each page's own `hreflang` links from
+the built HTML, and sets `lastmod` from a content entry's `lastmod` frontmatter
+or the last git commit of its source (`src/utils/gitDate.mjs`). On a shallow
+clone, or for a page with no known source, `lastmod` is omitted — never the
+build time.
+
+`public/_headers` sets the security headers (HSTS without `includeSubDomains`,
+a report-only CSP that allows only same-origin resources) and long caching for
+`/_astro/*`. An inline `<script>` or event-handler attribute would break the
+CSP once it is enforced.
 
 `@astrojs/sitemap` is pinned to 3.2.1: later versions need Astro 5 and fail the
 build here.
