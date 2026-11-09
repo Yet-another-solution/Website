@@ -110,7 +110,7 @@ const pageId = `${canonicalURL.href}#webpage`;
 const logoUrl = new URL('/img/logo-200.png', Astro.site).href;
 
 const organization = {
-  '@type': ['Organization', 'ProfessionalService'],
+  '@type': 'Organization',
   ...orgRef,
   name: 'Y-A-S',
   alternateName: 'Yet Another Solution',
@@ -140,6 +140,12 @@ const organization = {
     '@type': 'Offer',
     itemOffered: { '@type': 'Service', name: t(key), provider: orgRef },
   })),
+  subOrganization: {
+    '@type': 'Organization',
+    '@id': 'https://cod3rs.org/#org',
+    name: 'Cod3rs Community',
+    url: 'https://cod3rs.org',
+  },
   sameAs: [
     'https://github.com/Yet-another-solution',
     `https://datacvr.virk.dk/enhed/virksomhed/${company.cvr}`,
@@ -318,6 +324,13 @@ const navItems = [
               <li><a href={localizePath(item.path, lang)}>{t(item.key)}</a></li>
             ))}
             <li><a href={localizePath('/privacy/', lang)}>{t('footer.privacy')}</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer-section-title">{t('footer.network')}</p>
+          <ul class="list-unstyled footer-links">
+            <li><a href="https://cod3rs.org/" target="_blank" rel="noopener">Cod3rs</a> <span class="footer-link-note">{t('footer.cod3rs')}</span></li>
+            <li><a href="https://hackesbjerg.dk/" target="_blank" rel="noopener">Hack Esbjerg</a> <span class="footer-link-note">{t('footer.hackEsbjerg')}</span></li>
           </ul>
         </div>
         <div>

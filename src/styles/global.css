@@ -1310,6 +1310,13 @@ a.chip:focus-visible {
     text-decoration: none;
 }
 
+.footer-link-note {
+    display: block;
+    margin-top: -0.4rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
 .footer-links a:hover,
 .footer-links a:focus-visible { color: #fff; }
 

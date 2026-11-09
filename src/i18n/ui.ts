@@ -52,6 +52,9 @@ export const ui = {
 
     'footer.navigation': 'Navigation',
     'footer.team': 'The Team',
+    'footer.network': 'Projects we run',
+    'footer.cod3rs': 'developer community in Esbjerg',
+    'footer.hackEsbjerg': '24-hour hackathon in Esbjerg',
     'footer.builtWith': 'Built with Astro & hosted on Cloudflare Pages.',
     'footer.privacy': 'Privacy policy',
 
@@ -241,6 +244,9 @@ export const ui = {
 
     'footer.navigation': 'Navigácia',
     'footer.team': 'Tím',
+    'footer.network': 'Projekty, ktoré vedieme',
+    'footer.cod3rs': 'vývojárska komunita v Esbjergu',
+    'footer.hackEsbjerg': '24-hodinový hackathon v Esbjergu',
     'footer.builtWith': 'Postavené v Astre a hostované na Cloudflare Pages.',
     'footer.privacy': 'Ochrana súkromia',
 
