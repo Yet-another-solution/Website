@@ -29,6 +29,8 @@ const projects = defineCollection({
     date: z.coerce.date(),
     draft: z.boolean().default(false),
     image: z.string().optional(),
+    // One alt text per gallery screenshot, in file-name order.
+    galleryAlt: z.array(z.string()).optional(),
     tech: z.string().optional(),
     // Required: it is the project card's text, the page subtitle and the meta description.
     description: z.string().min(1),

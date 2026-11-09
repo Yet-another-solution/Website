@@ -729,7 +729,7 @@ a.chip:focus-visible {
 .project-image {
     display: block;
     max-width: 100%;
-    max-height: 420px;
+    height: auto;
     margin-bottom: 32px;
     border: 1px solid var(--border-color);
 }

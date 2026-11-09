@@ -47,7 +47,7 @@ interface Props {
 const {
   title,
   description,
-  image = '/img/Logo.png',
+  image = '/img/og-default.jpg',
   isHome = false,
   section = '',
   lang = defaultLang,
@@ -89,7 +89,7 @@ const organization = {
   name: 'Y-A-S',
   legalName: company.name,
   url: new URL('/', Astro.site).href,
-  logo: new URL('/img/Logo.png', Astro.site).href,
+  logo: new URL('/img/logo-200.png', Astro.site).href,
 };
 
 // Structured data: the company on the homepage, the post on a blog post.
@@ -164,7 +164,9 @@ const navItems = [
   <meta name="twitter:description" content={pageDescription} />
   <meta name="twitter:image" content={ogImage} />
 
-  <link rel="icon" href="/img/Logo.png" type="image/png" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <title>{fullTitle}</title>
 
   {jsonLd && (

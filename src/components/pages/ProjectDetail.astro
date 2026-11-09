@@ -8,6 +8,7 @@ import PageHero from '../PageHero.astro';
 import { defaultLang, formatDate, useTranslations, type Lang } from '../../i18n/ui';
 import { localizePath } from '../../i18n/routing';
 import { entrySlug } from '../../i18n/content';
+import { publicImageSize } from '../../utils/imageSize';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -33,6 +34,12 @@ const gallery = fs.existsSync(galleryDir)
       .map((file) => `/img/projects/${galleryKey}/${file}`)
       .filter((src) => src !== project.data.image)
   : [];
+
+// The lead image is shown at most 420px tall: its width/height attributes are
+// that display size, so the layout is reserved before the file arrives.
+const lead = project.data.image ? await publicImageSize(project.data.image) : null;
+const leadScale = lead ? Math.min(1, 420 / lead.height) : 1;
+const leadSize = lead && { width: Math.round(lead.width * leadScale), height: Math.round(lead.height * leadScale) };
 ---
 
 <BaseLayout
@@ -55,7 +62,7 @@ const gallery = fs.existsSync(galleryDir)
       <div class="split">
         <div class="split-main">
           {project.data.image && (
-            <img src={project.data.image} alt={project.data.title} class="project-image" loading="lazy" />
+            <img src={project.data.image} alt={project.data.title} class="project-image" {...leadSize} />
           )}
           <div class="prose">
             <Content />
@@ -68,7 +75,7 @@ const gallery = fs.existsSync(galleryDir)
                   <a href={src} target="_blank" rel="noopener">
                     <img
                       src={src}
-                      alt={`${project.data.title} – ${t('projects.gallery')} ${i + 1}`}
+                      alt={project.data.galleryAlt?.[i] ?? `${project.data.title} – ${t('projects.gallery')} ${i + 1}`}
                       width="1440"
                       height="900"
                       loading="lazy"
