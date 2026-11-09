@@ -25,7 +25,7 @@ const allPosts = await getLocalizedCollection('blog', lang);
 
 <BaseLayout
   title={`${t('blog.tagPrefix')} ${tag}`}
-  description={`${t('blog.taggedWith')} ${tag}`}
+  description={t('blog.tagDescription', { tag })}
   section="blog"
   lang={lang}
   alternates={alternates}

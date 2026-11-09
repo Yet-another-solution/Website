@@ -1,0 +1,38 @@
+# Y-A-S
+
+> Y-A-S ApS (Yet Another Solution, CVR 45856186) is a software studio at Bådebrogade 1, 6700 Esbjerg, Denmark. It builds custom web applications in C# and Blazor, and organises hackathons and community events. It maintains the open-source Community.Blazor.MapLibre library (over 23,000 NuGet downloads as of November 2026) and organised Hack Esbjerg 2026 (19–20 March 2026: 100+ participants, 13 projects, 6 prize categories). Contact: contact@y-a-s.net.
+
+The site is in English, with a Slovak version under /sk/.
+
+## Projects
+
+- [Community.Blazor.MapLibre](https://y-a-s.net/projects/community_blazor_maplibre/): open-source C# wrapper around MapLibre GL JS for interactive maps in Blazor; install with `dotnet add package Community.Blazor.MapLibre`
+- [Hack Esbjerg](https://y-a-s.net/projects/hack_esbjerg/): 24-hour hackathon in Esbjerg, Denmark, organised by Y-A-S ApS on 19–20 March 2026
+- [CycleBridge](https://y-a-s.net/projects/cyclebridge/): companion platform for cyclists, with a web app live today
+- [Hack The Flag](https://y-a-s.net/projects/hack_the_flag/): online cryptography competition
+- [Cod3rs Community](https://y-a-s.net/projects/cod3rs/): developer community in Denmark and Slovakia
+- [All projects](https://y-a-s.net/projects/)
+
+## Blog
+
+- [Blog](https://y-a-s.net/blog/): tutorials on C#, .NET and Blazor
+- [Getting Started with Blazor](https://y-a-s.net/blog/getting-started-with-blazor/)
+
+## Contact
+
+- [Contact](https://y-a-s.net/contact/): email contact@y-a-s.net for a custom web application or an event
+- [Privacy policy](https://y-a-s.net/privacy/)
+
+## Slovak (Slovenčina)
+
+- [Domov](https://y-a-s.net/sk/)
+- [Projekty](https://y-a-s.net/sk/projects/)
+- [Blog](https://y-a-s.net/sk/blog/)
+- [Kontakt](https://y-a-s.net/sk/contact/)
+
+## Optional
+
+- [Community.Blazor.MapLibre documentation](https://yet-another-solution.github.io/Blazor.MapLibre/)
+- [Community.Blazor.MapLibre on NuGet](https://www.nuget.org/packages/Community.Blazor.MapLibre)
+- [GitHub organisation](https://github.com/Yet-another-solution)
+- [Hack Esbjerg website](https://hackesbjerg.dk/)

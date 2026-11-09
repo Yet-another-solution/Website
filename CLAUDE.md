@@ -95,9 +95,12 @@ means updating that policy, and possibly a consent banner. Only the font weights
 imported in `BaseLayout.astro` are shipped — a new weight needs its own import.
 
 ### Homepage WebGL
-The homepage hero animates the five squares of the brand mark out of a single
-stack (inline script in `src/components/pages/Home.astro`), then pins them to
-the viewport and shrinks each one as its colour-matched section scrolls past.
+The homepage hero draws the five squares of the brand mark in WebGL
+(`src/scripts/heroSquares.ts`, imported on idle by `Home.astro` so three.js
+stays off the critical path; the section diagrams likewise load only as they
+near the viewport). Because that is after first paint, the old exploding-stack
+intro, which covered the screen, is skipped and the stack starts settled. It
+pins the squares to the viewport and shrinks each one as its colour-matched section scrolls past.
 **The five `.reveal-section` bands below the hero are paired with the squares by
 document order**, so reordering or adding a band changes which square points
 where. Each band's `.eyebrow` is also what the hero tooltip reads. Once the hero
@@ -114,18 +117,32 @@ WebGL throws.
 
 ### SEO
 `BaseLayout` emits description, canonical, Open Graph, Twitter Card and
-`hreflang` tags, plus JSON-LD: `Organization` on the homepage and `BlogPosting`
-on a blog post (which passes the `article` prop, also setting `og:type` and the
-article dates). The homepage `<title>` is `site.title`; the blog and projects
+`hreflang` tags, plus one JSON-LD `@graph` per page: the `Organization`
+(`@id` `https://y-a-s.net/#organization`) and `WebSite` nodes on the homepages,
+and on every indexable page a `WebPage` node (`pageType` prop: `ContactPage`,
+`CollectionPage`), a `BreadcrumbList` derived from `section` (Home > section >
+`pageName`), a `BlogPosting` on a blog post (the `article` prop, also setting
+`og:type` and the article dates), and any extra nodes a page passes in `jsonLd`
+(project pages add `CreativeWork`, or `SoftwareSourceCode` via the `schemaType`
+frontmatter field). Other pages refer to the company by its `@id` only. The homepage `<title>` is `site.title`; the blog and projects
 indexes use their `*.metaTitle` key, so the nav label and heading stay short.
 
 `@astrojs/sitemap` writes `sitemap-index.xml` and `sitemap-0.xml` at build time;
 `public/robots.txt` points at the index, and `public/_redirects` (Cloudflare
 Pages) sends the conventional `/sitemap.xml` there.
 
-The sitemap carries no `hreflang` alternates on purpose: the integration's
-`i18n` option pairs pages by `/sk/` prefix swap, which is wrong for entries whose
-Slovak slug differs, and every page already emits the right tags itself.
+The sitemap does not use the integration's `i18n` option (it pairs pages by
+`/sk/` prefix swap, which is wrong where the Slovak slug differs). Instead
+`serialize` in `astro.config.mjs` copies each page's own `hreflang` links from
+the built HTML, and sets `lastmod` from a content entry's `lastmod` frontmatter
+or the last git commit of its source (`src/utils/gitDate.mjs`). On a shallow
+clone, or for a page with no known source, `lastmod` is omitted — never the
+build time.
+
+`public/_headers` sets the security headers (HSTS without `includeSubDomains`,
+a report-only CSP that allows only same-origin resources) and long caching for
+`/_astro/*`. An inline `<script>` or event-handler attribute would break the
+CSP once it is enforced.
 
 `@astrojs/sitemap` is pinned to 3.2.1: later versions need Astro 5 and fail the
 build here.

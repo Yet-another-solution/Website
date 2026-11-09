@@ -1,16 +1,23 @@
 ---
 // Bootstrap and the fonts are bundled from npm rather than a CDN, so a page
 // view sends the visitor's IP address to nobody but our own host. They must
-// stay above global.css, whose rules override Bootstrap's.
+// stay above global.css, whose rules override Bootstrap's. Only the latin and
+// latin-ext subsets (Slovak needs latin-ext) of the weights the CSS uses.
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fontsource/jetbrains-mono/400.css';
-import '@fontsource/jetbrains-mono/400-italic.css';
-import '@fontsource/jetbrains-mono/500.css';
-import '@fontsource/jetbrains-mono/500-italic.css';
-import '@fontsource/jetbrains-mono/600.css';
-import '@fontsource/jetbrains-mono/700.css';
-import '@fontsource/jetbrains-mono/700-italic.css';
-import '@fontsource/rubik-mono-one/400.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-ext-400.css';
+import '@fontsource/jetbrains-mono/latin-400-italic.css';
+import '@fontsource/jetbrains-mono/latin-ext-400-italic.css';
+import '@fontsource/jetbrains-mono/latin-500.css';
+import '@fontsource/jetbrains-mono/latin-ext-500.css';
+import '@fontsource/jetbrains-mono/latin-600.css';
+import '@fontsource/jetbrains-mono/latin-ext-600.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
+import '@fontsource/jetbrains-mono/latin-ext-700.css';
+import '@fontsource/rubik-mono-one/latin-400.css';
+import '@fontsource/rubik-mono-one/latin-ext-400.css';
+// The display face sets every page title (the LCP text), so it is preloaded.
+import rubikLatin from '@fontsource/rubik-mono-one/files/rubik-mono-one-latin-400-normal.woff2?url';
 import '../styles/global.css';
 import { company } from '../company';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
@@ -21,6 +28,7 @@ import {
   ogLocales,
   useTranslations,
   type Lang,
+  type UIKey,
 } from '../i18n/ui';
 import { localizePath, switchLangPath } from '../i18n/routing';
 
@@ -42,18 +50,27 @@ interface Props {
   noindex?: boolean;
   /** Marks the page as a blog post: `og:type` article, dates and BlogPosting JSON-LD. */
   article?: { published: Date; modified?: Date; author: string };
+  /** Short page name for the breadcrumb trail; defaults to `title`. */
+  pageName?: string;
+  /** schema.org type of this page's WebPage node. */
+  pageType?: 'WebPage' | 'ContactPage' | 'CollectionPage';
+  /** Extra JSON-LD nodes for this page (a project, an item list), added to the graph. */
+  jsonLd?: Record<string, unknown>[];
 }
 
 const {
   title,
   description,
-  image = '/img/Logo.png',
+  image = '/img/og-default.jpg',
   isHome = false,
   section = '',
   lang = defaultLang,
   alternates = {},
   noindex = false,
   article,
+  pageName = title,
+  pageType = 'WebPage',
+  jsonLd: extraNodes = [],
 } = Astro.props;
 
 const t = useTranslations(lang);
@@ -84,45 +101,125 @@ const xDefault = alternateHrefs[defaultLang]
   ? new URL(alternateHrefs[defaultLang] as string, Astro.site).href
   : null;
 
+// Structured data, as one @graph per page. The company and the site are
+// described in full on the homepages; every other page points at them by @id.
+const siteUrl = new URL('/', Astro.site).href;
+const orgRef = { '@id': `${siteUrl}#organization` };
+const websiteRef = { '@id': `${siteUrl}#website` };
+const pageId = `${canonicalURL.href}#webpage`;
+const logoUrl = new URL('/img/logo-200.png', Astro.site).href;
+
 const organization = {
   '@type': 'Organization',
+  ...orgRef,
   name: 'Y-A-S',
+  alternateName: 'Yet Another Solution',
   legalName: company.name,
-  url: new URL('/', Astro.site).href,
-  logo: new URL('/img/Logo.png', Astro.site).href,
+  url: siteUrl,
+  logo: { '@type': 'ImageObject', url: logoUrl, width: 200, height: 200 },
+  image: logoUrl,
+  description: t('site.description'),
+  email: company.email,
+  taxID: company.cvr,
+  identifier: { '@type': 'PropertyValue', propertyID: 'CVR', value: company.cvr },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: company.street,
+    postalCode: company.city.split(' ')[0],
+    addressLocality: company.city.split(' ').slice(1).join(' '),
+    addressCountry: 'DK',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: company.email,
+    availableLanguage: ['en', 'sk'],
+  },
+  knowsAbout: ['C#', '.NET', 'Blazor', 'MapLibre', 'Hackathons'],
+  makesOffer: (['schema.serviceWebApps', 'schema.serviceEvents'] as const).map((key) => ({
+    '@type': 'Offer',
+    itemOffered: { '@type': 'Service', name: t(key), provider: orgRef },
+  })),
+  subOrganization: {
+    '@type': 'Organization',
+    '@id': 'https://cod3rs.org/#org',
+    name: 'Cod3rs Community',
+    url: 'https://cod3rs.org',
+  },
+  sameAs: [
+    'https://github.com/Yet-another-solution',
+    `https://datacvr.virk.dk/enhed/virksomhed/${company.cvr}`,
+  ],
 };
 
-// Structured data: the company on the homepage, the post on a blog post.
-const jsonLd = isHome
-  ? {
+const website = {
+  '@type': 'WebSite',
+  ...websiteRef,
+  url: siteUrl,
+  name: 'Y-A-S',
+  alternateName: 'Yet Another Solution',
+  publisher: orgRef,
+  inLanguage: langCodes.map((code) => localeTags[code]),
+};
+
+// Home > [section index] > this page. A section's own index page ends the
+// trail at the section; the 404 and the homepage have none.
+const sectionPath = section && section !== 'home' ? localizePath(`/${section}/`, lang) : null;
+const breadcrumbItems = isHome || noindex
+  ? []
+  : [
+      { name: t('nav.home'), path: localizePath('/', lang) },
+      ...(sectionPath ? [{ name: t(`nav.${section}` as UIKey), path: sectionPath }] : []),
+      ...(sectionPath === Astro.url.pathname ? [] : [{ name: pageName ?? '', path: Astro.url.pathname }]),
+    ];
+const breadcrumb = breadcrumbItems.length > 0 && {
+  '@type': 'BreadcrumbList',
+  '@id': `${canonicalURL.href}#breadcrumb`,
+  itemListElement: breadcrumbItems.map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.name,
+    item: new URL(item.path, Astro.site).href,
+  })),
+};
+
+const webPage = {
+  '@type': pageType,
+  '@id': pageId,
+  url: canonicalURL.href,
+  name: fullTitle,
+  description: pageDescription,
+  inLanguage: localeTags[lang],
+  isPartOf: websiteRef,
+  ...(isHome ? { about: orgRef } : {}),
+  ...(breadcrumb ? { breadcrumb: { '@id': breadcrumb['@id'] } } : {}),
+};
+
+const blogPosting = article && {
+  '@type': 'BlogPosting',
+  headline: title,
+  description: pageDescription,
+  image: ogImage.href,
+  datePublished: article.published.toISOString(),
+  dateModified: (article.modified ?? article.published).toISOString(),
+  inLanguage: localeTags[lang],
+  mainEntityOfPage: { '@id': pageId },
+  author: { '@type': 'Organization', name: article.author },
+  publisher: { ...orgRef, name: 'Y-A-S' },
+};
+
+const jsonLd = noindex
+  ? null
+  : {
       '@context': 'https://schema.org',
-      ...organization,
-      description: pageDescription,
-      email: company.email,
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: company.street,
-        postalCode: company.city.split(' ')[0],
-        addressLocality: company.city.split(' ').slice(1).join(' '),
-        addressCountry: 'DK',
-      },
-      sameAs: ['https://github.com/Yet-another-solution'],
-    }
-  : article
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'BlogPosting',
-        headline: title,
-        description: pageDescription,
-        image: ogImage.href,
-        datePublished: article.published.toISOString(),
-        dateModified: (article.modified ?? article.published).toISOString(),
-        inLanguage: localeTags[lang],
-        mainEntityOfPage: canonicalURL.href,
-        author: { '@type': 'Organization', name: article.author },
-        publisher: organization,
-      }
-    : null;
+      '@graph': [
+        ...(isHome ? [organization, website] : []),
+        webPage,
+        ...(breadcrumb ? [breadcrumb] : []),
+        ...(blogPosting ? [blogPosting] : []),
+        ...extraNodes,
+      ],
+    };
 
 const navItems = [
   { key: 'nav.home', path: '/', section: 'home' },
@@ -164,7 +261,10 @@ const navItems = [
   <meta name="twitter:description" content={pageDescription} />
   <meta name="twitter:image" content={ogImage} />
 
-  <link rel="icon" href="/img/Logo.png" type="image/png" />
+  <link rel="preload" href={rubikLatin} as="font" type="font/woff2" crossorigin />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <title>{fullTitle}</title>
 
   {jsonLd && (
@@ -218,7 +318,7 @@ const navItems = [
           </a>
         </div>
         <div>
-          <h2 class="footer-section-title">{t('footer.navigation')}</h2>
+          <p class="footer-section-title">{t('footer.navigation')}</p>
           <ul class="list-unstyled footer-links">
             {navItems.map((item) => (
               <li><a href={localizePath(item.path, lang)}>{t(item.key)}</a></li>
@@ -227,7 +327,14 @@ const navItems = [
           </ul>
         </div>
         <div>
-          <h2 class="footer-section-title">{t('footer.team')}</h2>
+          <p class="footer-section-title">{t('footer.network')}</p>
+          <ul class="list-unstyled footer-links">
+            <li><a href="https://cod3rs.org/" target="_blank" rel="noopener">Cod3rs</a> <span class="footer-link-note">{t('footer.cod3rs')}</span></li>
+            <li><a href="https://hackesbjerg.dk/" target="_blank" rel="noopener">Hack Esbjerg</a> <span class="footer-link-note">{t('footer.hackEsbjerg')}</span></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer-section-title">{t('footer.team')}</p>
           <ul class="list-unstyled footer-links">
             <li><a href="https://github.com/MatejMa2ur" target="_blank" rel="noopener">MatejMa2ur</a></li>
           </ul>

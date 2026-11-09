@@ -3,8 +3,8 @@
  * One project card, as shown on /projects/ and in the homepage's Selected Work
  * band: a navy tile with the project's image as a darkened backdrop and the
  * tech list as its category line. The whole tile is one link to the project
- * page. The navy scrim sits on the card itself, so a missing or broken image
- * still leaves a readable surface. Its accent colour comes from its
+ * page. The navy scrim sits on the card itself, so the text stays readable over
+ * any image; a missing image file fails the build. Its accent colour comes from its
  * position in `.project-grid`, cycling through the brand mark's green, blue
  * and red (see global.css).
  */
@@ -12,6 +12,7 @@ import type { CollectionEntry } from 'astro:content';
 import { defaultLang, useTranslations, type Lang } from '../i18n/ui';
 import { localizePath } from '../i18n/routing';
 import { entrySlug } from '../i18n/content';
+import { publicImageSize } from '../utils/imageSize';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -24,11 +25,12 @@ const { project, lang = defaultLang, heading: Heading = 'h3' } = Astro.props;
 const t = useTranslations(lang);
 const techs = project.data.tech?.split(',').map((tech) => tech.trim()).filter(Boolean) ?? [];
 const href = localizePath(`/projects/${entrySlug(project)}/`, lang);
+const size = project.data.image ? await publicImageSize(project.data.image) : null;
 ---
 
 <a href={href} class="project-card">
   {project.data.image && (
-    <img src={project.data.image} alt="" class="project-card-bg" loading="lazy" onerror="this.remove()" />
+    <img src={project.data.image} alt="" class="project-card-bg" loading="lazy" {...(size ?? {})} />
   )}
   {techs.length > 0 && <p class="project-card-category">{techs.join(' · ')}</p>}
   <Heading class="project-card-title">{project.data.title}</Heading>

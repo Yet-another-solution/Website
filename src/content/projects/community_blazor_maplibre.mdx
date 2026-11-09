@@ -1,13 +1,65 @@
 ---
 title: "Community.Blazor.MapLibre"
+seoTitle: "Community.Blazor.MapLibre: MapLibre maps for Blazor (C#)"
 date: 2025-01-12
 draft: false
-image: "/img/projects/community-blazor-maplibre.png"
+lastmod: 2026-11-09
+image: "/img/projects/community-blazor-maplibre.webp"
+galleryAlt:
+  - "Documentation example: a world map with a button that adds a random draggable marker"
+  - "Documentation example: the map rendered as a 3D globe"
+  - "Documentation example: GeoJSON regions loaded and coloured on the map"
+  - "Documentation overview with the dotnet add package install command and basic usage"
+schemaType: "SoftwareSourceCode"
+programmingLanguage: "C#"
+runtimePlatform: ".NET"
 tech: "Blazor,JavaScript,MapLibre"
-description: "C# wrapper around the MapLibre GL JS library, enabling interactive maps in Blazor applications."
+description: "Community.Blazor.MapLibre is an open-source C# wrapper around MapLibre GL JS that brings interactive maps to Blazor apps, with over 23,000 NuGet downloads."
 github: "https://github.com/Yet-another-solution/Blazor.MapLibre"
-webUrl: ""
+webUrl: "https://yet-another-solution.github.io/Blazor.MapLibre/"
 translationKey: "community-blazor-maplibre"
 ---
 
-C# Wrapper around a MapLibre GL JS library, enabling interactive maps in Blazor applications with a clean, idiomatic C# API.
+## What is Community.Blazor.MapLibre?
+
+Community.Blazor.MapLibre is an open-source C# wrapper around [MapLibre GL JS](https://maplibre.org/), the open-source library for interactive vector maps. It puts interactive maps into Blazor applications and lets you control them from C# through a clean, idiomatic API, so you do not have to write the JavaScript interop yourself. Y-A-S builds and maintains it.
+
+## How do I install it?
+
+Add the package from NuGet:
+
+```bash
+dotnet add package Community.Blazor.MapLibre
+```
+
+Then place the component in a Razor page:
+
+```razor
+<MapLibre />
+```
+
+To customise the map, pass it a `MapOptions` object:
+
+```razor
+<MapLibre Options="_mapOptions"></MapLibre>
+```
+
+The [documentation](https://yet-another-solution.github.io/Blazor.MapLibre/) covers the rest of the setup, including the stylesheet to load in your page's `<head>`.
+
+## What can it do?
+
+The documentation has a working example for each feature: adding markers and popups, listening to map events, fitting the map to bounds, loading GeoJSON, drawing shapes with Mapbox GL Draw, showing several maps on one page and rendering the map as a 3D globe.
+
+## Adoption
+
+As of November 2026, the package has over 23,000 downloads on [NuGet](https://www.nuget.org/packages/Community.Blazor.MapLibre), and the [GitHub repository](https://github.com/Yet-another-solution/Blazor.MapLibre) has 33 stars.
+
+## Who maintains it?
+
+Y-A-S ApS, a software studio in Esbjerg, Denmark. Custom web applications in C# and Blazor are what we build, so if you need interactive maps in one, we can help.
+
+## Links
+
+- Package: [Community.Blazor.MapLibre on NuGet](https://www.nuget.org/packages/Community.Blazor.MapLibre)
+- Documentation: [yet-another-solution.github.io/Blazor.MapLibre](https://yet-another-solution.github.io/Blazor.MapLibre/)
+- Source code: [Yet-another-solution/Blazor.MapLibre on GitHub](https://github.com/Yet-another-solution/Blazor.MapLibre)

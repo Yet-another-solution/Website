@@ -1,0 +1,18 @@
+# Cloudflare Pages response headers.
+# The CSP is report-only until it has run clean; then rename the header to
+# Content-Security-Policy. HSTS deliberately has no includeSubDomains/preload
+# until every subdomain is known to serve HTTPS.
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy-Report-Only: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
+# Astro's hashed bundles never change under the same name.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/img/*
+  Cache-Control: public, max-age=604800

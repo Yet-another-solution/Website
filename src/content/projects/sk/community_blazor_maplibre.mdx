@@ -1,13 +1,65 @@
 ---
 title: "Community.Blazor.MapLibre"
+seoTitle: "Community.Blazor.MapLibre: mapy MapLibre pre Blazor (C#)"
 date: 2025-01-12
 draft: false
-image: "/img/projects/community-blazor-maplibre.png"
+lastmod: 2026-11-09
+image: "/img/projects/community-blazor-maplibre.webp"
+galleryAlt:
+  - "Príklad z dokumentácie: mapa sveta s tlačidlom, ktoré pridá náhodný posúvateľný marker"
+  - "Príklad z dokumentácie: mapa vykreslená ako 3D glóbus"
+  - "Príklad z dokumentácie: oblasti z GeoJSON načítané a vyfarbené na mape"
+  - "Úvod dokumentácie s inštalačným príkazom dotnet add package a základným použitím"
+schemaType: "SoftwareSourceCode"
+programmingLanguage: "C#"
+runtimePlatform: ".NET"
 tech: "Blazor,JavaScript,MapLibre"
-description: "C# obal nad knižnicou MapLibre GL JS, ktorý prináša interaktívne mapy do Blazor aplikácií."
+description: "Community.Blazor.MapLibre je open-source C# obal nad MapLibre GL JS pre interaktívne mapy v Blazor aplikáciách. Má viac ako 23 000 stiahnutí z NuGetu."
 github: "https://github.com/Yet-another-solution/Blazor.MapLibre"
-webUrl: ""
+webUrl: "https://yet-another-solution.github.io/Blazor.MapLibre/"
 translationKey: "community-blazor-maplibre"
 ---
 
-C# obal nad knižnicou MapLibre GL JS, ktorý prináša interaktívne mapy do Blazor aplikácií cez čisté a idiomatické C# API.
+## Čo je Community.Blazor.MapLibre?
+
+Community.Blazor.MapLibre je open-source C# obal nad [MapLibre GL JS](https://maplibre.org/), open-source knižnicou na interaktívne vektorové mapy. Prináša interaktívne mapy do Blazor aplikácií a umožňuje ich ovládať z C# cez čisté a idiomatické API, takže JavaScriptový interop nemusíte písať sami. Knižnicu vyvíja a udržiava Y-A-S.
+
+## Ako ju nainštalujem?
+
+Pridajte balík z NuGetu:
+
+```bash
+dotnet add package Community.Blazor.MapLibre
+```
+
+Potom vložte komponent do Razor stránky:
+
+```razor
+<MapLibre />
+```
+
+Ak chcete mapu prispôsobiť, odovzdajte jej objekt `MapOptions`:
+
+```razor
+<MapLibre Options="_mapOptions"></MapLibre>
+```
+
+Zvyšok nastavenia, vrátane štýlu, ktorý treba načítať v `<head>` stránky, popisuje [dokumentácia](https://yet-another-solution.github.io/Blazor.MapLibre/).
+
+## Čo dokáže?
+
+Dokumentácia má funkčný príklad ku každej funkcii: pridávanie markerov a popupov, počúvanie udalostí mapy, prispôsobenie mapy hraniciam, načítanie GeoJSON, kreslenie tvarov cez Mapbox GL Draw, viac máp na jednej stránke a vykreslenie mapy ako 3D glóbusu.
+
+## Používanie
+
+K novembru 2026 má balík na [NuGete](https://www.nuget.org/packages/Community.Blazor.MapLibre) viac ako 23 000 stiahnutí a [repozitár na GitHube](https://github.com/Yet-another-solution/Blazor.MapLibre) má 33 hviezdičiek.
+
+## Kto ju udržiava?
+
+Y-A-S ApS, softvérové štúdio v dánskom Esbjergu. Webové aplikácie na mieru v C# a Blazore sú presne to, čo staviame, takže ak v jednej z nich potrebujete interaktívne mapy, radi pomôžeme.
+
+## Odkazy
+
+- Balík: [Community.Blazor.MapLibre na NuGete](https://www.nuget.org/packages/Community.Blazor.MapLibre)
+- Dokumentácia: [yet-another-solution.github.io/Blazor.MapLibre](https://yet-another-solution.github.io/Blazor.MapLibre/)
+- Zdrojový kód: [Yet-another-solution/Blazor.MapLibre na GitHube](https://github.com/Yet-another-solution/Blazor.MapLibre)

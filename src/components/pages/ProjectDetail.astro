@@ -5,9 +5,10 @@ import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Backdrop from '../Backdrop.astro';
 import PageHero from '../PageHero.astro';
-import { defaultLang, formatDate, useTranslations, type Lang } from '../../i18n/ui';
+import { defaultLang, formatDate, localeTags, useTranslations, type Lang } from '../../i18n/ui';
 import { localizePath } from '../../i18n/routing';
-import { entrySlug } from '../../i18n/content';
+import { entrySlug, getLocalizedCollection } from '../../i18n/content';
+import { publicImageSize } from '../../utils/imageSize';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -33,13 +34,50 @@ const gallery = fs.existsSync(galleryDir)
       .map((file) => `/img/projects/${galleryKey}/${file}`)
       .filter((src) => src !== project.data.image)
   : [];
+
+// The lead image is shown at most 420px tall: its width/height attributes are
+// that display size, so the layout is reserved before the file arrives.
+const lead = project.data.image ? await publicImageSize(project.data.image) : null;
+const leadScale = lead ? Math.min(1, 420 / lead.height) : 1;
+const leadSize = lead ? { width: Math.round(lead.width * leadScale), height: Math.round(lead.height * leadScale) } : {};
+
+// Previous/next in the order of the /projects/ listing (newest first).
+const siblings = (await getLocalizedCollection('projects', lang)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const position = siblings.findIndex((entry) => entry.id === project.id);
+const prev = siblings[position - 1];
+const next = siblings[position + 1];
+const projectHref = (entry: CollectionEntry<'projects'>) => localizePath(`/projects/${entrySlug(entry)}/`, lang);
+const contactHref = localizePath('/contact/', lang);
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const work = {
+  '@type': project.data.schemaType,
+  '@id': `${pageUrl}#work`,
+  name: project.data.title,
+  description: project.data.description,
+  url: pageUrl,
+  inLanguage: localeTags[lang],
+  creator: { '@id': new URL('/#organization', Astro.site).href },
+  mainEntityOfPage: { '@id': `${pageUrl}#webpage` },
+  ...(project.data.image ? { image: new URL(project.data.image, Astro.site).href } : {}),
+  ...(project.data.webUrl ? { sameAs: project.data.webUrl } : {}),
+  ...(project.data.schemaType === 'SoftwareSourceCode' && project.data.github
+    ? { codeRepository: project.data.github }
+    : {}),
+  ...(project.data.programmingLanguage ? { programmingLanguage: project.data.programmingLanguage } : {}),
+  ...(project.data.runtimePlatform ? { runtimePlatform: project.data.runtimePlatform } : {}),
+};
 ---
 
 <BaseLayout
-  title={project.data.title}
+  title={project.data.seoTitle ?? project.data.title}
+  pageName={project.data.title}
   description={project.data.description}
   image={project.data.image}
   section="projects"
+  jsonLd={[work]}
   lang={lang}
   alternates={alternates}
 >
@@ -52,10 +90,16 @@ const gallery = fs.existsSync(galleryDir)
     />
     <div class="yas-container page-content">
       <a href={localizePath('/projects/', lang)} class="text-link">{t('projects.back')}</a>
+      {(project.data.webUrl || project.data.github) && (
+        <div class="btn-row d-lg-none">
+          {project.data.webUrl && <a href={project.data.webUrl} target="_blank" rel="noopener" class="btn-yas btn-yas--navy">{t('projects.visitPage')}</a>}
+          {project.data.github && <a href={project.data.github} target="_blank" rel="noopener" class="btn-yas btn-yas--outline">{t('projects.githubRepo')}</a>}
+        </div>
+      )}
       <div class="split">
         <div class="split-main">
           {project.data.image && (
-            <img src={project.data.image} alt={project.data.title} class="project-image" loading="lazy" />
+            <img src={project.data.image} alt={project.data.title} class="project-image" {...leadSize} />
           )}
           <div class="prose">
             <Content />
@@ -68,7 +112,7 @@ const gallery = fs.existsSync(galleryDir)
                   <a href={src} target="_blank" rel="noopener">
                     <img
                       src={src}
-                      alt={`${project.data.title} – ${t('projects.gallery')} ${i + 1}`}
+                      alt={project.data.galleryAlt?.[i] ?? `${project.data.title} – ${t('projects.gallery')} ${i + 1}`}
                       width="1440"
                       height="900"
                       loading="lazy"
@@ -77,6 +121,19 @@ const gallery = fs.existsSync(galleryDir)
                 ))}
               </div>
             </section>
+          )}
+
+          <section class="light-card project-cta">
+            <h2 class="project-cta-heading">{t('projects.ctaHeading')}</h2>
+            <p class="lead-text">{t('projects.ctaBody')}</p>
+            <a href={contactHref} class="btn-yas btn-yas--navy">{t('projects.ctaButton')}</a>
+          </section>
+
+          {(prev || next) && (
+            <nav class="project-pager" aria-label={t('projects.title')}>
+              {prev && <a href={projectHref(prev)} rel="prev" class="text-link">← {t('projects.prev')}: {prev.data.title}</a>}
+              {next && <a href={projectHref(next)} rel="next" class="text-link">{t('projects.next')}: {next.data.title} →</a>}
+            </nav>
           )}
         </div>
 
@@ -97,18 +154,37 @@ const gallery = fs.existsSync(galleryDir)
             <p class="dark-card-value">{formatDate(project.data.date, lang)}</p>
           </div>
 
+          {project.data.status && (
+            <div>
+              <p class="eyebrow eyebrow--dim">{t('projects.status')}</p>
+              <p class="dark-card-value">{t(`projects.status.${project.data.status}`)}</p>
+            </div>
+          )}
+
+          {project.data.lastmod && (
+            <div>
+              <p class="eyebrow eyebrow--dim">{t('projects.updated')}</p>
+              <p class="dark-card-value"><time datetime={project.data.lastmod.toISOString().slice(0, 10)}>{formatDate(project.data.lastmod, lang)}</time></p>
+            </div>
+          )}
+
           {project.data.webUrl && (
-            <a href={project.data.webUrl} target="_blank" rel="noopener" class="btn-yas btn-yas--green btn-yas--icon">
+            <a href={project.data.webUrl} target="_blank" rel="noopener" class="btn-yas btn-yas--green btn-yas--icon d-none d-lg-flex">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
               {t('projects.visitPage')}
             </a>
           )}
           {project.data.github && (
-            <a href={project.data.github} target="_blank" rel="noopener" class="btn-yas btn-yas--ghost btn-yas--icon">
+            <a href={project.data.github} target="_blank" rel="noopener" class="btn-yas btn-yas--ghost btn-yas--icon d-none d-lg-flex">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
               {t('projects.githubRepo')}
             </a>
           )}
+
+          <div class="project-aside-cta">
+            <p class="eyebrow eyebrow--dim">{t('projects.ctaHeading')}</p>
+            <a href={contactHref} class="text-link project-aside-cta-link">{t('projects.ctaButton')} →</a>
+          </div>
         </aside>
       </div>
     </div>

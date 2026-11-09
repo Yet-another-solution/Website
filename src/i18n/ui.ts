@@ -48,12 +48,19 @@ export const ui = {
 
     'site.title': 'Y-A-S | Yet Another Solution — C# and Blazor developers',
     'site.description':
-      'Yet Another Solution - A team of developers creating innovative software solutions using C#, Blazor, and PostgreSQL.',
+      'Y-A-S ApS is a software studio in Esbjerg, Denmark. We build custom web applications in C# and Blazor and organise hackathons and community events.',
 
     'footer.navigation': 'Navigation',
     'footer.team': 'The Team',
+    'footer.network': 'Projects we run',
+    'footer.cod3rs': 'developer community in Esbjerg',
+    'footer.hackEsbjerg': '24-hour hackathon in Esbjerg',
     'footer.builtWith': 'Built with Astro & hosted on Cloudflare Pages.',
     'footer.privacy': 'Privacy policy',
+
+    // --- Structured data (JSON-LD service names) -------------------------
+    'schema.serviceWebApps': 'Custom web application development in C# and Blazor',
+    'schema.serviceEvents': 'Hackathon and community event organisation',
 
     // --- Company details (the values themselves live in src/company.ts) ---
     'company.cvr': 'CVR',
@@ -63,12 +70,17 @@ export const ui = {
     'home.hero.projectsTitle': 'See our projects',
     'home.hero.blogTitle': 'Read our blog',
     'home.hero.scrollTitle': 'Scroll down',
+    'home.hero.githubTitle': 'Y-A-S on GitHub',
+    'home.hero.title': 'Y-A-S: custom C# and Blazor web applications from Esbjerg, Denmark',
+    'home.hero.lead':
+      'Y-A-S ApS (Yet Another Solution) is a software studio in Esbjerg, Denmark. We build custom web applications with C# and Blazor, and we organise hackathons and community events, such as Hack Esbjerg 2026.',
+    'home.hero.cta': 'Tell us about your project',
 
     // --- Home: intro ----------------------------------------------------
     'home.intro.label': 'Yet Another Solution',
     'home.intro.heading': 'We build software',
     'home.intro.body':
-      'A team of developers crafting full-stack applications with modern tools — from backend APIs to polished web interfaces.',
+      'Y-A-S ApS (CVR 45856186) is a software studio based in Esbjerg, Denmark. We do two things. We design and build custom web applications in C# and Blazor, from the backend API to the interface your users click. And we organise hackathons and community events: Hack Esbjerg 2026 (19–20 March 2026) brought together over 100 participants, who built 13 projects across 6 prize categories. We also maintain Community.Blazor.MapLibre, an open-source library for MapLibre maps in Blazor with over 23,000 NuGet downloads.',
     'home.intro.viewProjects': 'View Projects',
     'home.intro.contactUs': 'Contact Us',
 
@@ -102,6 +114,11 @@ export const ui = {
       'Tutorials and deep dives on Blazor, .NET, and the way we build software.',
     'home.blog.explore': 'Explore Blog',
 
+    // --- Home: closing call to action ---------------------------------------
+    'home.cta.heading': 'Have a project in mind?',
+    'home.cta.body':
+      'Tell us what you need built in C# and Blazor, or which event you want to organise.',
+
     // --- Scene labels (drawn into the WebGL diagrams) ----------------------
     'scene.you': 'You',
     'scene.developers': 'the developers',
@@ -113,7 +130,7 @@ export const ui = {
     // The <title>; `blog.title` stays short for the nav and the page heading.
     'blog.metaTitle': 'Blog — Blazor and .NET tutorials',
     'blog.description':
-      'Insights, tutorials, and thoughts on software development from the Y-A-S team.',
+      'Tutorials and notes on C#, .NET and Blazor from Y-A-S, a software studio in Esbjerg, Denmark that builds custom web applications.',
     'blog.browseTags': 'Browse by Tags:',
     'blog.browseSeries': 'Browse by Series:',
     'blog.readMore': 'Read More →',
@@ -127,14 +144,18 @@ export const ui = {
     'blog.seriesPartAfter': 'series',
     'blog.tagPrefix': 'Tag:',
     'blog.tagLabel': 'Tag',
-    'blog.taggedWith': 'Posts tagged with',
-    'blog.seriesAllPosts': 'All posts in the {series} series',
+    'blog.tagDescription':
+      'Posts tagged “{tag}” on the Y-A-S blog: tutorials and notes on C#, .NET and Blazor from a software studio in Esbjerg, Denmark.',
+    'blog.seriesAllPosts':
+      'All posts in the {series} series on the Y-A-S blog: step-by-step tutorials on C#, .NET and Blazor from a software studio in Esbjerg.',
 
     // --- Projects ---------------------------------------------------------
     'projects.title': 'Projects',
     'projects.metaTitle': 'Projects built with C# and Blazor',
     'projects.description':
-      'Explore projects built by the Y-A-S team using C#, Blazor, and more.',
+      'Projects by Y-A-S, a software studio in Esbjerg: the open-source Community.Blazor.MapLibre library, the Hack Esbjerg hackathon, CycleBridge and more.',
+    'projects.intro':
+      'This is what Y-A-S has built and run. Some of it is open source: Community.Blazor.MapLibre, our C# library for MapLibre maps in Blazor, has over 23,000 downloads on NuGet. Some of it is product work: CycleBridge is a companion platform for cyclists, with its web app live today. And some of it is for the community: we organised Hack Esbjerg 2026, a 24-hour hackathon in Esbjerg, Denmark, where over 100 participants built 13 projects. The list also includes Hack The Flag, an online cryptography competition, and the Cod3rs developer community. If you need a web application or an event like these, get in touch.',
     'projects.details': 'Project Details',
     'projects.technologies': 'Technologies',
     'projects.date': 'Date',
@@ -143,11 +164,23 @@ export const ui = {
     'projects.back': '← Back to Projects',
     'projects.view': 'View project →',
     'projects.gallery': 'Screenshots',
+    'projects.updated': 'Last updated',
+    'projects.ctaHeading': 'Need something similar?',
+    'projects.ctaBody':
+      'We build custom web applications in C# and Blazor and organise hackathons and community events. Tell us what you have in mind.',
+    'projects.ctaButton': 'Talk to us',
+    'projects.prev': 'Previous project',
+    'projects.next': 'Next project',
+    'projects.status': 'Status',
+    'projects.status.active': 'Active',
+    'projects.status.completed': 'Completed',
 
     // --- Contact -----------------------------------------------------------
     'contact.title': 'Contact',
+    // The <title>; `contact.title` stays short for the nav and the breadcrumb.
+    'contact.metaTitle': 'Contact Y-A-S: C# and Blazor developers in Esbjerg',
     'contact.description':
-      'Contact Y-A-S ApS, a software development team in Esbjerg, Denmark — by email or on GitHub.',
+      'Contact Y-A-S ApS, a software studio in Esbjerg, Denmark, about a custom C# and Blazor web application or a hackathon or community event.',
     'contact.heading': 'Get in Touch',
     'contact.body':
       "Write to us by email, or find us on GitHub. We're always open to collaboration, questions, and feedback.",
@@ -207,12 +240,19 @@ export const ui = {
 
     'site.title': 'Y-A-S | Yet Another Solution — vývojári v C# a Blazore',
     'site.description':
-      'Yet Another Solution – tím vývojárov, ktorý tvorí inovatívne softvérové riešenia v C#, Blazore a PostgreSQL.',
+      'Y-A-S ApS je softvérové štúdio v dánskom Esbjergu. Vyvíjame webové aplikácie na mieru v C# a Blazore a organizujeme hackathony a komunitné podujatia.',
 
     'footer.navigation': 'Navigácia',
     'footer.team': 'Tím',
+    'footer.network': 'Projekty, ktoré vedieme',
+    'footer.cod3rs': 'vývojárska komunita v Esbjergu',
+    'footer.hackEsbjerg': '24-hodinový hackathon v Esbjergu',
     'footer.builtWith': 'Postavené v Astre a hostované na Cloudflare Pages.',
     'footer.privacy': 'Ochrana súkromia',
+
+    // --- Štruktúrované dáta (názvy služieb v JSON-LD) -------------------------
+    'schema.serviceWebApps': 'Vývoj webových aplikácií na mieru v C# a Blazore',
+    'schema.serviceEvents': 'Organizovanie hackathonov a komunitných podujatí',
 
     // --- Údaje o spoločnosti (samotné hodnoty sú v src/company.ts) ---------
     'company.cvr': 'CVR',
@@ -222,12 +262,17 @@ export const ui = {
     'home.hero.projectsTitle': 'Pozrite si naše projekty',
     'home.hero.blogTitle': 'Prečítajte si náš blog',
     'home.hero.scrollTitle': 'Posunúť nadol',
+    'home.hero.githubTitle': 'Y-A-S na GitHube',
+    'home.hero.title': 'Y-A-S: webové aplikácie na mieru v C# a Blazore z Esbjergu v Dánsku',
+    'home.hero.lead':
+      'Y-A-S ApS (Yet Another Solution) je softvérové štúdio v dánskom Esbjergu. Vyvíjame webové aplikácie na mieru v C# a Blazore a organizujeme hackathony a komunitné podujatia, napríklad Hack Esbjerg 2026.',
+    'home.hero.cta': 'Napíšte nám o projekte',
 
     // --- Domov: úvod --------------------------------------------------------
     'home.intro.label': 'Yet Another Solution',
     'home.intro.heading': 'Tvoríme softvér',
     'home.intro.body':
-      'Tím vývojárov, ktorý stavia full-stack aplikácie s modernými nástrojmi — od backendových API až po vyladené webové rozhrania.',
+      'Y-A-S ApS (CVR 45856186) je softvérové štúdio so sídlom v dánskom Esbjergu. Robíme dve veci. Navrhujeme a vyvíjame webové aplikácie na mieru v C# a Blazore, od backendového API až po rozhranie, na ktoré klikajú vaši používatelia. A organizujeme hackathony a komunitné podujatia: na Hack Esbjerg 2026 (19. – 20. marca 2026) sa stretlo viac ako 100 účastníkov, ktorí vytvorili 13 projektov v 6 súťažných kategóriách. Okrem toho udržiavame Community.Blazor.MapLibre, open-source knižnicu na mapy MapLibre v Blazore s viac ako 23 000 stiahnutiami z NuGetu.',
     'home.intro.viewProjects': 'Zobraziť projekty',
     'home.intro.contactUs': 'Kontaktujte nás',
 
@@ -261,6 +306,11 @@ export const ui = {
       'Návody a hlbšie pohľady na Blazor, .NET a spôsob, akým staviame softvér.',
     'home.blog.explore': 'Preskúmať blog',
 
+    // --- Domov: záverečná výzva -----------------------------------------------
+    'home.cta.heading': 'Máte nápad na projekt?',
+    'home.cta.body':
+      'Napíšte nám, čo potrebujete postaviť v C# a Blazore, alebo aké podujatie chcete zorganizovať.',
+
     // --- Popisky v diagramoch -------------------------------------------------
     'scene.you': 'Vy',
     'scene.developers': 'vývojári',
@@ -271,7 +321,7 @@ export const ui = {
     'blog.title': 'Blog',
     'blog.metaTitle': 'Blog — návody na Blazor a .NET',
     'blog.description':
-      'Postrehy, návody a úvahy o vývoji softvéru od tímu Y-A-S.',
+      'Návody a poznámky o C#, .NET a Blazore od Y-A-S, softvérového štúdia z dánskeho Esbjergu, ktoré vyvíja webové aplikácie na mieru.',
     'blog.browseTags': 'Prehľadávať podľa tagov:',
     'blog.browseSeries': 'Prehľadávať podľa sérií:',
     'blog.readMore': 'Čítať ďalej →',
@@ -286,14 +336,18 @@ export const ui = {
     'blog.seriesPartAfter': '',
     'blog.tagPrefix': 'Tag:',
     'blog.tagLabel': 'Tag',
-    'blog.taggedWith': 'Príspevky označené tagom',
-    'blog.seriesAllPosts': 'Všetky príspevky v sérii {series}',
+    'blog.tagDescription':
+      'Príspevky s tagom „{tag}“ na blogu Y-A-S: návody a poznámky o C#, .NET a Blazore od softvérového štúdia z dánskeho Esbjergu.',
+    'blog.seriesAllPosts':
+      'Všetky príspevky zo série {series} na blogu Y-A-S: návody krok za krokom o C#, .NET a Blazore od softvérového štúdia z Esbjergu.',
 
     // --- Projekty --------------------------------------------------------------
     'projects.title': 'Projekty',
     'projects.metaTitle': 'Projekty postavené v C# a Blazore',
     'projects.description':
-      'Preskúmajte projekty, ktoré tím Y-A-S postavil v C#, Blazore a ďalších technológiách.',
+      'Projekty Y-A-S, softvérového štúdia z Esbjergu: open-source knižnica Community.Blazor.MapLibre, hackathon Hack Esbjerg, CycleBridge a ďalšie.',
+    'projects.intro':
+      'Toto je to, čo sme v Y-A-S postavili a prevádzkovali. Časť je open source: Community.Blazor.MapLibre, naša C# knižnica na mapy MapLibre v Blazore, má na NuGete viac ako 23 000 stiahnutí. Časť je produktová práca: CycleBridge je platforma pre cyklistov, ktorej webová aplikácia už beží. A časť robíme pre komunitu: zorganizovali sme Hack Esbjerg 2026, 24-hodinový hackathon v dánskom Esbjergu, kde viac ako 100 účastníkov vytvorilo 13 projektov. V zozname nájdete aj Hack The Flag, online kryptografickú súťaž, a vývojársku komunitu Cod3rs. Ak potrebujete webovú aplikáciu alebo podobné podujatie, ozvite sa nám.',
     'projects.details': 'Detaily projektu',
     'projects.technologies': 'Technológie',
     'projects.date': 'Dátum',
@@ -302,11 +356,22 @@ export const ui = {
     'projects.back': '← Späť na projekty',
     'projects.view': 'Zobraziť projekt →',
     'projects.gallery': 'Snímky obrazovky',
+    'projects.updated': 'Naposledy aktualizované',
+    'projects.ctaHeading': 'Potrebujete niečo podobné?',
+    'projects.ctaBody':
+      'Vyvíjame webové aplikácie na mieru v C# a Blazore a organizujeme hackathony a komunitné podujatia. Napíšte nám, čo máte v pláne.',
+    'projects.ctaButton': 'Ozvite sa nám',
+    'projects.prev': 'Predchádzajúci projekt',
+    'projects.next': 'Ďalší projekt',
+    'projects.status': 'Stav',
+    'projects.status.active': 'Aktívny',
+    'projects.status.completed': 'Ukončený',
 
     // --- Kontakt ----------------------------------------------------------------
     'contact.title': 'Kontakt',
+    'contact.metaTitle': 'Kontakt Y-A-S: vývojári v C# a Blazore v Esbjergu',
     'contact.description':
-      'Kontaktujte Y-A-S ApS, tím vývojárov softvéru z dánskeho Esbjergu — e-mailom alebo na GitHube.',
+      'Kontaktujte Y-A-S ApS, softvérové štúdio v dánskom Esbjergu, ak potrebujete webovú aplikáciu v C# a Blazore alebo hackathon či komunitné podujatie.',
     'contact.heading': 'Ozvite sa nám',
     'contact.body':
       'Napíšte nám e-mail alebo nás nájdite na GitHube. Sme vždy otvorení spolupráci, otázkam aj spätnej väzbe.',

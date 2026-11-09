@@ -92,59 +92,117 @@ h1, h2, h3, h4, h5, h6 {
     border-bottom: 1px solid var(--border-color);
 }
 
-@media (max-width: 575.98px) { /* Mobile */
-    /* The hero square is sized by viewport width on mobile (see .white-square
-       below), so the hero itself must match instead of staying full-height —
-       otherwise a slab of empty dark background is left below the square. */
-    #home {
-        height: 100vw !important;
-    }
-
-    .s-text{
-        padding-top: 10vw;
-    }
-    h1.h1{
-        font-size: 5rem;
-    }
-
-    .white-square {
-        width: 100vw;
-        height: 100vw;
-    }
-
-    .lr-ws{
-        height: 5vw;
-        max-width: 90vw;
-    }
-    .lr-ws-center{
-        height: 90vw;
-        max-height: 90vw;
-    }
+/* The hero square's side: the smaller viewport dimension, so it never
+   overflows sideways (phones, portrait tablets) or downwards; on desktop also
+   at most 55vw, so the panel beside it keeps room. Everything inside the
+   square scales with it. */
+:root { --hero-sq: min(100vh, 100vw); }
+/* Tablets stack the panel under the square: keep the square short enough
+   that the panel's call to action still lands in the first screen. */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    :root { --hero-sq: min(100vw, 60vh); }
+    .white-square { margin: 0 auto; }
+}
+@media (min-width: 992px) {
+    :root { --hero-sq: min(100vh, 55vw); }
 }
 
-@media (min-width: 576px) { /* Desktop */
-    .s-text{
-        padding-top: 10vh;
-    }
-    h1.h1{
-        font-size: 12rem;
-    }
-
-    .white-square {
-        width: 100vh;
-        height: 100vh;
-    }
-
-    .lr-ws{
-        height: 5vh;
-        max-width: 90vh;
-    }
-    .lr-ws-center{
-        height: 90vh;
-        max-height: 90vh;
-    }
+.white-square {
+    width: var(--hero-sq);
+    height: var(--hero-sq);
 }
 
+.lr-ws{
+    height: calc(var(--hero-sq) * 0.05);
+    max-width: calc(var(--hero-sq) * 0.9);
+}
+.lr-ws-center{
+    height: calc(var(--hero-sq) * 0.9);
+    max-height: calc(var(--hero-sq) * 0.9);
+}
+
+.s-text{
+    padding-top: calc(var(--hero-sq) * 0.1);
+}
+
+/* Scaled with the square so the wordmark always stays on one line. */
+.h1.hero-wordmark{
+    font-size: calc(var(--hero-sq) * 0.17);
+}
+
+.hero-tagline {
+    transform: rotate(90deg);
+    font-size: 2rem;
+}
+
+@media (max-width: 575.98px) {
+    .hero-tagline { font-size: 1rem; }
+}
+
+/* The hero: the brand square, then the panel that says who we are. Side by
+   side where the square leaves room (desktop), stacked below that. */
+.hero-inner {
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 40px clamp(1.25rem, 5vw, 96px);
+    color: #fff;
+}
+
+.hero-panel .eyebrow { margin: 0; }
+
+.hero-title {
+    margin: 0;
+    max-width: 640px;
+    font-family: 'Rubik Mono One', monospace;
+    font-size: clamp(1.35rem, 2.3vw, 2.4rem);
+    line-height: 1.25;
+    color: #fff;
+}
+
+.hero-lead {
+    margin: 0;
+    max-width: 60ch;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@media (min-width: 992px) {
+    /* min-height, not height: a panel taller than the viewport grows the
+       hero instead of overflowing it. */
+    #home { min-height: 100vh; }
+    .hero-inner { flex-direction: row; align-items: center; }
+    .white-square { flex: none; }
+    .hero-panel { flex: 1 1 0; min-width: 0; }
+}
+
+@media (max-width: 575.98px) {
+    .hero-panel { padding-top: 24px; padding-bottom: 32px; gap: 14px; }
+    .hero-title { font-size: 1.15rem; line-height: 1.3; }
+    .hero-lead { font-size: 0.9rem; line-height: 1.6; }
+}
+
+/* Closing call to action after the homepage bands. */
+.home-closing {
+    padding: 96px 0;
+    background: var(--page-alt-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.home-closing-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
 
 /* ===== LAYOUT ===== */
 
@@ -254,6 +312,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .text-link {
     align-self: flex-start;
+    /* 44px tap target without changing how the text sits. */
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--secondary-color);
@@ -327,6 +389,12 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--main-light-text-color);
     text-decoration: none;
     background: #fff;
+}
+
+a.pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
 }
 
 a.pill:hover,
@@ -659,10 +727,43 @@ a.chip:focus-visible {
     height: auto;
 }
 
+/* "Need something similar?" after a project's body, and the pager below it. */
+.project-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 56px;
+}
+
+.project-cta-heading {
+    margin: 0;
+    font-family: 'Rubik Mono One', monospace;
+    font-size: 1.375rem;
+    line-height: 1.2;
+}
+
+.project-pager {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.project-pager [rel="next"] { margin-left: auto; }
+
+.project-aside-cta {
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.project-aside-cta-link { color: var(--primary-color); }
+
 .project-image {
     display: block;
     max-width: 100%;
-    max-height: 420px;
+    height: auto;
     margin-bottom: 32px;
     border: 1px solid var(--border-color);
 }
@@ -1096,6 +1197,11 @@ a.chip:focus-visible {
     padding-bottom: 20px;
 }
 
+.yas-navbar .navbar-toggler {
+    min-width: 44px;
+    min-height: 44px;
+}
+
 .yas-navbar-brand {
     font-size: 1.375rem;
     line-height: 1;
@@ -1182,14 +1288,23 @@ a.chip:focus-visible {
 .footer-links {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
     margin: 0;
 }
 
 .footer-links a {
+    display: inline-block;
+    padding: 0.6rem 0;
     font-size: 0.9rem;
     color: var(--main-dark-text-color);
     text-decoration: none;
+}
+
+.footer-link-note {
+    display: block;
+    margin-top: -0.4rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .footer-links a:hover,
