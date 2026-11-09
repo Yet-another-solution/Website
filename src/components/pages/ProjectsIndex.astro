@@ -5,7 +5,8 @@ import Backdrop from '../Backdrop.astro';
 import PageHero from '../PageHero.astro';
 import ProjectCard from '../ProjectCard.astro';
 import { defaultLang, useTranslations, type Lang } from '../../i18n/ui';
-import { getLocalizedCollection } from '../../i18n/content';
+import { entrySlug, getLocalizedCollection } from '../../i18n/content';
+import { localizePath } from '../../i18n/routing';
 
 interface Props {
   lang?: Lang;
@@ -17,12 +18,24 @@ const t = useTranslations(lang);
 const projects = (await getLocalizedCollection('projects', lang)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
+
+const itemList = {
+  '@type': 'ItemList',
+  itemListElement: projects.map((project, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: project.data.title,
+    url: new URL(localizePath(`/projects/${entrySlug(project)}/`, lang), Astro.site).href,
+  })),
+};
 ---
 
 <BaseLayout
   title={t('projects.metaTitle')}
   description={t('projects.description')}
   section="projects"
+  pageType="CollectionPage"
+  jsonLd={[itemList]}
   lang={lang}
 >
   <main class="yas-page">

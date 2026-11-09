@@ -5,7 +5,7 @@ import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Backdrop from '../Backdrop.astro';
 import PageHero from '../PageHero.astro';
-import { defaultLang, formatDate, useTranslations, type Lang } from '../../i18n/ui';
+import { defaultLang, formatDate, localeTags, useTranslations, type Lang } from '../../i18n/ui';
 import { localizePath } from '../../i18n/routing';
 import { entrySlug } from '../../i18n/content';
 import { publicImageSize } from '../../utils/imageSize';
@@ -40,6 +40,23 @@ const gallery = fs.existsSync(galleryDir)
 const lead = project.data.image ? await publicImageSize(project.data.image) : null;
 const leadScale = lead ? Math.min(1, 420 / lead.height) : 1;
 const leadSize = lead && { width: Math.round(lead.width * leadScale), height: Math.round(lead.height * leadScale) };
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const work = {
+  '@type': project.data.schemaType,
+  '@id': `${pageUrl}#work`,
+  name: project.data.title,
+  description: project.data.description,
+  url: pageUrl,
+  inLanguage: localeTags[lang],
+  creator: { '@id': new URL('/#organization', Astro.site).href },
+  mainEntityOfPage: { '@id': `${pageUrl}#webpage` },
+  ...(project.data.image ? { image: new URL(project.data.image, Astro.site).href } : {}),
+  ...(project.data.webUrl ? { sameAs: project.data.webUrl } : {}),
+  ...(project.data.schemaType === 'SoftwareSourceCode'
+    ? { codeRepository: project.data.github, programmingLanguage: 'C#', runtimePlatform: '.NET' }
+    : {}),
+};
 ---
 
 <BaseLayout
@@ -47,6 +64,7 @@ const leadSize = lead && { width: Math.round(lead.width * leadScale), height: Ma
   description={project.data.description}
   image={project.data.image}
   section="projects"
+  jsonLd={[work]}
   lang={lang}
   alternates={alternates}
 >

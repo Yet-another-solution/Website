@@ -114,9 +114,14 @@ WebGL throws.
 
 ### SEO
 `BaseLayout` emits description, canonical, Open Graph, Twitter Card and
-`hreflang` tags, plus JSON-LD: `Organization` on the homepage and `BlogPosting`
-on a blog post (which passes the `article` prop, also setting `og:type` and the
-article dates). The homepage `<title>` is `site.title`; the blog and projects
+`hreflang` tags, plus one JSON-LD `@graph` per page: the `Organization`
+(`@id` `https://y-a-s.net/#organization`) and `WebSite` nodes on the homepages,
+and on every indexable page a `WebPage` node (`pageType` prop: `ContactPage`,
+`CollectionPage`), a `BreadcrumbList` derived from `section` (Home > section >
+`pageName`), a `BlogPosting` on a blog post (the `article` prop, also setting
+`og:type` and the article dates), and any extra nodes a page passes in `jsonLd`
+(project pages add `CreativeWork`, or `SoftwareSourceCode` via the `schemaType`
+frontmatter field). Other pages refer to the company by its `@id` only. The homepage `<title>` is `site.title`; the blog and projects
 indexes use their `*.metaTitle` key, so the nav label and heading stay short.
 
 `@astrojs/sitemap` writes `sitemap-index.xml` and `sitemap-0.xml` at build time;

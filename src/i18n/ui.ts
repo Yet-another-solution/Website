@@ -55,6 +55,10 @@ export const ui = {
     'footer.builtWith': 'Built with Astro & hosted on Cloudflare Pages.',
     'footer.privacy': 'Privacy policy',
 
+    // --- Structured data (JSON-LD service names) -------------------------
+    'schema.serviceWebApps': 'Custom web application development in C# and Blazor',
+    'schema.serviceEvents': 'Hackathon and community event organisation',
+
     // --- Company details (the values themselves live in src/company.ts) ---
     'company.cvr': 'CVR',
     'company.country': 'Denmark',
@@ -223,6 +227,10 @@ export const ui = {
     'footer.team': 'Tím',
     'footer.builtWith': 'Postavené v Astre a hostované na Cloudflare Pages.',
     'footer.privacy': 'Ochrana súkromia',
+
+    // --- Štruktúrované dáta (názvy služieb v JSON-LD) -------------------------
+    'schema.serviceWebApps': 'Vývoj webových aplikácií na mieru v C# a Blazore',
+    'schema.serviceEvents': 'Organizovanie hackathonov a komunitných podujatí',
 
     // --- Údaje o spoločnosti (samotné hodnoty sú v src/company.ts) ---------
     'company.cvr': 'CVR',
