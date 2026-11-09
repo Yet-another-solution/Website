@@ -726,6 +726,39 @@ a.chip:focus-visible {
     height: auto;
 }
 
+/* "Need something similar?" after a project's body, and the pager below it. */
+.project-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 56px;
+}
+
+.project-cta-heading {
+    margin: 0;
+    font-family: 'Rubik Mono One', monospace;
+    font-size: 1.375rem;
+    line-height: 1.2;
+}
+
+.project-pager {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.project-pager [rel="next"] { margin-left: auto; }
+
+.project-aside-cta {
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.project-aside-cta-link { color: var(--primary-color); }
+
 .project-image {
     display: block;
     max-width: 100%;
