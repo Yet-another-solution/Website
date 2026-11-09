@@ -60,7 +60,8 @@ const work = {
 ---
 
 <BaseLayout
-  title={project.data.title}
+  title={project.data.seoTitle ?? project.data.title}
+  pageName={project.data.title}
   description={project.data.description}
   image={project.data.image}
   section="projects"
@@ -121,6 +122,20 @@ const work = {
             <p class="eyebrow eyebrow--dim">{t('projects.date')}</p>
             <p class="dark-card-value">{formatDate(project.data.date, lang)}</p>
           </div>
+
+          {project.data.status && (
+            <div>
+              <p class="eyebrow eyebrow--dim">{t('projects.status')}</p>
+              <p class="dark-card-value">{t(`projects.status.${project.data.status}`)}</p>
+            </div>
+          )}
+
+          {project.data.lastmod && (
+            <div>
+              <p class="eyebrow eyebrow--dim">{t('projects.updated')}</p>
+              <p class="dark-card-value"><time datetime={project.data.lastmod.toISOString().slice(0, 10)}>{formatDate(project.data.lastmod, lang)}</time></p>
+            </div>
+          )}
 
           {project.data.webUrl && (
             <a href={project.data.webUrl} target="_blank" rel="noopener" class="btn-yas btn-yas--green btn-yas--icon">

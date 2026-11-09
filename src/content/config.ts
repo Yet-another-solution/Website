@@ -28,6 +28,11 @@ const projects = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     draft: z.boolean().default(false),
+    // When the page was last revised, shown in its details card and the sitemap.
+    lastmod: z.coerce.date().optional(),
+    status: z.enum(['active', 'completed']).optional(),
+    // The <title> and breadcrumb-free search title; `title` stays the short name.
+    seoTitle: z.string().optional(),
     image: z.string().optional(),
     // The JSON-LD type of the project: a code library or any other piece of work.
     schemaType: z.enum(['SoftwareSourceCode', 'CreativeWork']).default('CreativeWork'),
