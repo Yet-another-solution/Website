@@ -36,6 +36,9 @@ const projects = defineCollection({
     image: z.string().optional(),
     // The JSON-LD type of the project: a code library or any other piece of work.
     schemaType: z.enum(['SoftwareSourceCode', 'CreativeWork']).default('CreativeWork'),
+    // SoftwareSourceCode details for the JSON-LD.
+    programmingLanguage: z.string().optional(),
+    runtimePlatform: z.string().optional(),
     // One alt text per gallery screenshot, in file-name order.
     galleryAlt: z.array(z.string()).optional(),
     tech: z.string().optional(),

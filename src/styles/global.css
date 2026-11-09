@@ -92,63 +92,51 @@ h1, h2, h3, h4, h5, h6 {
     border-bottom: 1px solid var(--border-color);
 }
 
-@media (max-width: 575.98px) { /* Mobile */
-    /* The hero square is sized by viewport width on mobile (see .white-square
-       below), so the hero itself must match instead of staying full-height —
-       otherwise a slab of empty dark background is left below the square. */
-    .s-text{
-        padding-top: 10vw;
-    }
-    /* Sized to the viewport so the wordmark stays on one line. */
-    .h1.hero-wordmark{
-        font-size: 15vw;
-    }
-    .hero-tagline{
-        font-size: 1rem;
-    }
-
-    .white-square {
-        width: 100vw;
-        height: 100vw;
-    }
-
-    .lr-ws{
-        height: 5vw;
-        max-width: 90vw;
-    }
-    .lr-ws-center{
-        height: 90vw;
-        max-height: 90vw;
-    }
+/* The hero square's side: the smaller viewport dimension, so it never
+   overflows sideways (phones, portrait tablets) or downwards; on desktop also
+   at most 55vw, so the panel beside it keeps room. Everything inside the
+   square scales with it. */
+:root { --hero-sq: min(100vh, 100vw); }
+/* Tablets stack the panel under the square: keep the square short enough
+   that the panel's call to action still lands in the first screen. */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    :root { --hero-sq: min(100vw, 60vh); }
+    .white-square { margin: 0 auto; }
+}
+@media (min-width: 992px) {
+    :root { --hero-sq: min(100vh, 55vw); }
 }
 
-@media (min-width: 576px) { /* Desktop */
-    .s-text{
-        padding-top: 10vh;
-    }
-    .h1.hero-wordmark{
-        font-size: 12rem;
-    }
-
-    .white-square {
-        width: 100vh;
-        height: 100vh;
-    }
-
-    .lr-ws{
-        height: 5vh;
-        max-width: 90vh;
-    }
-    .lr-ws-center{
-        height: 90vh;
-        max-height: 90vh;
-    }
+.white-square {
+    width: var(--hero-sq);
+    height: var(--hero-sq);
 }
 
+.lr-ws{
+    height: calc(var(--hero-sq) * 0.05);
+    max-width: calc(var(--hero-sq) * 0.9);
+}
+.lr-ws-center{
+    height: calc(var(--hero-sq) * 0.9);
+    max-height: calc(var(--hero-sq) * 0.9);
+}
+
+.s-text{
+    padding-top: calc(var(--hero-sq) * 0.1);
+}
+
+/* Scaled with the square so the wordmark always stays on one line. */
+.h1.hero-wordmark{
+    font-size: calc(var(--hero-sq) * 0.17);
+}
 
 .hero-tagline {
     transform: rotate(90deg);
     font-size: 2rem;
+}
+
+@media (max-width: 575.98px) {
+    .hero-tagline { font-size: 1rem; }
 }
 
 /* The hero: the brand square, then the panel that says who we are. Side by
@@ -188,8 +176,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (min-width: 992px) {
-    #home { height: 100vh; }
-    .hero-inner { flex-direction: row; }
+    /* min-height, not height: a panel taller than the viewport grows the
+       hero instead of overflowing it. */
+    #home { min-height: 100vh; }
+    .hero-inner { flex-direction: row; align-items: center; }
     .white-square { flex: none; }
     .hero-panel { flex: 1 1 0; min-width: 0; }
 }

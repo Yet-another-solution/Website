@@ -95,11 +95,12 @@ means updating that policy, and possibly a consent banner. Only the font weights
 imported in `BaseLayout.astro` are shipped — a new weight needs its own import.
 
 ### Homepage WebGL
-The homepage hero animates the five squares of the brand mark out of a single
-stack (`src/scripts/heroSquares.ts`, imported on idle by `Home.astro` so three.js
+The homepage hero draws the five squares of the brand mark in WebGL
+(`src/scripts/heroSquares.ts`, imported on idle by `Home.astro` so three.js
 stays off the critical path; the section diagrams likewise load only as they
-near the viewport), then pins them to
-the viewport and shrinks each one as its colour-matched section scrolls past.
+near the viewport). Because that is after first paint, the old exploding-stack
+intro, which covered the screen, is skipped and the stack starts settled. It
+pins the squares to the viewport and shrinks each one as its colour-matched section scrolls past.
 **The five `.reveal-section` bands below the hero are paired with the squares by
 document order**, so reordering or adding a band changes which square points
 where. Each band's `.eyebrow` is also what the hero tooltip reads. Once the hero

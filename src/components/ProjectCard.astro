@@ -30,7 +30,7 @@ const size = project.data.image ? await publicImageSize(project.data.image) : nu
 
 <a href={href} class="project-card">
   {project.data.image && (
-    <img src={project.data.image} alt="" class="project-card-bg" loading="lazy" {...size} />
+    <img src={project.data.image} alt="" class="project-card-bg" loading="lazy" {...(size ?? {})} />
   )}
   {techs.length > 0 && <p class="project-card-category">{techs.join(' · ')}</p>}
   <Heading class="project-card-title">{project.data.title}</Heading>

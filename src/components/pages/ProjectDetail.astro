@@ -39,7 +39,7 @@ const gallery = fs.existsSync(galleryDir)
 // that display size, so the layout is reserved before the file arrives.
 const lead = project.data.image ? await publicImageSize(project.data.image) : null;
 const leadScale = lead ? Math.min(1, 420 / lead.height) : 1;
-const leadSize = lead && { width: Math.round(lead.width * leadScale), height: Math.round(lead.height * leadScale) };
+const leadSize = lead ? { width: Math.round(lead.width * leadScale), height: Math.round(lead.height * leadScale) } : {};
 
 // Previous/next in the order of the /projects/ listing (newest first).
 const siblings = (await getLocalizedCollection('projects', lang)).sort(
@@ -63,9 +63,11 @@ const work = {
   mainEntityOfPage: { '@id': `${pageUrl}#webpage` },
   ...(project.data.image ? { image: new URL(project.data.image, Astro.site).href } : {}),
   ...(project.data.webUrl ? { sameAs: project.data.webUrl } : {}),
-  ...(project.data.schemaType === 'SoftwareSourceCode'
-    ? { codeRepository: project.data.github, programmingLanguage: 'C#', runtimePlatform: '.NET' }
+  ...(project.data.schemaType === 'SoftwareSourceCode' && project.data.github
+    ? { codeRepository: project.data.github }
     : {}),
+  ...(project.data.programmingLanguage ? { programmingLanguage: project.data.programmingLanguage } : {}),
+  ...(project.data.runtimePlatform ? { runtimePlatform: project.data.runtimePlatform } : {}),
 };
 ---
 

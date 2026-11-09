@@ -55,7 +55,7 @@ export function initHeroSquares(fallbackImg: HTMLElement) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(width, height);
-  renderer.setClearColor(bgColor, 1);
+  renderer.setClearColor(bgColor, 0);
 
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(0, width, 0, height, 0.1, 2000);
@@ -213,9 +213,15 @@ export function initHeroSquares(fallbackImg: HTMLElement) {
     return 1 - Math.pow(1 - t, 3);
   }
 
-  const start = performance.now();
   const holdMs = 500;
   const animMs = 1400;
+  // This module loads on idle, after the hero's H1 and CTA have painted, so the
+  // intro (an opaque navy cover, then the stack exploding from the centre)
+  // would hide content already on screen. Start at its end instead: the first
+  // frame draws the settled, coloured stack over a transparent canvas.
+  // ponytail: set `start = performance.now()` to bring the intro back, but
+  // only if this ever runs before first paint.
+  const start = performance.now() - holdMs - animMs;
   let settled = false;
   // Captured once the explosion settles (and refreshed on resize) so the
   // stack stays put on screen instead of scrolling away with the page.
