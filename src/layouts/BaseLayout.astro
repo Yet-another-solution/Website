@@ -1,16 +1,23 @@
 ---
 // Bootstrap and the fonts are bundled from npm rather than a CDN, so a page
 // view sends the visitor's IP address to nobody but our own host. They must
-// stay above global.css, whose rules override Bootstrap's.
+// stay above global.css, whose rules override Bootstrap's. Only the latin and
+// latin-ext subsets (Slovak needs latin-ext) of the weights the CSS uses.
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fontsource/jetbrains-mono/400.css';
-import '@fontsource/jetbrains-mono/400-italic.css';
-import '@fontsource/jetbrains-mono/500.css';
-import '@fontsource/jetbrains-mono/500-italic.css';
-import '@fontsource/jetbrains-mono/600.css';
-import '@fontsource/jetbrains-mono/700.css';
-import '@fontsource/jetbrains-mono/700-italic.css';
-import '@fontsource/rubik-mono-one/400.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-ext-400.css';
+import '@fontsource/jetbrains-mono/latin-400-italic.css';
+import '@fontsource/jetbrains-mono/latin-ext-400-italic.css';
+import '@fontsource/jetbrains-mono/latin-500.css';
+import '@fontsource/jetbrains-mono/latin-ext-500.css';
+import '@fontsource/jetbrains-mono/latin-600.css';
+import '@fontsource/jetbrains-mono/latin-ext-600.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
+import '@fontsource/jetbrains-mono/latin-ext-700.css';
+import '@fontsource/rubik-mono-one/latin-400.css';
+import '@fontsource/rubik-mono-one/latin-ext-400.css';
+// The display face sets every page title (the LCP text), so it is preloaded.
+import rubikLatin from '@fontsource/rubik-mono-one/files/rubik-mono-one-latin-400-normal.woff2?url';
 import '../styles/global.css';
 import { company } from '../company';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
@@ -248,6 +255,7 @@ const navItems = [
   <meta name="twitter:description" content={pageDescription} />
   <meta name="twitter:image" content={ogImage} />
 
+  <link rel="preload" href={rubikLatin} as="font" type="font/woff2" crossorigin />
   <link rel="icon" href="/favicon.ico" sizes="48x48" />
   <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

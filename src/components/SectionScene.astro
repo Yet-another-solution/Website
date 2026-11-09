@@ -61,30 +61,43 @@ const labelsByScene: Record<SceneName, Record<string, string>> = {
 </style>
 
 <script>
-  import { initSectionScene, type SceneLabels, type SceneName } from '../scripts/sectionScenes';
+  import type { SceneLabels, SceneName } from '../scripts/sectionScenes';
 
+  // three.js and the scenes load only once a diagram is about to scroll into
+  // view, so none of it is on the critical path. (A diagram hidden on small
+  // screens never intersects, so phones never load it.) With reduced motion
+  // the scenes draw themselves fully, without animating (see sceneKit.ts).
   const canvases = Array.from(document.querySelectorAll<HTMLCanvasElement>('[data-section-scene]'));
 
-  if (canvases.length) {
-    // Labels are drawn to 2D canvases, so wait for the webfont rather than baking
-    // a fallback face into the textures.
+  function start(canvas: HTMLCanvasElement) {
+    const section = canvas.closest('.reveal-section') ?? canvas;
+    let labels: SceneLabels = {};
+    try {
+      labels = JSON.parse(canvas.dataset.sceneLabels ?? '{}') as SceneLabels;
+    } catch {
+      // Fall through with no labels — each scene has an English default.
+    }
+    // Labels are drawn to 2D canvases, so wait for the webfont rather than
+    // baking a fallback face into the textures.
     const ready = document.fonts ? document.fonts.ready : Promise.resolve();
-    ready.then(() => {
-      canvases.forEach((canvas) => {
-        const section = canvas.closest('.reveal-section') ?? canvas;
-        let labels: SceneLabels = {};
-        try {
-          labels = JSON.parse(canvas.dataset.sceneLabels ?? '{}') as SceneLabels;
-        } catch {
-          // Fall through with no labels — each scene has an English default.
-        }
-        try {
-          initSectionScene(canvas, canvas.dataset.sectionScene as SceneName, section, labels);
-        } catch (error) {
-          // The section's text carries the message on its own, so fail quietly.
-          console.warn('Section scene unavailable:', error);
-        }
-      });
-    });
+    Promise.all([import('../scripts/sectionScenes'), ready])
+      .then(([{ initSectionScene }]) =>
+        initSectionScene(canvas, canvas.dataset.sectionScene as SceneName, section, labels)
+      )
+      // The section's text carries the message on its own, so fail quietly.
+      .catch((error) => console.warn('Section scene unavailable:', error));
+  }
+
+  if (canvases.length && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          observer.unobserve(entry.target);
+          start(entry.target as HTMLCanvasElement);
+        }),
+      { rootMargin: '300px 0px' }
+    );
+    canvases.forEach((canvas) => observer.observe(canvas));
   }
 </script>

@@ -96,7 +96,9 @@ imported in `BaseLayout.astro` are shipped — a new weight needs its own import
 
 ### Homepage WebGL
 The homepage hero animates the five squares of the brand mark out of a single
-stack (inline script in `src/components/pages/Home.astro`), then pins them to
+stack (`src/scripts/heroSquares.ts`, imported on idle by `Home.astro` so three.js
+stays off the critical path; the section diagrams likewise load only as they
+near the viewport), then pins them to
 the viewport and shrinks each one as its colour-matched section scrolls past.
 **The five `.reveal-section` bands below the hero are paired with the squares by
 document order**, so reordering or adding a band changes which square points
