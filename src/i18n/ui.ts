@@ -63,12 +63,17 @@ export const ui = {
     'home.hero.projectsTitle': 'See our projects',
     'home.hero.blogTitle': 'Read our blog',
     'home.hero.scrollTitle': 'Scroll down',
+    'home.hero.githubTitle': 'Y-A-S on GitHub',
+    'home.hero.title': 'Y-A-S: custom C# and Blazor web applications from Esbjerg, Denmark',
+    'home.hero.lead':
+      'Y-A-S ApS (Yet Another Solution) is a software studio in Esbjerg, Denmark. We build custom web applications with C# and Blazor, and we organise hackathons and community events, such as Hack Esbjerg 2026.',
+    'home.hero.cta': 'Tell us about your project',
 
     // --- Home: intro ----------------------------------------------------
     'home.intro.label': 'Yet Another Solution',
     'home.intro.heading': 'We build software',
     'home.intro.body':
-      'A team of developers crafting full-stack applications with modern tools — from backend APIs to polished web interfaces.',
+      'Y-A-S ApS (CVR 45856186) is a software studio based in Esbjerg, Denmark. We do two things. We design and build custom web applications in C# and Blazor, from the backend API to the interface your users click. And we organise hackathons and community events: Hack Esbjerg 2026 (19–20 March 2026) brought together over 100 participants, who built 13 projects across 6 prize categories. We also maintain Community.Blazor.MapLibre, an open-source library for MapLibre maps in Blazor with over 23,000 NuGet downloads.',
     'home.intro.viewProjects': 'View Projects',
     'home.intro.contactUs': 'Contact Us',
 
@@ -101,6 +106,11 @@ export const ui = {
     'home.blog.body':
       'Tutorials and deep dives on Blazor, .NET, and the way we build software.',
     'home.blog.explore': 'Explore Blog',
+
+    // --- Home: closing call to action ---------------------------------------
+    'home.cta.heading': 'Have a project in mind?',
+    'home.cta.body':
+      'Tell us what you need built in C# and Blazor, or which event you want to organise.',
 
     // --- Scene labels (drawn into the WebGL diagrams) ----------------------
     'scene.you': 'You',
@@ -222,12 +232,17 @@ export const ui = {
     'home.hero.projectsTitle': 'Pozrite si naše projekty',
     'home.hero.blogTitle': 'Prečítajte si náš blog',
     'home.hero.scrollTitle': 'Posunúť nadol',
+    'home.hero.githubTitle': 'Y-A-S na GitHube',
+    'home.hero.title': 'Y-A-S: webové aplikácie na mieru v C# a Blazore z Esbjergu v Dánsku',
+    'home.hero.lead':
+      'Y-A-S ApS (Yet Another Solution) je softvérové štúdio v dánskom Esbjergu. Vyvíjame webové aplikácie na mieru v C# a Blazore a organizujeme hackathony a komunitné podujatia, napríklad Hack Esbjerg 2026.',
+    'home.hero.cta': 'Napíšte nám o projekte',
 
     // --- Domov: úvod --------------------------------------------------------
     'home.intro.label': 'Yet Another Solution',
     'home.intro.heading': 'Tvoríme softvér',
     'home.intro.body':
-      'Tím vývojárov, ktorý stavia full-stack aplikácie s modernými nástrojmi — od backendových API až po vyladené webové rozhrania.',
+      'Y-A-S ApS (CVR 45856186) je softvérové štúdio so sídlom v dánskom Esbjergu. Robíme dve veci. Navrhujeme a vyvíjame webové aplikácie na mieru v C# a Blazore, od backendového API až po rozhranie, na ktoré klikajú vaši používatelia. A organizujeme hackathony a komunitné podujatia: na Hack Esbjerg 2026 (19. – 20. marca 2026) sa stretlo viac ako 100 účastníkov, ktorí vytvorili 13 projektov v 6 súťažných kategóriách. Okrem toho udržiavame Community.Blazor.MapLibre, open-source knižnicu na mapy MapLibre v Blazore s viac ako 23 000 stiahnutiami z NuGetu.',
     'home.intro.viewProjects': 'Zobraziť projekty',
     'home.intro.contactUs': 'Kontaktujte nás',
 
@@ -260,6 +275,11 @@ export const ui = {
     'home.blog.body':
       'Návody a hlbšie pohľady na Blazor, .NET a spôsob, akým staviame softvér.',
     'home.blog.explore': 'Preskúmať blog',
+
+    // --- Domov: záverečná výzva -----------------------------------------------
+    'home.cta.heading': 'Máte nápad na projekt?',
+    'home.cta.body':
+      'Napíšte nám, čo potrebujete postaviť v C# a Blazore, alebo aké podujatie chcete zorganizovať.',
 
     // --- Popisky v diagramoch -------------------------------------------------
     'scene.you': 'Vy',

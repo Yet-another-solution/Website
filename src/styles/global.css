@@ -96,15 +96,15 @@ h1, h2, h3, h4, h5, h6 {
     /* The hero square is sized by viewport width on mobile (see .white-square
        below), so the hero itself must match instead of staying full-height —
        otherwise a slab of empty dark background is left below the square. */
-    #home {
-        height: 100vw !important;
-    }
-
     .s-text{
         padding-top: 10vw;
     }
-    h1.h1{
-        font-size: 5rem;
+    /* Sized to the viewport so the wordmark stays on one line. */
+    .h1.hero-wordmark{
+        font-size: 15vw;
+    }
+    .hero-tagline{
+        font-size: 1rem;
     }
 
     .white-square {
@@ -126,7 +126,7 @@ h1, h2, h3, h4, h5, h6 {
     .s-text{
         padding-top: 10vh;
     }
-    h1.h1{
+    .h1.hero-wordmark{
         font-size: 12rem;
     }
 
@@ -145,6 +145,73 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+
+.hero-tagline {
+    transform: rotate(90deg);
+    font-size: 2rem;
+}
+
+/* The hero: the brand square, then the panel that says who we are. Side by
+   side where the square leaves room (desktop), stacked below that. */
+.hero-inner {
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 40px clamp(1.25rem, 5vw, 96px);
+    color: #fff;
+}
+
+.hero-panel .eyebrow { margin: 0; }
+
+.hero-title {
+    margin: 0;
+    max-width: 22ch;
+    font-family: 'Rubik Mono One', monospace;
+    font-size: clamp(1.35rem, 2.3vw, 2.4rem);
+    line-height: 1.25;
+    color: #fff;
+}
+
+.hero-lead {
+    margin: 0;
+    max-width: 60ch;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@media (min-width: 992px) {
+    #home { height: 100vh; }
+    .hero-inner { flex-direction: row; }
+    .white-square { flex: none; }
+    .hero-panel { flex: 1 1 0; min-width: 0; }
+}
+
+@media (max-width: 575.98px) {
+    .hero-panel { padding-top: 28px; padding-bottom: 32px; gap: 16px; }
+    .hero-lead { font-size: 0.9rem; line-height: 1.6; }
+}
+
+/* Closing call to action after the homepage bands. */
+.home-closing {
+    padding: 96px 0;
+    background: var(--page-alt-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.home-closing-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
 
 /* ===== LAYOUT ===== */
 
